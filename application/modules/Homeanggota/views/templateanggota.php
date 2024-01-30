@@ -90,7 +90,7 @@
                             } ?>"><a href="<?php echo base_url('Simulasi') ?>"><i class="fa fa-bank"></i> Simulasi</a>
                 </li>
 
-                
+
               </ul>
             </div>
             <!-- <div class="menu_section">
@@ -174,7 +174,7 @@
                 </a>
                 <ul class="dropdown-menu dropdown-usermenu pull-right">
                   <li><a href="<?php echo base_url('MscbAnggota/ubahPswd') ?>"> Ubah Password</a></li>
-                  <li><a href="<?php echo base_url('Loginanggota/logout') ?>"><i class="fa fa-sign-out pull-right"></i> Keluar</a></li>
+                  <li><a href="<?php echo base_url('Login/logout') ?>"><i class="fa fa-sign-out pull-right"></i> Keluar</a></li>
                 </ul>
               </li>
 

@@ -46,7 +46,7 @@
                       Masukkan Username dan Password.
                   </div> -->
                 <?php endif; ?>
-                <form class="login100-form validate-form p-b-33 p-t-5" action="<?= base_url() ?>Loginanggota/prosesLogin" method="post">
+                <form class="login100-form validate-form p-b-33 p-t-5" action="<?= base_url() ?>Login/prosesLogin" method="post">
 
                     <div class="wrap-input100 validate-input" data-validate="Enter username">
                         <input class="input100" type="text" name="username" id="username" value="<?= $username ?>" placeholder="Username" autocomplete="off">

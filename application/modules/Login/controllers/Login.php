@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class Loginanggota extends CI_Controller
+class Login extends CI_Controller
 {
 
 	function __construct()
@@ -66,6 +66,6 @@ class Loginanggota extends CI_Controller
 	function logout()
 	{
 		$this->session->sess_destroy();
-		redirect('Loginanggota');
+		redirect('Login');
 	}
 }
