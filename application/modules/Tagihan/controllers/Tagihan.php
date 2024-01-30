@@ -294,4 +294,26 @@ class Tagihan extends CI_Controller
 		}
 		redirect($_SERVER['HTTP_REFERER']);
 	}
+	function delete($id)
+	{
+		$this->db->trans_start();
+		// simpanan
+		$this->db->where('fk_tagihan_id', $id);
+		$this->db->delete('t_cb_tagihan_simpanan');
+		// pinjaman
+		$pinjaman = $this->db->query("select *  from t_cb_tagihan_pinjaman where fk_tagihan_id = ? ", [$id])->result();
+		foreach ($pinjaman as $key => $p) {
+			$this->MTagihanPinjaman->delete($p->id);
+			$this->db->query("update  t_cb_pinjaman set status = ? , jml_angsuran = ? where id =? ", [0, $p->angsuran_ke - 1, $p->fk_pinjaman_id]);
+		}
+		$this->MTagihan->delete($id);
+
+		$this->db->trans_complete();
+		if ($this->db->trans_status() === TRUE) {
+			$this->session->set_flashdata('success', 'Data Berhasil dihapus.');
+		} else {
+			$this->session->set_flashdata('error', 'Data Gagal dihapus.');
+		}
+		redirect('Tagihan');
+	}
 }
