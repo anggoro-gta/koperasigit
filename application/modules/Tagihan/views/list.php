@@ -75,7 +75,7 @@
 
         $.ajax({
             type: 'post',
-            url: "<?php echo base_url() ?>Simpanan/getListDetail",
+            url: "<?php echo base_url() ?>Tagihan/getListDetail",
             data: {
                 skpd,
                 // tgl_dari,
