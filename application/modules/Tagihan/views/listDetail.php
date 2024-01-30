@@ -103,7 +103,7 @@
                     "data": "id",
                     render: function(data, type, row) {
                         aksi = `<div class="btn-group text-center"><a class="btn btn-xs btn-success" href="<?= base_url() ?>/Tagihan/detail_${row.kategori}/${row.id}"><i class="fa fa-eye" title="Detail"></i></a>
-                        <a class="btn btn-xs btn-danger" onclick="return confirm('Apakah Anda akan menghapus data?');"  href="<?= base_url() ?>/Tagihan/delete/${row.id}"><i class="fa fa-trash" title="Detail"></i></a></div>`
+                        <a class="btn btn-xs btn-danger" onclick="return confirm('Apakah Anda akan menghapus data?');"  href="<?= base_url() ?>/Tagihan/delete_${row.kategori}/${row.id}"><i class="fa fa-trash" title="Detail"></i></a></div>`
                         return aksi;
                     },
                     "orderable": false,

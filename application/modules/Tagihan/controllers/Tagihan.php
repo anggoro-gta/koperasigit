@@ -294,7 +294,7 @@ class Tagihan extends CI_Controller
 		}
 		redirect($_SERVER['HTTP_REFERER']);
 	}
-	function delete($id)
+	function delete_kolektif($id)
 	{
 		$this->db->trans_start();
 		// simpanan
