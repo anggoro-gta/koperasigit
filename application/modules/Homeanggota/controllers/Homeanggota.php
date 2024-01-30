@@ -8,13 +8,30 @@ class Homeanggota extends MX_Controller
 	{
 		parent::__construct();
 		$this->load->model('MHome');
+		$this->MHome->ceklogin();
 	}
 
 	public function index()
 	{
-		$this->MHome->ceklogin();
 		$data['beranda'] = 'active';
 
 		$this->template->load('Homeanggota/templateanggota', 'Homeanggota/berandaanggota', $data);
+	}
+
+	public function getListDtlSimpanan(){
+		$data=null;
+		$this->load->view('Homeanggota/listDtlSimpanan', $data);
+	}
+
+	public function getListDtlPinjaman(){
+		die('pinjaman');
+		$data=null;
+		$this->load->view('Homeanggota/listDtlSimpanan', $data);
+	}
+
+	public function getListDtlSimulasi(){
+		die('simulasi');
+		$data=null;
+		$this->load->view('Homeanggota/listDtlSimpanan', $data);
 	}
 }

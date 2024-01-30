@@ -90,13 +90,7 @@
                             } ?>"><a href="<?php echo base_url('Simulasi') ?>"><i class="fa fa-bank"></i> Simulasi</a>
                 </li>
 
-                <li><a><i class="fa fa-bar-chart"></i> Laporan <span class="fa fa-chevron-down"></span></a>
-                  <ul class="nav child_menu">
-                    <li class="<?php if (isset($lapTransaksi)) {
-                                  echo 'active';
-                                } ?>"><a href="<?php echo base_url('Laporan') ?>">Lap Transaksi</a></li>
-                  </ul>
-                </li>
+                
               </ul>
             </div>
             <!-- <div class="menu_section">
