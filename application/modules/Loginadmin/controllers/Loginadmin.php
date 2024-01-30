@@ -20,8 +20,9 @@ class Loginadmin extends CI_Controller
 		$user = $this->input->post('username');
 		$pass = md5($this->input->post('password'));
 
-		$que = "select * from ms_cb_user_sistem where blokir='N' and username='$user' and password='$pass' ";
-		$hasil = $this->db->query($que)->row();
+		$this->db->select('*')->from('ms_cb_user_sistem')->where(array('blokir'=>'N', 'username'=>$user,'password'=>$pass));
+		$hasil = $this->db->get()->row();
+
 		if (isset($hasil)) {
 			$datetime = date('Y-m-d H:i:s');
 			$this->db->query("update ms_cb_user_sistem set last_login='$datetime' where id=" . $hasil->id);

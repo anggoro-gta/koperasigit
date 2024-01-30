@@ -20,8 +20,8 @@ class Login extends CI_Controller
 		$user = $this->input->post('username');
 		$pass = md5($this->input->post('password'));
 
-		$que = "select * from ms_cb_user_anggota where blokir='N' and username='$user' and password='$pass' ";
-		$hasil = $this->db->query($que)->row();
+		$this->db->select('*')->from('ms_cb_user_anggota')->where(array('blokir'=>'N', 'username'=>$user,'password'=>$pass));
+		$hasil = $this->db->get()->row();
 
 		if (isset($hasil)) {
 			$datetime = date('Y-m-d H:i:s');
