@@ -351,7 +351,6 @@
   <!-- Custom Theme Scripts -->
   <script src="<?php echo base_url('gentelella/') ?>build/js/custom.min.js"></script>
 
-
 </body>
 <style>
   .nominal {

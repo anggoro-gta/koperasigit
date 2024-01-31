@@ -316,4 +316,168 @@ class Tagihan extends CI_Controller
 		}
 		redirect('Tagihan');
 	}
+
+	public function create_individu()
+	{
+		$this->MHome->ceklogin();
+		$skpd = $this->db->query("select * from ms_cb_skpd")->result_array();
+		$data = array(
+			'action' => base_url() . 'Tagihan/save_individu',
+			'button' => 'Buat Tagihan',
+			'id' => set_value('id'),
+			'fk_skpd_id' => set_value('fk_skpd_id'),
+			'periode' => set_value('periode'),
+			'wajib' => set_value('wajib'),
+			'sukarela' => set_value('sukarela'),
+			'arrSKPD' => $skpd,
+			'method' => 'POST'
+		);
+
+		$data['Tagihan'] = 'active';
+		$data['act_back'] = base_url() . 'Tagihan';
+		$data['arrUserAnggota'] = $this->MMscbUseranggota->get();
+		$this->template->load('Homeadmin/templateadmin', 'Tagihan/form_individu', $data);
+	}
+	function getAnggota()
+	{
+		$this->MHome->ceklogin();
+		$fk_skpd_id = $this->input->post('fk_skpd_id');
+
+		$hsl = $this->MMscbUseranggota->get(array('fk_id_skpd' => $fk_skpd_id));
+		$data['data'] = "<option value=''>Pilih</option>\n";
+		foreach ((array)$hsl as $val) {
+			$data['data'] .= "<option value=\"" . $val['id'] . "\">" . $val['nama'] . " " . $val['nip'] . "</option>\n";
+		}
+		echo json_encode($data);
+	}
+	function getDataIndividu($id = null)
+	{
+		$fk_anggota_id = $this->input->post('fk_anggota_id');
+		if ($id) {
+			$sw = 0;
+			$simpanan = $this->db->query("select
+			tcts.*, mcua.nama ,mcua.nip
+		from
+			t_cb_tagihan_simpanan tcts
+			join ms_cb_user_anggota mcua on tcts.fk_anggota_id = mcua.id
+		where
+			fk_tagihan_id = ?",  [$id])->result();
+			$pinjaman = $this->db->query("select
+			tgl,
+			nama,
+			nip,
+			kategori ,
+			tctp.*,
+			pinjaman,
+			tenor
+		from
+			t_cb_tagihan_pinjaman tctp
+		join ms_cb_user_anggota mcua on
+			tctp.fk_anggota_id = mcua.id
+			join t_cb_pinjaman tcp on tcp.id =tctp.fk_pinjaman_id
+			join ms_cb_kategori_pinjam mckp on mckp.id = tcp.fk_kategori_id
+		where
+			fk_tagihan_id = ?",  [$id])->result();
+			$readonly = true;
+		} else {
+			$simpanan = $this->db->query("SELECT id,nama,nip FROM ms_cb_user_anggota where fk_id_skpd = ?",  [$fk_anggota_id])->result();
+			$sw = $this->db->query("SELECT nominal FROM ms_cb_simpanan where id = ? ", [2])->row()->nominal;
+			$readonly = false;
+			$pinjaman = $this->db->query("select
+				tcp.id,
+				tcp.fk_anggota_id,
+				tgl,
+				nama,
+				nip,
+				pinjaman,
+				kategori ,
+				jml_angsuran+1 as angsuran_ke,
+				pokok,
+				tapim,
+				tcp.bunga,
+				tenor,
+				jml_tagihan
+			from
+				t_cb_pinjaman tcp
+			join ms_cb_user_anggota mcua on
+				tcp.fk_anggota_id = mcua.id
+			join ms_cb_kategori_pinjam mckp on
+				tcp.fk_kategori_id = mckp.id
+				where status=0 and tcp.fk_anggota_id = ?",  [$fk_anggota_id])->row();
+		}
+		$data = [
+			'simpanan' => $simpanan,
+			'pinjaman' => $pinjaman,
+			'sw' => $sw,
+			'readonly' => $readonly
+		];
+		$this->load->view('Tagihan/_form_individu', $data);
+	}
+
+	public function save_individu()
+	{
+		$this->MHome->ceklogin();
+		$this->db->trans_start();
+		$periode = $this->input->post('periode');
+		$fk_skpd_id = $this->input->post('fk_skpd_id');
+		$fk_anggota_id = $this->input->post('fk_anggota_id');
+		$fk_pinjaman_id = $this->input->post('fk_pinjaman_id');
+
+		$angsuran_ke = $this->input->post('angsuran_ke');
+		$pokok = $this->input->post('pokok');
+		$tapim = $this->input->post('tapim');
+		$bunga = $this->input->post('bunga');
+		$jml_tagihan = $this->input->post('jml_tagihan');
+		$tenor = $this->input->post('tenor');
+
+		$wajib = $this->input->post('wajib');
+		$sukarela = $this->input->post('sukarela');
+		$jml = $this->input->post('jml');
+
+		$data['fk_skpd_id'] = $fk_skpd_id;
+		$data['bulan'] = explode('-', $periode)[0];
+		$data['tahun'] = explode('-', $periode)[1];
+		$data['kategori'] = 'individu';
+		$data['user_act'] = $this->session->id;
+		$data['time_act'] = date('Y-m-d H:i:s');
+		$this->MTagihan->insert($data);
+		$tagihanId = $this->db->insert_id();
+
+		$dataPinjaman = [];
+
+		$pinjaman = [
+			'fk_tagihan_id' => $tagihanId,
+			'fk_pinjaman_id' => $fk_pinjaman_id,
+			'fk_anggota_id' => $fk_anggota_id,
+			'angsuran_ke' => str_replace(".", "", $angsuran_ke),
+			'pokok' => str_replace(".", "", $pokok),
+			'tapim' => str_replace(".", "", $tapim),
+			'bunga' => str_replace(".", "", $bunga),
+			'jml_tagihan' => str_replace(".", "", $jml_tagihan),
+		];
+		$this->db->query("update  t_cb_pinjaman set jml_angsuran = ? where id =? ", [$angsuran_ke, $fk_pinjaman_id]);
+		if ($angsuran_ke == $tenor) {
+			$this->db->query("update  t_cb_pinjaman set status = ? where id =? ", [1, $fk_pinjaman_id]);
+		}
+		$this->MTagihanPinjaman->insert($pinjaman);
+		// insert tagihan simpanan
+		if ($jml && $jml > 0) {
+			$simpanan = [
+				'fk_tagihan_id' => $tagihanId,
+				'fk_skpd_id' => $fk_skpd_id,
+				'fk_anggota_id' => $fk_anggota_id,
+				'wajib' => str_replace(".", "", $wajib),
+				'sukarela' => str_replace(".", "", $sukarela),
+			];
+			$this->MTagihanSimpanan->insert($simpanan);
+		}
+		$this->db->trans_complete();
+
+		if ($this->db->trans_status() === TRUE) {
+			$this->session->set_flashdata('success', 'Data Berhasil disimpan.');
+		} else {
+			$this->session->set_flashdata('error', 'Data Gagal disimpan.');
+		}
+		redirect('Tagihan');
+	}
 }

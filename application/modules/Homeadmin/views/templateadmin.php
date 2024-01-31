@@ -361,6 +361,7 @@
   <!-- Custom Theme Scripts -->
   <script src="<?php echo base_url('gentelella/') ?>build/js/custom.min.js"></script>
 
+  <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
 
 </body>
 <style>
@@ -542,7 +543,7 @@
     var rupiah = '';
     var angkarev = angka.toString().split('').reverse().join('');
     for (var i = 0; i < angkarev.length; i++)
-      if (i % 3 == 0) rupiah += angkarev.substr(i, 3) + ',';
+      if (i % 3 == 0) rupiah += angkarev.substr(i, 3) + '.';
     return rupiah.split('', rupiah.length - 1).reverse().join('');
   }
 
