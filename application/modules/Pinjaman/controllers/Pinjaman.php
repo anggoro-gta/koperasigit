@@ -11,8 +11,8 @@ class Pinjaman extends CI_Controller
 		$this->load->model('MHome');
 		$this->load->model('MMscbUseranggota');
 		$this->load->model('MMscbSkpd');
-		$this->load->model('MMscbStatuspekerjaan');
-		$this->load->model('MSimpanan');
+		$this->load->model('MMscbKategoripinjam');
+		$this->load->model('McbPinjaman');
 		// $this->load->model('MMsCabang');
 	}
 
@@ -47,7 +47,7 @@ class Pinjaman extends CI_Controller
 		// $tgl_sampai = $this->input->post('tgl_sampai');
 
 		if ($skpd != '') {
-			$this->datatables->where('fk_id_skpd', $skpd);
+			$this->datatables->where('us.fk_id_skpd', $skpd);
 		}
 
 		// if ($tgl_dari != '') {
@@ -55,9 +55,10 @@ class Pinjaman extends CI_Controller
 		// 	$this->datatables->where("p.tgl <=", $this->help->ReverseTgl($tgl_sampai));
 		// }
 
-		$this->datatables->select("pj.id,pj.fk_anggota_id,pj.tgl,pj.jml_angsuran,pj.nilai,pj.kategori,pj.status,an.nama");
+		$this->datatables->select("pj.id,us.nama,us.fk_id_skpd,DATE_FORMAT(pj.tgl,'%d-%m-%Y')tgl,FORMAT(pj.pinjaman,0) pinjaman,pj.jml_angsuran,pj.tenor,FORMAT(pj.pokok,0) pokok,FORMAT(pj.tapim,0) tapim,FORMAT(pj.bunga,0) bunga,FORMAT(pj.jml_tagihan,0) jml_tagihan,ka.kategori,CASE pj.status WHEN 1 THEN 'Sudah' ELSE 'Belum' END as status");
 		$this->datatables->from("t_cb_pinjaman pj");
-		$this->datatables->join('ms_cb_user_anggota an', 'pj.fk_anggota_id=an.id', 'inner');
+		$this->datatables->join('ms_cb_user_anggota us', 'pj.fk_anggota_id = us.id', 'inner');
+		$this->datatables->join('ms_cb_kategori_pinjam ka', 'pj.fk_kategori_id = ka.id', 'inner');
 		$this->datatables->add_column('action', '<div class="btn-group">' . anchor(site_url('MscbAnggota/update/$1'), '<i title="detail" class="glyphicon glyphicon-share-alt icon-white"></i>', 'class="btn btn-xs btn-success"') . '</div>', 'id');
 
 		echo $this->datatables->generate();
@@ -67,19 +68,27 @@ class Pinjaman extends CI_Controller
 	{
 		$this->MHome->ceklogin();
 		$data = array(
-			'action' => base_url() . 'Simpanan/save',
+			'action' => base_url() . 'Pinjaman/save',
 			'button' => 'Simpan',
 			'id' => set_value('id'),
+			'nilaibunga' => set_value('nilaibunga'),
 			'fk_anggota_id' => set_value('fk_anggota_id'),
-			'tgl' => set_value('tgl'),
-			'wajib' => set_value('wajib'),
-			'sukarela' => set_value('sukarela'),
+			'fk_kategori_id' => set_value('fk_kategori_id'),
+			'tgl_mulai_hutang' => set_value('tgl_mulai_hutang'),
+			'jml_pinjam' => set_value('jml_pinjam'),
+			'tenor' => set_value('tenor'),
+			'bulat_pinjam' => set_value('bulat_pinjam'),
+			'pokok' => set_value('pokok'),
+			'tapim' => set_value('tapim'),
+			'bunga' => set_value('bunga'),
+			'jml_tagihan' => set_value('jml_tagihan'),
 		);
 
-		$data['Simpanan'] = 'active';
-		$data['act_back'] = base_url() . 'Simpanan';
+		$data['Pinjaman'] = 'active';
+		$data['act_back'] = base_url() . 'Pinjaman';
 		$data['arrUserAnggota'] = $this->MMscbUseranggota->get();
-		$this->template->load('Homeadmin/templateadmin', 'Simpanan/form', $data);
+		$data['arrKategori'] = $this->MMscbKategoripinjam->get();
+		$this->template->load('Homeadmin/templateadmin', 'Pinjaman/form', $data);
 	}
 
 	public function save()
@@ -88,18 +97,26 @@ class Pinjaman extends CI_Controller
 
 		$id_anggota = $this->input->post('fk_anggota_id');
 
-		$getskpd = $this->db->query("SELECT fk_id_skpd FROM ms_cb_user_anggota where id = '$id_anggota'")->row();
-
+		$data['fk_kategori_id'] = $this->input->post('fk_kategori_id');
 		$data['fk_anggota_id'] = $id_anggota;
-		$data['fk_skpd_id'] = $getskpd->fk_id_skpd;
-		$data['tgl'] = $this->help->ReverseTgl($this->input->post('tgl'));
-		$data['wajib'] = str_replace(',', '', $this->input->post('wajib'));
-		$data['sukarela'] = str_replace(',', '', $this->input->post('sukarela'));
+		$data['tgl'] = $this->help->ReverseTgl($this->input->post('tgl_mulai_hutang'));
+		$data['tenor'] = $this->input->post('tenor');
+		$data['pinjaman'] = str_replace(",", "", $this->input->post('bulat_pinjam'));
+		$data['pokok'] = str_replace(",", "", $this->input->post('pokok'));
+		$data['tapim'] = str_replace(",", "", $this->input->post('tapim'));
+		$data['bunga'] = str_replace(",", "", $this->input->post('bunga'));
+		$data['jml_tagihan'] = str_replace(",", "", $this->input->post('bunga'));
+		$data['status'] = 0;
 
-		$this->MSimpanan->insert($data);
-		$this->session->set_flashdata('success', 'Data Berhasil disimpan.');
+		$get_hutang = $this->db->query("SELECT * FROM t_cb_pinjaman where id = '$id_anggota'")->row();
 
-		redirect('Simpanan');
+		if ($get_hutang == NULL) {
+			$this->McbPinjaman->insert($data);
+			$this->session->set_flashdata('success', 'Data Berhasil disimpan.');
+		} else {
+			$this->session->set_flashdata('error', 'Sudah ada data pinjaman mohon cek data pinjaman');
+		}
+		redirect('Pinjaman');
 	}
 
 	public function saveUpload()
@@ -151,5 +168,18 @@ class Pinjaman extends CI_Controller
 		$data['hasil'] = $this->db->query($que)->result();
 
 		$this->template->load('Home/template', 'Simpanan/viewRiwayat', $data);
+	}
+
+	public function cariBunga()
+	{
+		$idkategori = $this->input->post('idkategori');
+		$hsl = $this->MMscbKategoripinjam->get(array('id' => $idkategori));
+		$hsl = $hsl[0];
+
+		$data['bunga'] = $hsl['bunga'];
+		// $data['nominal'] = number_format($hsl['nominal']);
+		// $data['fee_terapis'] = number_format($hsl['fee_terapis']);
+
+		echo json_encode($data);
 	}
 }

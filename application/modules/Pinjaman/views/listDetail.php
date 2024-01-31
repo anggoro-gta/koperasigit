@@ -6,7 +6,7 @@
                 <h2>List</h2>
                 <ul class="nav navbar-right panel_toolbox">
                     <div class="pull-right">
-                        <a href="#" id="upload_file" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-cloud-upload"></i> Upload</a>
+                        <!-- <a href="#" id="upload_file" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-cloud-upload"></i> Upload</a> -->
                         <a href="<?= $act_add ?>" class="btn btn-sm btn-success"><i class="glyphicon glyphicon-plus"></i> Tambah</a>
                     </div>
                 </ul>
@@ -22,21 +22,37 @@
                                     <th width="5%">No</th>
                                     <!-- <th><center>Cabang</center></th> -->
                                     <th>
-                                        <center>Nomor Anggota</center>
+                                        <center>Nama Anggota</center>
                                     </th>
                                     <th>
-                                        <center>Nama</center>
+                                        <center>Tanggal Pinjam</center>
                                     </th>
                                     <th>
-                                        <center>Jumlah Angsuran</center>
+                                        <center>Jumlah Pinjaman</center>
                                     </th>
                                     <th>
-                                        <center>Kategori</center>
+                                        <center>Angsuran yg terbayar</center>
                                     </th>
                                     <th>
-                                        <center>Status Lunas
+                                        <center>Tenor</center>
+                                    </th>
                                     <th>
-                                        <center>Total Pinjaman</center>
+                                        <center>Pokok</center>
+                                    </th>
+                                    <th>
+                                        <center>Tapim</center>
+                                    </th>
+                                    <th>
+                                        <center>Bunga</center>
+                                    </th>
+                                    <th>
+                                        <center>Tagihan Bulanan</center>
+                                    </th>
+                                    <th>
+                                        <center>Jenis</center>
+                                    </th>
+                                    <th>
+                                        <center>Status Lunas</center>
                                     </th>
                                     <th>Aksi</th>
                                 </tr>
@@ -93,6 +109,10 @@
 </div>
 <script type="text/javascript">
     level = "<?= $this->session->fk_level_id ?>";
+
+    statuslunas = "lunas";
+    statusblmlunas = "belum lunas"
+
     $("#fk_id_skpd").select2();
     $('.tanggal').datepicker({
         autoclose: true,
@@ -141,45 +161,80 @@
                     "className": "text-center"
                 },
                 {
-                    "data": "fk_anggota_id",
-                    "orderable": false,
-                },
-                {
                     "data": "nama",
                     "orderable": false,
                 },
                 {
+                    "data": "tgl",
+                    "orderable": false,
+                    "className": "text-center",
+                    "searchable": false,
+                },
+                {
+                    "data": "pinjaman",
+                    "orderable": false,
+                    "className": "text-right",
+                    "searchable": false,
+                },
+                {
                     "data": "jml_angsuran",
                     "orderable": false,
-                    "className": "text-center"
+                    "className": "text-center",
+                    "searchable": false,
+                },
+                {
+                    "data": "tenor",
+                    "orderable": false,
+                    "className": "text-center",
+                    "searchable": false,
+                },
+                {
+                    "data": "pokok",
+                    "orderable": false,
+                    "className": "text-right",
+                    "searchable": false,
+                },
+                {
+                    "data": "tapim",
+                    "orderable": false,
+                    "className": "text-right",
+                    "searchable": false,
+                },
+                {
+                    "data": "bunga",
+                    "orderable": false,
+                    "className": "text-right",
+                    "searchable": false,
+                },
+                {
+                    "data": "jml_tagihan",
+                    "orderable": false,
+                    "className": "text-right",
+                    "searchable": false,
                 },
                 {
                     "data": "kategori",
                     "orderable": false,
+                    "className": "text-center",
                     "searchable": false,
                 },
                 {
                     "data": "status",
                     "orderable": false,
-                    "className": "text-center"
-                },
-                {
-                    "data": "nilai",
-                    "orderable": false,
-                    "searchable": false,
-                    "className": "text-right"
+                    "className": "text-center",
                 },
                 {
                     "data": "id",
+                    "orderable": false,
+                    "className": "text-center",
                     render: function(data, type, row) {
-                        aksi = '<div class="btn-group text-center">';
-                        aksi += '<a class="btn btn-xs btn-success" href="<?= base_url() ?>Simpanan/detail/' + row.nomor_anggota + '"><i class="glyphicon glyphicon-share-alt icon-white" title="Detail"></i></a>';
+                        aksi = '<div class="btn-group">';
+                        if (row.jml_angsuran == 0) {
+                            aksi += '<a class="btn btn-xs btn-danger" href="<?= base_url() ?>Pos/delete/' + data + '"><i class="glyphicon glyphicon-trash icon-white" title="Hapus" onclick="return confirmDelete()"></i></a>';
+                        }
                         aksi += '</div>';
                         return aksi;
                     },
-                    "orderable": false,
-                    "searchable": false,
-                    "className": "text-center"
                 },
             ],
             order: [
