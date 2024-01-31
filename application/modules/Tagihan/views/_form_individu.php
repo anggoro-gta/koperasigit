@@ -19,13 +19,13 @@
                 <div class="form-group required">
                     <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Piut</label>
                     <div class="col-md-6 col-sm-6 col-xs-12">
-                        <input type="text"  readonly class="form-control col-md-7 col-xs-12" value="<?= $pinjaman->tgl ?>">
+                        <input type="text" readonly class="form-control col-md-7 col-xs-12" value="<?= $pinjaman->tgl ?>">
                     </div>
                 </div>
                 <div class="form-group required">
                     <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Pinjaman</label>
                     <div class="col-md-6 col-sm-6 col-xs-12">
-                        <input type="text"  readonly class="form-control col-md-7 col-xs-12" value="<?= number_format($pinjaman->pinjaman, 0, ",", ".") ?>">
+                        <input type="text" readonly class="form-control col-md-7 col-xs-12" value="<?= number_format($pinjaman->pinjaman, 0, ",", ".") ?>">
                     </div>
                 </div>
                 <div class="form-group required">
@@ -84,19 +84,19 @@
         </div>
         <div class="x_content">
             <input type="hidden" id="sw" value="<?= number_format($sw, 0, ",", "")  ?>">
-            <div class="form-group required">
+            <div class="form-group">
                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Jml</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
                     <input type="number" name="jml" id="jml" class="form-control col-md-7 col-xs-12" value="">
                 </div>
             </div>
-            <div class="form-group required">
+            <div class="form-group">
                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">SW</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
                     <input type="text" name="wajib" id="wajib" readonly class="form-control col-md-7 col-xs-12" value="">
                 </div>
             </div>
-            <div class="form-group required">
+            <div class="form-group">
                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Sukarela</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
                     <input type="number" name="sukarela" class="form-control col-md-7 col-xs-12" value="">
