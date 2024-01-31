@@ -323,7 +323,7 @@ class Tagihan extends CI_Controller
 		$skpd = $this->db->query("select * from ms_cb_skpd")->result_array();
 		$data = array(
 			'action' => base_url() . 'Tagihan/save_individu',
-			'button' => 'Buat Tagihan',
+			'button' => 'Simpan',
 			'id' => set_value('id'),
 			'fk_skpd_id' => set_value('fk_skpd_id'),
 			'periode' => set_value('periode'),
@@ -477,6 +477,31 @@ class Tagihan extends CI_Controller
 			$this->session->set_flashdata('success', 'Data Berhasil disimpan.');
 		} else {
 			$this->session->set_flashdata('error', 'Data Gagal disimpan.');
+		}
+		redirect('Tagihan');
+	}
+
+	function delete_individu($id)
+	{
+		$this->db->trans_start();
+		// simpanan
+		$this->db->where('fk_tagihan_id', $id);
+		$this->db->delete('t_cb_tagihan_simpanan');
+		// pinjaman
+		$pinjaman = $this->db->query("select *  from t_cb_tagihan_pinjaman where fk_tagihan_id = ? ", [$id])->result();
+		foreach ($pinjaman as $key => $p) {
+			$this->MTagihanPinjaman->delete($p->id);
+			$lastTagihanPinjaman = $this->db->query("select max(angsuran_ke) angsuran_ke  from t_cb_tagihan_pinjaman where fk_pinjaman_id = ? limit 1", [$p->fk_pinjaman_id])->row();
+
+			$this->db->query("update  t_cb_pinjaman set status = ? , jml_angsuran = ? where id =? ", [0, ($lastTagihanPinjaman->angsuran_ke ?? 0), $p->fk_pinjaman_id]);
+		}
+		$this->MTagihan->delete($id);
+
+		$this->db->trans_complete();
+		if ($this->db->trans_status() === TRUE) {
+			$this->session->set_flashdata('success', 'Data Berhasil dihapus.');
+		} else {
+			$this->session->set_flashdata('error', 'Data Gagal dihapus.');
 		}
 		redirect('Tagihan');
 	}
