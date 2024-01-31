@@ -42,7 +42,7 @@
                     </div>
                 </div>
                 <div class="form-group required">
-                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Jumlah Angsuran</label>
+                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Maksimal Angsuran</label>
                     <div class="col-md-6 col-sm-6 col-xs-12">
                         <input type="text" name="angsuran" id="angsuran" required class="form-control col-md-7 col-xs-12 angka" value="">
                     </div>
