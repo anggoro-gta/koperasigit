@@ -16,7 +16,7 @@
                   <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12" id='simpanan'>
                     <div class="tile-stats" style="background-color: green;color: white">
                       <div class="icon"><i class="fa fa-money" style="color: white"></i></div>
-                      <div class="count">20.000.000</div>
+                      <div class="count"><?=number_format($simpanan)?></div>
                       <h3 style="color: white">SIMPANAN</h3>
                       <p>Jumlah Simpanan</p>
                     </div>
@@ -24,7 +24,7 @@
                   <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12" id='pinjaman'>
                     <div class="tile-stats"  style="background-color: red;color: white">
                       <div class="icon"><i class="fa fa-money" style="color: white"></i></div>
-                      <div class="count">10.000.000</div>
+                      <div class="count"><?=number_format($pinjaman)?></div>
                       <h3 style="color: white">PINJAMAN</h3>
                       <p>Jumlah Pinjaman</p>
                     </div>

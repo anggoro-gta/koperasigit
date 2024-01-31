@@ -38,7 +38,7 @@
                 <div class="form-group required">
                     <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Jumlah Pinjaman</label>
                     <div class="col-md-6 col-sm-6 col-xs-12">
-                        <input type="text" name="pinjaman" id="pinjaman" required class="form-control col-md-7 col-xs-12 nominal" value="">
+                        <input type="text" name="pinjaman" id="pinjaman_simulasi" required class="form-control col-md-7 col-xs-12 nominal" value="">
                     </div>
                 </div>
                 <div class="form-group required">
@@ -69,49 +69,15 @@
         </div>
     </div>
 </div>
-<div id="tampilData"></div>
+<div id="tampilDataSimulasi"></div>
 
 <script type="text/javascript">
-    // $(document).ready(function() {
-    //     // data();
-    //     nip = $("#nip").val();
-    //     console.log("nip : " + nip);
-    //     tahunlahir = nip.substring(0, 4);
-    //     bulanlahir = nip.substring(4, 6);
-    //     tanggallahir = nip.substring(6, 8);
-
-    //     console.log("tahun lahir : " + tahunlahir);
-    //     console.log("bulan lahir : " + bulanlahir);
-    //     console.log("tanggal lahir : " + tanggallahir);
-
-    //     kelahiran = tahunlahir + "-" + bulanlahir + "-" + tanggallahir;
-    //     let kelahirandate = new Date(kelahiran);
-
-    //     let daylahir = kelahirandate.getDate();
-    //     let monthlahir = kelahirandate.getMonth();
-    //     let yearlahir = kelahirandate.getFullYear();
-    //     console.log("KELAHIRAN : " + daylahir + "-" + (monthlahir + 1) + "-" + yearlahir);
-    //     console.log("PENSIUN : " + daylahir + "-" + (monthlahir + 1) + "-" + (yearlahir + 58));
-
-    //     let date = new Date("2017-01-26");
-
-    //     function differenceInMonths(date1, date2) {
-    //         const monthDiff = date1.getMonth() - date2.getMonth();
-    //         const yearDiff = date1.getYear() - date2.getYear();
-
-    //         return monthDiff + yearDiff * 12;
-    //     }
-
-    //     //new date
-    //     const date1 = new Date('2022-06-05');
-
-    //     //old date
-    //     const date2 = new Date('2020-06-05');
-
-    //     const difference = differenceInMonths(date1, date2);
-
-    //     console.log(difference);
-    // });
+    $(document).ready(function() {
+         $(".nominal").autoNumeric("init", {
+            vMax: 9999999999999,
+            vMin: -9999999999999
+          });
+    });
 
     $("#idkategorisimulasi").change(function() {
         let idkategorisimulasi = $("#idkategorisimulasi").val();
@@ -161,7 +127,7 @@
 
     function data() {
         sisagajipokok = $("#gajipk").val();
-        jumlahpinjam = $("#pinjaman").val();
+        jumlahpinjam = $("#pinjaman_simulasi").val();
         jumlahangsuran = $("#angsuran").val();
 
         sisamasajabatan = $("#idsisajabatan").val();
@@ -171,41 +137,41 @@
         if (sisagajipokok == '' && jumlahpinjam == '' && jumlahangsuran == '') {
             document.getElementById('gajipk').focus();
             document.getElementById('gajipk').style.borderColor = "red";
-            document.getElementById('pinjaman').style.borderColor = "red";
+            document.getElementById('pinjaman_simulasi').style.borderColor = "red";
             document.getElementById('angsuran').style.borderColor = "red";
         } else if (sisagajipokok == '' && jumlahpinjam == '' && jumlahangsuran != '') {
             document.getElementById('gajipk').focus();
             document.getElementById('gajipk').style.borderColor = "red";
-            document.getElementById('pinjaman').style.borderColor = "red";
+            document.getElementById('pinjaman_simulasi').style.borderColor = "red";
             document.getElementById('angsuran').style.borderColor = "green";
         } else if (sisagajipokok == '' && jumlahpinjam != '' && jumlahangsuran != '') {
             document.getElementById('gajipk').focus();
             document.getElementById('gajipk').style.borderColor = "red";
-            document.getElementById('pinjaman').style.borderColor = "green";
+            document.getElementById('pinjaman_simulasi').style.borderColor = "green";
             document.getElementById('angsuran').style.borderColor = "green";
         } else if (sisagajipokok == '' && jumlahpinjam != '' && jumlahangsuran == '') {
             document.getElementById('gajipk').focus();
             document.getElementById('gajipk').style.borderColor = "red";
-            document.getElementById('pinjaman').style.borderColor = "green";
+            document.getElementById('pinjaman_simulasi').style.borderColor = "green";
             document.getElementById('angsuran').style.borderColor = "red";
         } else if (sisagajipokok != '' && jumlahpinjam == '' && jumlahangsuran == '') {
-            document.getElementById('pinjaman').focus();
+            document.getElementById('pinjaman_simulasi').focus();
             document.getElementById('gajipk').style.borderColor = "green";
-            document.getElementById('pinjaman').style.borderColor = "red";
+            document.getElementById('pinjaman_simulasi').style.borderColor = "red";
             document.getElementById('angsuran').style.borderColor = "red";
         } else if (sisagajipokok != '' && jumlahpinjam == '' && jumlahangsuran != '') {
-            document.getElementById('pinjaman').focus();
+            document.getElementById('pinjaman_simulasi').focus();
             document.getElementById('gajipk').style.borderColor = "green";
-            document.getElementById('pinjaman').style.borderColor = "red";
+            document.getElementById('pinjaman_simulasi').style.borderColor = "red";
             document.getElementById('angsuran').style.borderColor = "green";
         } else if (sisagajipokok != '' && jumlahpinjam != '' && jumlahangsuran == '') {
             document.getElementById('angsuran').focus();
             document.getElementById('gajipk').style.borderColor = "green";
-            document.getElementById('pinjaman').style.borderColor = "green";
+            document.getElementById('pinjaman_simulasi').style.borderColor = "green";
             document.getElementById('angsuran').style.borderColor = "red";
         } else if (sisagajipokok != '' && jumlahpinjam != '' && jumlahangsuran != '') {
             document.getElementById('gajipk').style.borderColor = "green";
-            document.getElementById('pinjaman').style.borderColor = "green";
+            document.getElementById('pinjaman_simulasi').style.borderColor = "green";
             document.getElementById('angsuran').style.borderColor = "green";
 
             $.ajax({
@@ -222,7 +188,7 @@
                 },
                 success: function(data) {
                     $("body").css("cursor", "default");
-                    $("#tampilData").html(data);
+                    $("#tampilDataSimulasi").html(data);
                 }
             });
         }
