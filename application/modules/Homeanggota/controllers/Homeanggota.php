@@ -18,20 +18,22 @@ class Homeanggota extends MX_Controller
 		$this->template->load('Homeanggota/templateanggota', 'Homeanggota/berandaanggota', $data);
 	}
 
-	public function getListDtlSimpanan(){
-		$data=null;
+	public function getListDtlSimpanan()
+	{
+		$data = null;
 		$this->load->view('Homeanggota/listDtlSimpanan', $data);
 	}
 
-	public function getListDtlPinjaman(){
+	public function getListDtlPinjaman()
+	{
 		die('pinjaman');
-		$data=null;
+		$data = null;
 		$this->load->view('Homeanggota/listDtlSimpanan', $data);
 	}
 
-	public function getListDtlSimulasi(){
-		die('simulasi');
-		$data=null;
-		$this->load->view('Homeanggota/listDtlSimpanan', $data);
+	public function getListDtlSimulasi()
+	{
+		$data = null;
+		$this->load->view('Homeanggota/listDtlSimulasi', $data);
 	}
 }

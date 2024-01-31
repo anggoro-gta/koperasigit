@@ -9,9 +9,9 @@ class Simulasi extends CI_Controller
 		parent::__construct();
 		$this->load->library('datatables');
 		$this->load->model('MHome');
-		$this->load->model('MMscbUseranggota');
-		$this->load->model('MMscbSkpd');
-		$this->load->model('MMscbStatuspekerjaan');
+		// $this->load->model('MMscbUseranggota');
+		// $this->load->model('MMscbSkpd');
+		// $this->load->model('MMscbStatuspekerjaan');
 		// $this->load->model('MMsCabang');
 	}
 
@@ -20,7 +20,7 @@ class Simulasi extends CI_Controller
 		$this->MHome->ceklogin();
 		$data = null;
 		$data['Simulasi'] = 'active';
-		$data['arrAnggota'] = $this->MMscbSkpd->get();
+		// $data['arrAnggota'] = $this->MMscbSkpd->get();
 		// $data['arrcabang'] = $this->MMsCabang->get();
 		$this->template->load('Homeanggota/templateanggota', 'Simulasi/list', $data);
 	}
@@ -34,6 +34,48 @@ class Simulasi extends CI_Controller
 		// $data['tgl_sampai'] = $this->input->post('tgl_sampai');
 
 		$this->load->view('MscbAnggota/listDetail', $data);
+	}
+
+	public function getTableSimulasi()
+	{
+		$this->MHome->ceklogin();
+
+		$sisagajipokok = $this->input->post('sisagajipokok');
+		$strreplacesisagajipokok = str_replace(",", "", $sisagajipokok);
+		$intsisagajipokok = intval($strreplacesisagajipokok);
+
+		$jumlahpinjam = $this->input->post('jumlahpinjam');
+		$strreplacejumlahpinjam = str_replace(",", "", $jumlahpinjam);
+		$intjumlahpinjam = intval($strreplacejumlahpinjam);
+
+		$jumlahangsuran = $this->input->post('jumlahangsuran');
+		$strreplacejumlahangsuran = str_replace(",", "", $jumlahangsuran);
+		$intjumlahangsuran = intval($strreplacejumlahangsuran);
+
+		$sisamasajabatan = $this->input->post('sisamasajabatan');
+		$strreplacesisamasajabatan = str_replace(",", "", $sisamasajabatan);
+		$intsisamasajabatan = intval($strreplacesisamasajabatan);
+
+		$pokok = $intjumlahpinjam / $intjumlahangsuran;
+		$tapim = (10 / 100) * $pokok;
+		$bunga = (0.75 / 100) * $intjumlahpinjam;
+
+		$pokokpembulatan = round($pokok);
+		$tapimpembulatan = round($tapim);
+		$bungapembulatan = round($bunga);
+
+		$jumlahtagihan = $pokokpembulatan + $tapimpembulatan + $bungapembulatan;
+
+		$data['sisagajipokok'] = $intsisagajipokok;
+		$data['jumlahpinjam'] = $intjumlahpinjam;
+		$data['jumlahangsuran'] = $intjumlahangsuran;
+		$data['sisamasajabatan'] = $intsisamasajabatan;
+		$data['pokok'] = $pokokpembulatan;
+		$data['tapim'] = $tapimpembulatan;
+		$data['bunga'] = $bungapembulatan;
+		$data['jumlahtagihan'] = $jumlahtagihan;
+
+		$this->load->view('Simulasi/listDetailsimulasi', $data);
 	}
 
 	public function getDatatables()
