@@ -85,10 +85,10 @@
                               echo 'active';
                             } ?>"><a href="<?php echo base_url('Homeanggota') ?>"><i class="fa fa-home"></i> Beranda</a>
                 </li>
-                <li class="<?php if (isset($Simulasi)) {
-                              echo 'active';
-                            } ?>"><a href="<?php echo base_url('Simulasi') ?>"><i class="fa fa-bank"></i> Simulasi</a>
-                </li>
+                <!-- <li class="<?php if (isset($Simulasi)) {
+                                  echo 'active';
+                                } ?>"><a href="<?php echo base_url('Simulasi') ?>"><i class="fa fa-bank"></i> Simulasi</a>
+                </li> -->
 
 
               </ul>

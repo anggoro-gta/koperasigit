@@ -66,14 +66,30 @@ class Simulasi extends CI_Controller
 
 		$jumlahtagihan = $pokokpembulatan + $tapimpembulatan + $bungapembulatan;
 
+		$arraytemp = [];
+
+		for ($i = 0; $i < $intjumlahangsuran; $i++) {
+			$temp_angsuran_ke = $i + 1;
+			$arraytemp[$i]['angsuranke'] = $temp_angsuran_ke;
+			$temp_pokok = $intjumlahpinjam / $temp_angsuran_ke;
+			$arraytemp[$i]['pokok'] = round($temp_pokok);
+			$temp_tapim = (10 / 100) * $temp_pokok;
+			$arraytemp[$i]['tapim'] = round($temp_tapim);
+			$temp_bunga = (0.75 / 100) * $intjumlahpinjam;
+			$arraytemp[$i]['bunga'] = round($temp_bunga);
+			$temp_total_angsuran = $temp_pokok + $temp_tapim + $temp_bunga;
+			$arraytemp[$i]['total_angsuran'] = round($temp_total_angsuran);
+		}
+
 		$data['sisagajipokok'] = $intsisagajipokok;
 		$data['jumlahpinjam'] = $intjumlahpinjam;
 		$data['jumlahangsuran'] = $intjumlahangsuran;
 		$data['sisamasajabatan'] = $intsisamasajabatan;
-		$data['pokok'] = $pokokpembulatan;
-		$data['tapim'] = $tapimpembulatan;
-		$data['bunga'] = $bungapembulatan;
-		$data['jumlahtagihan'] = $jumlahtagihan;
+		// $data['pokok'] = $pokokpembulatan;
+		// $data['tapim'] = $tapimpembulatan;
+		// $data['bunga'] = $bungapembulatan;
+		// $data['jumlahtagihan'] = $jumlahtagihan;
+		$data['perhitungan_simulasi'] = $arraytemp;
 
 		$this->load->view('Simulasi/listDetailsimulasi', $data);
 	}

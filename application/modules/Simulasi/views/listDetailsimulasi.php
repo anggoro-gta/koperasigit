@@ -18,7 +18,7 @@
                             <thead>
                                 <tr>
                                     <th width="5%">
-                                        <center>Angsuran Ke</center>
+                                        <center>Jangka waktu</center>
                                     </th>
                                     <th>
                                         <center>Pokok</center>
@@ -30,7 +30,7 @@
                                         <center>Bunga</center>
                                     </th>
                                     <th>
-                                        <center>Total Tagihan</center>
+                                        <center>Total Angsuran</center>
                                     </th>
                                     <th>
                                         <center>Keterangan</center>
@@ -38,30 +38,29 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php for ($i = 0; $i < $jumlahangsuran; $i++) { ?>
+                                <?php $iterasi = count($perhitungan_simulasi); ?>
+                                <?php for ($i = 0; $i < $iterasi; $i++) { ?>
                                     <tr>
-                                        <td align="right"><?= $i + 1; ?></td>
-                                        <td align="right"><?= number_format($pokok); ?></td>
-                                        <td align="right"><?= number_format($tapim); ?></td>
-                                        <td align="right"><?= number_format($bunga); ?></td>
-                                        <?php $jumlah = $jumlahtagihan * ($i + 1); ?>
-                                        <td align="right"><?= number_format($jumlah); ?></td>
-                                        <?php $angsuranke = ($i + 1); ?>
-                                        <?php if ($angsuranke > $sisamasajabatan && $jumlah > $sisagajipokok) { ?>
+                                        <td align="right"><?= $perhitungan_simulasi[$i]['angsuranke']; ?></td>
+                                        <td align="right"><?= number_format($perhitungan_simulasi[$i]['pokok']); ?></td>
+                                        <td align="right"><?= number_format($perhitungan_simulasi[$i]['tapim']); ?></td>
+                                        <td align="right"><?= number_format($perhitungan_simulasi[$i]['bunga']); ?></td>
+                                        <td align="right"><?= number_format($perhitungan_simulasi[$i]['total_angsuran']); ?></td>
+                                        <?php if ($perhitungan_simulasi[$i]['angsuranke'] > $sisamasajabatan && $perhitungan_simulasi[$i]['total_angsuran'] > $sisagajipokok) { ?>
                                             <td bgcolor="red">
-                                                <font color="white">Tidak Aman - Melebihi sisa gaji pokok dan sisa masa jabatan</font>
+                                                <font color="white">Simulasi tidak dapat digunakan, karena melebihi sisa gaji pokok dan sisa masa jabatan (bulan).</font>
                                             </td>
-                                        <?php } else if ($jumlah > $sisagajipokok) { ?>
+                                        <?php } else if ($perhitungan_simulasi[$i]['angsuranke'] > $sisamasajabatan) { ?>
                                             <td bgcolor="red">
-                                                <font color="white">Tidak Aman - Melebihi sisa gaji pokok</font>
+                                                <font color="white">Simulasi tidak dapat digunakan, karena melebihi sisa masa jabatan (bulan).</font>
                                             </td>
-                                        <?php } else if ($angsuranke > $sisamasajabatan) { ?>
+                                        <?php } else if ($perhitungan_simulasi[$i]['total_angsuran'] > $sisagajipokok) { ?>
                                             <td bgcolor="red">
-                                                <font color="white">Tidak Aman - Melebihi sisa masa jabatan</font>
+                                                <font color="white">Simulasi tidak dapat digunakan, karena melebihi sisa gaji pokok.</font>
                                             </td>
                                         <?php } else { ?>
-                                            <td bgcolor="green" textcolor="white">
-                                                <font color="white">Aman</font>
+                                            <td bgcolor="green">
+                                                <font color="white">Simulasi dapat digunakan.</font>
                                             </td>
                                         <?php } ?>
                                     </tr>
@@ -69,7 +68,7 @@
                             </tbody>
                         </table>
 
-                        <table class="table table-bordered table-striped" id="example3" style="width: 100%">
+                        <!-- <table class="table table-bordered table-striped" id="example3" style="width: 100%">
                             <thead>
                                 <tr>
                                     <th>
@@ -79,18 +78,12 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <?php if (($jumlahtagihan * $jumlahangsuran) > $sisagajipokok || $jumlahangsuran > $sisamasajabatan) { ?>
-                                        <td bgcolor="red">
-                                            <font color="white">Simulasi ini tidak aman digunakan, mohon ganti indikator jumlah angsuran atau jumlah pinjaman nya.</font>
-                                        </td>
-                                    <?php } else { ?>
-                                        <td bgcolor="green">
-                                            <font color="white">Simulasi ini aman digunakan, silahkan menghubungi petugas koperasi untuk menggunakan simulasi ini.</font>
-                                        </td>
-                                    <?php } ?>
+                                    <td bgcolor="red">
+                                        <font color="white">Simulasi ini tidak aman digunakan, mohon ganti indikator jumlah angsuran atau jumlah pinjaman nya.</font>
+                                    </td>
                                 </tr>
                             </tbody>
-                        </table>
+                        </table> -->
                     </div>
                 </form>
             </div>

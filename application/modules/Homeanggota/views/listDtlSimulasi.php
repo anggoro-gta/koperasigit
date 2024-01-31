@@ -73,10 +73,10 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-         $(".nominal").autoNumeric("init", {
+        $(".nominal").autoNumeric("init", {
             vMax: 9999999999999,
             vMin: -9999999999999
-          });
+        });
     });
 
     $("#idkategorisimulasi").change(function() {
@@ -131,8 +131,6 @@
         jumlahangsuran = $("#angsuran").val();
 
         sisamasajabatan = $("#idsisajabatan").val();
-
-        console.log(sisamasajabatan);
 
         if (sisagajipokok == '' && jumlahpinjam == '' && jumlahangsuran == '') {
             document.getElementById('gajipk').focus();
