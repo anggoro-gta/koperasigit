@@ -15,6 +15,15 @@ class homeadmin extends MX_Controller
 		$this->MHome->ceklogin();
 		$data['beranda'] = 'active';
 
+		$idANggota = $this->session->id;
+		$que1 = "SELECT (COALESCE(sum(simpanan_pokok),0)+COALESCE(sum(simpanan_wajib),0)+COALESCE(sum(wajib),0)+COALESCE(sum(sukarela),0)+COALESCE(sum(tapim),0)) simpanan FROM ms_cb_user_anggota a
+			INNER JOIN t_cb_tagihan_simpanan s ON s.fk_anggota_id=a.id
+			INNER JOIN t_cb_tagihan_pinjaman p ON p.fk_anggota_id=a.id";
+		$data['simpanan'] = $this->db->query($que1)->row()->simpanan;
+
+		$que2 = "SELECT sum(pinjaman) pinjaman FROM t_cb_pinjaman WHERE status=0";
+		$data['pinjaman'] = $this->db->query($que2)->row()->pinjaman;
+
 		// 	$get_simpanan = $this->db->query("SELECT
 		// 	FORMAT(SUM(jml_simpanan),0) jumlah_simpanan
 		// FROM

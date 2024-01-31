@@ -1,33 +1,29 @@
 <div class="">
   <div class="row top_tiles" style="margin: 10px 0;">
-    <div class="col-md-3 col-sm-3 col-xs-6 tile">
-      <span>SALDO</span>
-      <h2>8000000</h2>
-      <!-- <span class="sparkline_one" style="height: 160px;">      
-        <canvas width="200" height="60" style="display: inline-block; vertical-align: top; width: 94px; height: 30px;"></canvas>
-      </span> -->
+    <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12" id='simpanan'>
+      <div class="tile-stats" style="background-color: green;color: white">
+        <div class="icon"><i class="fa fa-money" style="color: white"></i></div>
+        <div class="count"><?= number_format($simpanan) ?></div>
+        <h3 style="color: white">SIMPANAN</h3>
+        <p>Jumlah Simpanan</p>
+      </div>
     </div>
-    <div class="col-md-3 col-sm-3 col-xs-6 tile">
-      <span>SIMPANAN</span>
-      <h2>8000000</h2>
-      <!-- <span class="sparkline_one" style="height: 160px;">
-        <canvas width="200" height="60" style="display: inline-block; vertical-align: top; width: 94px; height: 30px;"></canvas>
-      </span> -->
+    <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12" id='pinjaman'>
+      <div class="tile-stats" style="background-color: red;color: white">
+        <div class="icon"><i class="fa fa-money" style="color: white"></i></div>
+        <div class="count"><?= number_format($pinjaman) ?></div>
+        <h3 style="color: white">PINJAMAN</h3>
+        <p>Jumlah Pinjaman</p>
+      </div>
     </div>
-    <div class="col-md-3 col-sm-3 col-xs-6 tile">
-      <span>PINJAMAN</span>
-      <h2>8000000</h2>
-      <!-- <span class="sparkline_two" style="height: 160px;">
-        <canvas width="200" height="60" style="display: inline-block; vertical-align: top; width: 94px; height: 30px;"></canvas>
-      </span> -->
+    <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12" id='simulasi'>
+      <div class="tile-stats" style="background-color: orange;color: white">
+        <div class="icon"><i class="fa fa-sort-amount-desc" style="color: white"></i></div>
+        <div class="count">&nbsp;</div>
+        <h3 style="color: white">Simulasi</h3>
+        <p>Perhitungan Pinjaman</p>
+      </div>
     </div>
-    <!-- <div class="col-md-3 col-sm-3 col-xs-6 tile">
-      <span>TAG</span>
-      <h2>231,809</h2> -->
-    <!-- <span class="sparkline_one" style="height: 160px;">
-        <canvas width="200" height="60" style="display: inline-block; vertical-align: top; width: 94px; height: 30px;"></canvas>
-      </span> -->
-    <!-- </div> -->
   </div>
   <br />
 
