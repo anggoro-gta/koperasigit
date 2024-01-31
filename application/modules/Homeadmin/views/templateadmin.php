@@ -88,12 +88,12 @@
                 <?php if ($level == 1) { ?>
                   <li><a><i class="fa fa-book"></i> Master <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
-                      <li class="<?php if (isset($MscbAnggota)) {
-                                    echo 'active';
-                                  } ?>"><a href="<?php echo base_url('MscbAnggota') ?>">Anggota</a></li>
                       <li class="<?php if (isset($MscbSkpd)) {
                                     echo 'active';
                                   } ?>"><a href="<?php echo base_url('MscbSkpd') ?>">SKPD</a></li>
+                      <li class="<?php if (isset($MscbAnggota)) {
+                                    echo 'active';
+                                  } ?>"><a href="<?php echo base_url('MscbAnggota') ?>">Anggota</a></li>
                       <li class="<?php if (isset($MscbUsersistem)) {
                                     echo 'active';
                                   } ?>"><a href="<?php echo base_url('MscbUsersistem') ?>">User</a></li>
@@ -122,12 +122,12 @@
                 <?php if ($level == 1) { ?>
                   <li><a><i class="fa fa-edit"></i> Transaksi <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
-                      <li class="<?php if (isset($Tagihan)) {
-                                    echo 'active';
-                                  } ?>"><a href="<?php echo base_url('Tagihan') ?>">Tagihan</a></li>
                       <li class="<?php if (isset($Pinjaman)) {
                                     echo 'active';
                                   } ?>"><a href="<?php echo base_url('Pinjaman') ?>">Pinjaman</a></li>
+                      <li class="<?php if (isset($Tagihan)) {
+                                    echo 'active';
+                                  } ?>"><a href="<?php echo base_url('Tagihan') ?>">Tagihan</a></li>
                     </ul>
                   </li>
                 <?php } ?>
