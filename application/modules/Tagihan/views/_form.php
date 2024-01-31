@@ -12,7 +12,10 @@
                 <thead>
                     <tr>
                         <?php if ($readonly == false) { ?>
-                            <th width="5%"></th>
+                            <th width="5%" class="text-center">
+
+                                <input type="checkbox" id="checkAllPinjaman" class="flat" />
+                            </th>
                         <?php } ?>
 
                         <th width="5%">No</th>
@@ -37,7 +40,7 @@
                         <tr>
                             <?php if ($readonly == false) { ?>
                                 <td class="text-center">
-                                    <input type="checkbox" name="pinjaman[]" class="flat" />
+                                    <input type="checkbox" class="pinjaman" name="pinjaman[]" class="flat" />
                                     <input type="hidden" name="fk_anggota_id[]" value="<?= $p->fk_anggota_id ?>">
                                     <input type="hidden" name="fk_pinjaman_id[]" value="<?= $p->id ?>">
                                     <input type="hidden" name="angsuran_ke[]" value="<?= $p->angsuran_ke ?>">
@@ -85,7 +88,9 @@
                 <thead>
                     <tr>
                         <?php if ($readonly == false) { ?>
-                            <th width="5%"></th>
+                            <th width="5%" class="text-center">
+                                <input type="checkbox" id="checkAllSimpanan" class="flat" />
+                            </th>
                         <?php } ?>
 
                         <th width="5%">No</th>
@@ -104,7 +109,7 @@
                         <tr>
                             <?php if ($readonly == false) { ?>
                                 <td class="text-center">
-                                    <input type="checkbox" name="simpanan[]" class="flat" />
+                                    <input type="checkbox" class="simpanan" name="simpanan[]" class="flat" />
                                     <input type="hidden" name="wajib[]" value="<?= number_format($simpananWajib, 0, ",", ".") ?>">
                                     <input type="hidden" name="fk_anggota_id[]" value="<?= $value->id ?>">
                                 </td>
@@ -137,3 +142,11 @@
         </div>
     </div>
 </div>
+<script>
+    $('#checkAllSimpanan').click(function() {
+        $('.simpanan').prop('checked', this.checked);
+    });
+    $('#checkAllPinjaman').click(function() {
+        $('.pinjaman').prop('checked', this.checked);
+    });
+</script>
