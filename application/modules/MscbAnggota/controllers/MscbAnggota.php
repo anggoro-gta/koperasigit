@@ -12,7 +12,7 @@ class MscbAnggota extends CI_Controller
 		$this->load->model('MMscbUseranggota');
 		$this->load->model('MMscbSkpd');
 		$this->load->model('MMscbStatuspekerjaan');
-		$this->load->model('MMscbSimpanan');
+		// $this->load->model('MMscbSimpanan');
 
 		// $this->load->model('MMsCabang');
 	}
@@ -104,7 +104,7 @@ class MscbAnggota extends CI_Controller
 		$data['act_back'] = base_url() . 'MscbAnggota';
 		$data['arrStatuspekerjaan'] = $this->MMscbStatuspekerjaan->get();
 		$data['arrSkpd'] = $this->MMscbSkpd->get();
-		$data['arrSimpanan'] = $this->MMscbSimpanan->get();
+		// $data['arrSimpanan'] = $this->MMscbSimpanan->get();
 		// $data['arrcabang'] = $this->MMsCabang->get(array('status'=>1));
 		$this->template->load('Homeadmin/templateadmin', 'MscbAnggota/form', $data);
 	}
@@ -135,7 +135,7 @@ class MscbAnggota extends CI_Controller
 		$data['act_back'] = base_url() . 'MscbAnggota';
 		$data['arrStatuspekerjaan'] = $this->MMscbStatuspekerjaan->get();
 		$data['arrSkpd'] = $this->MMscbSkpd->get();
-		$data['arrSimpanan'] = $this->MMscbSimpanan->get();
+		// $data['arrSimpanan'] = $this->MMscbSimpanan->get();
 		$this->template->load('Homeadmin/templateadmin', 'MscbAnggota/form', $data);
 	}
 
