@@ -12,6 +12,8 @@ class MscbAnggota extends CI_Controller
 		$this->load->model('MMscbUseranggota');
 		$this->load->model('MMscbSkpd');
 		$this->load->model('MMscbStatuspekerjaan');
+		$this->load->model('MMscbSimpanan');
+
 		// $this->load->model('MMsCabang');
 	}
 
@@ -76,6 +78,10 @@ class MscbAnggota extends CI_Controller
 	public function create()
 	{
 		$this->MHome->ceklogin();
+
+		$pokok = $this->db->query("SELECT * FROM ms_cb_simpanan WHERE kategori='pokok'")->row();
+		$wajib = $this->db->query("SELECT * FROM ms_cb_simpanan WHERE kategori='wajib'")->row();
+
 		$data = array(
 			'action' => base_url() . 'MscbAnggota/save',
 			'button' => 'Simpan',
@@ -89,7 +95,8 @@ class MscbAnggota extends CI_Controller
 			'fk_id_status_pekerjaan' => set_value('fk_id_status_pekerjaan'),
 			'fk_id_skpd' => set_value('fk_id_skpd'),
 			'status_keaktifan' => set_value('status_keaktifan'),
-			'simpanan_pokok' => set_value('simpanan_pokok'),
+			'simpanan_pokok' => set_value('simpanan_pokok', $pokok->nominal),
+			'simpanan_wajib' => set_value('simpanan_wajib', $wajib->nominal),
 			'keterangan' => set_value('keterangan'),
 		);
 
@@ -97,6 +104,7 @@ class MscbAnggota extends CI_Controller
 		$data['act_back'] = base_url() . 'MscbAnggota';
 		$data['arrStatuspekerjaan'] = $this->MMscbStatuspekerjaan->get();
 		$data['arrSkpd'] = $this->MMscbSkpd->get();
+		$data['arrSimpanan'] = $this->MMscbSimpanan->get();
 		// $data['arrcabang'] = $this->MMsCabang->get(array('status'=>1));
 		$this->template->load('Homeadmin/templateadmin', 'MscbAnggota/form', $data);
 	}
@@ -120,12 +128,14 @@ class MscbAnggota extends CI_Controller
 			'fk_id_skpd' => set_value('fk_id_skpd', $kat->fk_id_skpd),
 			'status_keaktifan' => set_value('status_keaktifan', $kat->status_keaktifan),
 			'simpanan_pokok' => set_value('simpanan_pokok', $kat->simpanan_pokok),
+			'simpanan_wajib' => set_value('simpanan_wajib', $kat->simpanan_wajib),
 			'keterangan' => set_value('keterangan', $kat->keterangan),
 		);
 		$data['MsPelanggan'] = 'active';
 		$data['act_back'] = base_url() . 'MscbAnggota';
 		$data['arrStatuspekerjaan'] = $this->MMscbStatuspekerjaan->get();
 		$data['arrSkpd'] = $this->MMscbSkpd->get();
+		$data['arrSimpanan'] = $this->MMscbSimpanan->get();
 		$this->template->load('Homeadmin/templateadmin', 'MscbAnggota/form', $data);
 	}
 
@@ -138,8 +148,8 @@ class MscbAnggota extends CI_Controller
 		$data['time_act'] = date('Y-m-d H:i:s');
 
 		if (empty($id)) {
-			$last = $this->db->query("SELECT id FROM ms_cb_user_anggota ORDER BY id DESC LIMIT 1")->row();
-			$castint = intval($last->id);
+			$last = $this->db->query("SELECT username FROM ms_cb_user_anggota ORDER BY id DESC LIMIT 1")->row();
+			$castint = intval($last->username);
 			$caststring = strval($castint);
 			$panjanghuruf = strlen($caststring);
 
@@ -167,39 +177,86 @@ class MscbAnggota extends CI_Controller
 				$finalidnew = $stringidnew;
 			}
 
-			$data['id'] = $finalidnew;
-			$data['username'] = $finalidnew;
-			$data['password'] = md5('admin');
-			$data['nama'] = $this->input->post('nama');
-			$data['alamat'] = $this->input->post('alamat');
-			$data['nik'] = $this->input->post('nik');
-			$data['nip'] = $this->input->post('nip');
-			$data['nomor_hp'] = $this->input->post('nomor_hp');
-			$data['jenis_kelamin'] = $this->input->post('jenis_kelamin');
-			$data['fk_id_status_pekerjaan'] = $this->input->post('fk_id_status_pekerjaan');
-			$data['fk_id_skpd'] = $this->input->post('fk_id_skpd');
-			$data['status_keaktifan'] = $this->input->post('status_keaktifan');
-			$data['simpanan_pokok'] = str_replace(',', '', $this->input->post('simpanan_pokok'));
-			$data['keterangan'] = $this->input->post('keterangan');
+			$getsimpwajib = $this->input->post('simpanan_wajib');
 
-			$this->MMscbUseranggota->insert($data);
-			$this->session->set_flashdata('success', 'Data Berhasil disimpan.');
+			if ($getsimpwajib == "") {
+				// $data['id'] = $finalidnew;
+				$data['username'] = $finalidnew;
+				$data['password'] = md5('admin');
+				$data['nama'] = $this->input->post('nama');
+				$data['alamat'] = $this->input->post('alamat');
+				$data['nik'] = $this->input->post('nik');
+				$data['nip'] = $this->input->post('nip');
+				$data['nomor_hp'] = $this->input->post('nomor_hp');
+				$data['jenis_kelamin'] = $this->input->post('jenis_kelamin');
+				$data['fk_id_status_pekerjaan'] = $this->input->post('fk_id_status_pekerjaan');
+				$data['fk_id_skpd'] = $this->input->post('fk_id_skpd');
+				$data['status_keaktifan'] = $this->input->post('status_keaktifan');
+				$data['simpanan_pokok'] = str_replace(",", "", $this->input->post('simpanan_pokok'));
+				// $data['simpanan_wajib'] = NULL;
+				$data['keterangan'] = $this->input->post('keterangan');
+
+				$this->MMscbUseranggota->insert($data);
+				$this->session->set_flashdata('success', 'Data Berhasil disimpan.');
+			} else {
+				// $data['id'] = $finalidnew;
+				$data['username'] = $finalidnew;
+				$data['password'] = md5('admin');
+				$data['nama'] = $this->input->post('nama');
+				$data['alamat'] = $this->input->post('alamat');
+				$data['nik'] = $this->input->post('nik');
+				$data['nip'] = $this->input->post('nip');
+				$data['nomor_hp'] = $this->input->post('nomor_hp');
+				$data['jenis_kelamin'] = $this->input->post('jenis_kelamin');
+				$data['fk_id_status_pekerjaan'] = $this->input->post('fk_id_status_pekerjaan');
+				$data['fk_id_skpd'] = $this->input->post('fk_id_skpd');
+				$data['status_keaktifan'] = $this->input->post('status_keaktifan');
+				$data['simpanan_pokok'] = str_replace(",", "", $this->input->post('simpanan_pokok'));
+				$data['simpanan_wajib'] = str_replace(",", "", $this->input->post('simpanan_wajib'));
+				$data['keterangan'] = $this->input->post('keterangan');
+
+				$this->MMscbUseranggota->insert($data);
+				$this->session->set_flashdata('success', 'Data Berhasil disimpan.');
+			}
 		} else {
-			$data['id'] = $id;
-			$data['nama'] = $this->input->post('nama');
-			$data['alamat'] = $this->input->post('alamat');
-			$data['nik'] = $this->input->post('nik');
-			$data['nip'] = $this->input->post('nip');
-			$data['nomor_hp'] = $this->input->post('nomor_hp');
-			$data['jenis_kelamin'] = $this->input->post('jenis_kelamin');
-			$data['fk_id_status_pekerjaan'] = $this->input->post('fk_id_status_pekerjaan');
-			$data['fk_id_skpd'] = $this->input->post('fk_id_skpd');
-			$data['status_keaktifan'] = $this->input->post('status_keaktifan');
-			$data['simpanan_pokok'] = str_replace(',', '', $this->input->post('simpanan_pokok'));
-			$data['keterangan'] = $this->input->post('keterangan');
 
-			$this->MMscbUseranggota->update($id, $data);
-			$this->session->set_flashdata('success', 'Data Berhasil diupdate.');
+			$getsimpwajib = $this->input->post('simpanan_wajib');
+
+			if ($getsimpwajib == "") {
+				$data['id'] = $id;
+				$data['nama'] = $this->input->post('nama');
+				$data['alamat'] = $this->input->post('alamat');
+				$data['nik'] = $this->input->post('nik');
+				$data['nip'] = $this->input->post('nip');
+				$data['nomor_hp'] = $this->input->post('nomor_hp');
+				$data['jenis_kelamin'] = $this->input->post('jenis_kelamin');
+				$data['fk_id_status_pekerjaan'] = $this->input->post('fk_id_status_pekerjaan');
+				$data['fk_id_skpd'] = $this->input->post('fk_id_skpd');
+				$data['status_keaktifan'] = $this->input->post('status_keaktifan');
+				$data['simpanan_pokok'] = str_replace(",", "", $this->input->post('simpanan_pokok'));
+				// $data['simpanan_wajib'] = NULL;
+				$data['keterangan'] = $this->input->post('keterangan');
+
+				$this->MMscbUseranggota->update($id, $data);
+				$this->session->set_flashdata('success', 'Data Berhasil diupdate.');
+			} else {
+				$data['id'] = $id;
+				$data['nama'] = $this->input->post('nama');
+				$data['alamat'] = $this->input->post('alamat');
+				$data['nik'] = $this->input->post('nik');
+				$data['nip'] = $this->input->post('nip');
+				$data['nomor_hp'] = $this->input->post('nomor_hp');
+				$data['jenis_kelamin'] = $this->input->post('jenis_kelamin');
+				$data['fk_id_status_pekerjaan'] = $this->input->post('fk_id_status_pekerjaan');
+				$data['fk_id_skpd'] = $this->input->post('fk_id_skpd');
+				$data['status_keaktifan'] = $this->input->post('status_keaktifan');
+				$data['simpanan_pokok'] = str_replace(",", "", $this->input->post('simpanan_pokok'));
+				$data['simpanan_wajib'] = str_replace(",", "", $this->input->post('simpanan_wajib'));
+				$data['keterangan'] = $this->input->post('keterangan');
+
+				$this->MMscbUseranggota->update($id, $data);
+				$this->session->set_flashdata('success', 'Data Berhasil diupdate.');
+			}
 		}
 
 		redirect('MscbAnggota');

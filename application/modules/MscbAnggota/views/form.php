@@ -57,7 +57,7 @@
             <div class="form-group required">
               <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">NIK</label>
               <div class="col-md-6 col-sm-6 col-xs-12">
-                <input type="text" name="nik" required class="form-control col-md-7 col-xs-12 upper" value="<?= $nik ?>">
+                <input type="text" name="nik" required class="form-control col-md-7 col-xs-12 angka" value="<?= $nik ?>">
               </div>
             </div>
             <div class="form-group required">
@@ -119,8 +119,14 @@
             </div>
             <div class="form-group required">
               <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Simpanan Pokok</label>
-              <div class="col-md-2 col-sm-6 col-xs-12">
+              <div class="col-md-6 col-sm-6 col-xs-12">
                 <input type="text" name="simpanan_pokok" required class="form-control col-md-7 col-xs-12 nominal" value="<?= $simpanan_pokok ?>">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Simpanan Wajib</label>
+              <div class="col-md-6 col-sm-6 col-xs-12">
+                <input type="text" name="simpanan_wajib" class="form-control col-md-7 col-xs-12 nominal" value="<?= $simpanan_wajib ?>">
               </div>
             </div>
             <div class="form-group">
