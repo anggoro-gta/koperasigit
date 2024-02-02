@@ -40,7 +40,11 @@ class Homeanggota extends MX_Controller
 		$idANggota = $this->session->id;
 		$angg = $this->MMscbUseranggota->get(array('id'=>$idANggota));
 		$data['angg']=$angg[0];
-		// $que = "SELECT * FROM ms_cb_user_anggota"
+		$que = "SELECT max(t.bulan) bulan, max(tahun) tahun, sum(s.wajib) wajib,  sum(s.sukarela) sukarela FROM t_cb_tagihan_simpanan s INNER JOIN t_cb_tagihan t ON t.id=s.fk_tagihan_id WHERE fk_anggota_id=$idANggota";
+		$data['wjb'] = $this->db->query($que)->row();
+
+		$que2 = "SELECT max(t.bulan) bulan, max(tahun) tahun,sum(p.tapim) tapim FROM t_cb_tagihan_pinjaman p INNER JOIN t_cb_tagihan t ON t.id=p.fk_tagihan_id WHERE fk_anggota_id=$idANggota";
+		$data['tpm'] = $this->db->query($que2)->row();
 		
 		$this->load->view('Homeanggota/listDtlSimpanan', $data);
 	}
