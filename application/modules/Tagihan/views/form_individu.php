@@ -155,13 +155,13 @@
     let angsuran_ke = $('#angsuran_ke').val(),
       min_angsuran = $('#min_angsuran').val(),
       max_angsuran = $('#max_angsuran').val();
-    if (angsuran_ke < min_angsuran) {
+    if (parseInt(angsuran_ke) < (min_angsuran)) {
       alert('ke harus lebih dari ' + min_angsuran)
       $('#angsuran_ke').val(min_angsuran)
       hitung(1)
       return false;
     }
-    if (angsuran_ke > max_angsuran) {
+    if (parseInt(angsuran_ke) > (max_angsuran)) {
       alert('ke harus kurang dari ' + max_angsuran)
       $('#angsuran_ke').val(min_angsuran)
       hitung(1)
