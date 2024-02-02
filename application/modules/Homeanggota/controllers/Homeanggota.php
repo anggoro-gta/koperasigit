@@ -24,7 +24,7 @@ class Homeanggota extends MX_Controller
 			LEFT JOIN (
 				SELECT s.fk_anggota_id,sum(s.wajib) wajib, sum(s.sukarela) sukarela  FROM t_cb_tagihan_simpanan s INNER JOIN t_cb_tagihan g2 ON g2.id=s.fk_tagihan_id WHERE s.fk_anggota_id=$idANggota AND g2.status_posting=1
 			) ss ON ss.fk_anggota_id=a.id
-			WHERE a.id=2671 ";
+			WHERE a.id=$idANggota ";
 		$smpn = $this->db->query($que1)->row();
 		$data['simpanan'] = !isset($smpn)?'0':$smpn->simpanan;
 
