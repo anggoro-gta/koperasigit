@@ -61,6 +61,7 @@ class Tagihan extends CI_Controller
 		$this->datatables->select("t.*,nama_skpd,CONCAT(bulan, ' ', tahun) AS periode");
 		$this->datatables->from("t_cb_tagihan t");
 		$this->datatables->join("ms_cb_skpd skpd", "t.fk_skpd_id=skpd.id");
+        $this->db->order_by("cast(tahun * 100 + bulan as char) desc");
 		// $this->datatables->add_column('action', '<div class="btn-group">' . anchor(site_url('MscbAnggota/update/$1'), '<i title="detail" class="glyphicon glyphicon-share-alt icon-white"></i>', 'class="btn btn-xs btn-success"') . '</div>', 'id');
 
 		echo $this->datatables->generate();
@@ -106,7 +107,8 @@ class Tagihan extends CI_Controller
 			kategori ,
 			tctp.*,
 			pinjaman,
-			tenor
+			tenor,
+			jml_angsuran
 		from
 			t_cb_tagihan_pinjaman tctp
 		join ms_cb_user_anggota mcua on
@@ -185,11 +187,11 @@ class Tagihan extends CI_Controller
 				'fk_tagihan_id' => $tagihanId,
 				'fk_pinjaman_id' => $fk_pinjaman_id[$i],
 				'fk_anggota_id' => $fk_anggota_id[$i],
-				'angsuran_ke' => str_replace(".", "", $angsuran_ke[$i]),
-				'pokok' => str_replace(".", "", $pokok[$i]),
-				'tapim' => str_replace(".", "", $tapim[$i]),
-				'bunga' => str_replace(".", "", $bunga[$i]),
-				'jml_tagihan' => str_replace(".", "", $jml_tagihan[$i]),
+				'angsuran_ke' => str_replace(",", "", $angsuran_ke[$i]),
+				'pokok' => str_replace(",", "", $pokok[$i]),
+				'tapim' => str_replace(",", "", $tapim[$i]),
+				'bunga' => str_replace(",", "", $bunga[$i]),
+				'jml_tagihan' => str_replace(",", "", $jml_tagihan[$i]),
 			];
 			$this->db->query("update  t_cb_pinjaman set jml_angsuran = ? where id =? ", [$angsuran_ke[$i], $fk_pinjaman_id[$i]]);
 			if ($angsuran_ke[$i] == $tenor[$i]) {
@@ -207,8 +209,8 @@ class Tagihan extends CI_Controller
 				'fk_tagihan_id' => $tagihanId,
 				'fk_skpd_id' => $fk_skpd_id,
 				'fk_anggota_id' => $fk_anggota_id[$i],
-				'wajib' => str_replace(".", "", $wajib[$i]),
-				'sukarela' => str_replace(".", "", $sukarela[$i]),
+				'wajib' => str_replace(",", "", $wajib[$i]),
+				'sukarela' => str_replace(",", "", $sukarela[$i]),
 			];
 			array_push($dataSimpanan, $simpanan);
 		}
@@ -274,7 +276,9 @@ class Tagihan extends CI_Controller
 		$tagihanPinjaman = $this->MTagihanPinjaman->get(['id' => $id])[0];
 		$this->MTagihanPinjaman->delete($id);
 		// update pinjaman
-		$this->db->query("update  t_cb_pinjaman set status = ? , jml_angsuran = ? where id =? ", [0, $tagihanPinjaman['angsuran_ke'] - 1, $tagihanPinjaman['fk_pinjaman_id']]);
+
+		$lastTagihanPinjaman = $this->db->query("select max(angsuran_ke) angsuran_ke  from t_cb_tagihan_pinjaman where fk_pinjaman_id = ? limit 1", [$tagihanPinjaman['fk_pinjaman_id']])->row();
+		$this->db->query("update  t_cb_pinjaman set status = ? , jml_angsuran = ? where id =? ", [0, ($lastTagihanPinjaman->angsuran_ke ?? 0), $tagihanPinjaman['fk_pinjaman_id']]);
 
 		// count detail
 		$jmlSimpanan = $this->db->query("select count(id) simpanan from t_cb_tagihan_simpanan where fk_tagihan_id = ? ", [$tagihanId])->row()->simpanan;
@@ -353,34 +357,36 @@ class Tagihan extends CI_Controller
 	function getDataIndividu($id = null)
 	{
 		$fk_anggota_id = $this->input->post('fk_anggota_id');
+		$jenis = $this->input->post('jenis');
 		if ($id) {
-			$sw = 0;
 			$simpanan = $this->db->query("select
-			tcts.*, mcua.nama ,mcua.nip
-		from
-			t_cb_tagihan_simpanan tcts
-			join ms_cb_user_anggota mcua on tcts.fk_anggota_id = mcua.id
-		where
-			fk_tagihan_id = ?",  [$id])->result();
+					tcts.*, mcua.nama ,mcua.nip
+				from
+					t_cb_tagihan_simpanan tcts
+					join ms_cb_user_anggota mcua on tcts.fk_anggota_id = mcua.id
+				where
+					fk_tagihan_id = ?",  [$id])->row();
+			$sw = $simpanan->wajib ?? 0;
 			$pinjaman = $this->db->query("select
-			tgl,
-			nama,
-			nip,
-			kategori ,
-			tctp.*,
-			pinjaman,
-			tenor
-		from
-			t_cb_tagihan_pinjaman tctp
-		join ms_cb_user_anggota mcua on
-			tctp.fk_anggota_id = mcua.id
-			join t_cb_pinjaman tcp on tcp.id =tctp.fk_pinjaman_id
-			join ms_cb_kategori_pinjam mckp on mckp.id = tcp.fk_kategori_id
-		where
-			fk_tagihan_id = ?",  [$id])->result();
+					tgl,
+					nama,
+					nip,
+					kategori ,
+					tctp.*,
+					pinjaman,
+					tenor,
+					jml_angsuran
+				from
+					t_cb_tagihan_pinjaman tctp
+				join ms_cb_user_anggota mcua on
+					tctp.fk_anggota_id = mcua.id
+					join t_cb_pinjaman tcp on tcp.id =tctp.fk_pinjaman_id
+					join ms_cb_kategori_pinjam mckp on mckp.id = tcp.fk_kategori_id
+				where
+					fk_tagihan_id = ?",  [$id])->row();
 			$readonly = true;
 		} else {
-			$simpanan = $this->db->query("SELECT id,nama,nip FROM ms_cb_user_anggota where fk_id_skpd = ?",  [$fk_anggota_id])->result();
+			$simpanan = true;
 			$sw = $this->db->query("SELECT nominal FROM ms_cb_simpanan where id = ? ", [2])->row()->nominal;
 			$readonly = false;
 			$pinjaman = $this->db->query("select
@@ -409,6 +415,7 @@ class Tagihan extends CI_Controller
 			'simpanan' => $simpanan,
 			'pinjaman' => $pinjaman,
 			'sw' => $sw,
+			'jenis' => $jenis,
 			'readonly' => $readonly
 		];
 		$this->load->view('Tagihan/_form_individu', $data);
@@ -432,7 +439,6 @@ class Tagihan extends CI_Controller
 
 		$wajib = $this->input->post('wajib');
 		$sukarela = $this->input->post('sukarela');
-		$jml = $this->input->post('jml');
 
 		$data['fk_skpd_id'] = $fk_skpd_id;
 		$data['bulan'] = explode('-', $periode)[0];
@@ -449,11 +455,11 @@ class Tagihan extends CI_Controller
 			'fk_tagihan_id' => $tagihanId,
 			'fk_pinjaman_id' => $fk_pinjaman_id,
 			'fk_anggota_id' => $fk_anggota_id,
-			'angsuran_ke' => str_replace(".", "", $angsuran_ke),
-			'pokok' => str_replace(".", "", $pokok),
-			'tapim' => str_replace(".", "", $tapim),
-			'bunga' => str_replace(".", "", $bunga),
-			'jml_tagihan' => str_replace(".", "", $jml_tagihan),
+			'angsuran_ke' => str_replace(",", "", $angsuran_ke),
+			'pokok' => str_replace(",", "", $pokok),
+			'tapim' => str_replace(",", "", $tapim),
+			'bunga' => str_replace(",", "", $bunga),
+			'jml_tagihan' => str_replace(",", "", $jml_tagihan),
 		];
 		$this->db->query("update  t_cb_pinjaman set jml_angsuran = ? where id =? ", [$angsuran_ke, $fk_pinjaman_id]);
 		if ($angsuran_ke == $tenor) {
@@ -461,13 +467,13 @@ class Tagihan extends CI_Controller
 		}
 		$this->MTagihanPinjaman->insert($pinjaman);
 		// insert tagihan simpanan
-		if ($jml && $jml > 0) {
+		if ($wajib) {
 			$simpanan = [
 				'fk_tagihan_id' => $tagihanId,
 				'fk_skpd_id' => $fk_skpd_id,
 				'fk_anggota_id' => $fk_anggota_id,
-				'wajib' => str_replace(".", "", $wajib),
-				'sukarela' => str_replace(".", "", $sukarela),
+				'wajib' => str_replace(",", "", $wajib),
+				'sukarela' => str_replace(",", "", $sukarela),
 			];
 			$this->MTagihanSimpanan->insert($simpanan);
 		}
@@ -504,5 +510,33 @@ class Tagihan extends CI_Controller
 			$this->session->set_flashdata('error', 'Data Gagal dihapus.');
 		}
 		redirect('Tagihan');
+	}
+
+	public function detail_individu($id)
+	{
+		$this->MHome->ceklogin();
+		$skpd = $this->db->query("select * from ms_cb_skpd")->result_array();
+		$tagihan = $this->db->query("select * from t_cb_tagihan where id = ? ", [$id])->row();
+		$fk_anggota_id = $this->db->query("select * from t_cb_tagihan_pinjaman where fk_tagihan_id = ? ", [$id])->row()->fk_anggota_id;
+		if ($fk_anggota_id==null) {
+			$fk_anggota_id = $this->db->query("select * from t_cb_tagihan_pinjaman where fk_tagihan_id = ? ", [$id])->row()->fk_anggota_id;
+		}
+		$data = array(
+			'action' => base_url() . 'Tagihan/save_kolektif',
+			'button' => 'Buat Tagihan',
+			'id' => set_value('id', $id),
+			'fk_skpd_id' => set_value('fk_skpd_id', $tagihan->fk_skpd_id),
+			'fk_anggota_id' => set_value('fk_anggota_id', $fk_anggota_id),
+			'periode' => set_value('periode', $tagihan->bulan . '-' . $tagihan->tahun),
+			'wajib' => set_value('wajib'),
+			'sukarela' => set_value('sukarela'),
+			'arrSKPD' => $skpd,
+			'method' => 'PUT'
+		);
+
+		$data['Tagihan'] = 'active';
+		$data['act_back'] = base_url() . 'Tagihan';
+		$data['arrUserAnggota'] = $this->MMscbUseranggota->get();
+		$this->template->load('Homeadmin/templateadmin', 'Tagihan/form_individu', $data);
 	}
 }

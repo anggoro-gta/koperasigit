@@ -45,25 +45,25 @@
                                     <input type="hidden" name="fk_pinjaman_id[]" value="<?= $p->id ?>">
                                     <input type="hidden" name="angsuran_ke[]" value="<?= $p->angsuran_ke ?>">
                                     <input type="hidden" name="tenor[]" value="<?= $p->tenor ?>">
-                                    <input type="hidden" name="pokok[]" value="<?= number_format($p->pokok, 0, ",", ".")  ?>">
-                                    <input type="hidden" name="tapim[]" value="<?= number_format($p->tapim, 0, ",", ".")  ?>">
-                                    <input type="hidden" name="bunga[]" value="<?= number_format($p->bunga, 0, ",", ".")  ?>">
-                                    <input type="hidden" name="jml_tagihan[]" value="<?= number_format($p->jml_tagihan, 0, ",", ".")  ?>">
+                                    <input type="hidden" name="pokok[]" value="<?= number_format($p->pokok)  ?>">
+                                    <input type="hidden" name="tapim[]" value="<?= number_format($p->tapim)  ?>">
+                                    <input type="hidden" name="bunga[]" value="<?= number_format($p->bunga)  ?>">
+                                    <input type="hidden" name="jml_tagihan[]" value="<?= number_format($p->jml_tagihan)  ?>">
                                 </td>
                             <?php } ?>
                             <td scope="row"><?= ++$key ?></td>
                             <td><?= $p->tgl ?></td>
                             <td><?= $p->nama ?></td>
                             <td><?= $p->nip ?></td>
-                            <td><?= number_format($p->pinjaman, 0, ",", ".") ?></td>
+                            <td><?= number_format($p->pinjaman) ?></td>
                             <td><?= $p->kategori ?></td>
                             <td><?= (int)$p->angsuran_ke ?></td>
-                            <td><?= number_format($p->pokok, 0, ",", ".") ?></td>
-                            <td><?= number_format($p->tapim, 0, ",", ".") ?></td>
-                            <td><?= number_format($p->bunga, 0, ",", ".") ?></td>
+                            <td><?= number_format($p->pokok) ?></td>
+                            <td><?= number_format($p->tapim) ?></td>
+                            <td><?= number_format($p->bunga) ?></td>
                             <td><?= $p->tenor ?></td>
-                            <td><?= number_format($p->jml_tagihan, 0, ",", ".") ?></td>
-                            <?php if ($readonly) { ?>
+                            <td><?= number_format($p->jml_tagihan) ?></td>
+                            <?php if ($readonly&&$p->angsuran_ke==$p->jml_angsuran) { ?>
                                 <td>
                                     <div class="btn-group text-center"><a class="btn btn-xs btn-danger" onclick="return confirm('Apakah Anda akan menghapus data?');" href="<?php echo base_url() ?>/Tagihan/delete_pinjaman/<?= $p->id ?>/<?= $p->fk_tagihan_id ?>"><i class="fa fa-trash"></i></a></div>
                                 </td>
@@ -110,19 +110,19 @@
                             <?php if ($readonly == false) { ?>
                                 <td class="text-center">
                                     <input type="checkbox" class="simpanan" name="simpanan[]" class="flat" />
-                                    <input type="hidden" name="wajib[]" value="<?= number_format($simpananWajib, 0, ",", ".") ?>">
+                                    <input type="hidden" name="wajib[]" value="<?= number_format($simpananWajib) ?>">
                                     <input type="hidden" name="fk_anggota_id[]" value="<?= $value->id ?>">
                                 </td>
                             <?php } ?>
                             <td scope="row"><?= ++$key ?></td>
                             <td><?= $value->nama ?></td>
                             <td><?= $value->nip ?></td>
-                            <td><?= number_format($simpananWajib, 0, ",", ".") ?></td>
+                            <td><?= number_format($simpananWajib) ?></td>
                             <td>
                                 <?php if ($readonly == false) { ?>
                                     <input type="text" name="sukarela[]" class="form-control col-md-7 col-xs-12" value="">
                                 <?php } else { ?>
-                                    <?= number_format($value->sukarela, 0, ",", ".") ?>
+                                    <?= number_format($value->sukarela) ?>
                                 <?php  } ?>
                             </td>
                             <?php if ($readonly) { ?>

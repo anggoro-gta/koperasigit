@@ -44,6 +44,19 @@
                 <input type="text" name="periode" required class="form-control col-md-7 col-xs-12 blnThn" value="<?= $periode ?>">
               </div>
             </div>
+            <?php if ($method == 'POST') { ?>
+              <div class="form-group required">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Jenis</label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                  <select class="form-control" name="jenis" id="jenis" required>
+                    <option value="">.: Pilih :.</option>
+                    <option value="1">Tagihan Pinjaman</option>
+                    <option value="2">Tagihan Simpanan</option>
+                    <option value="3">Tagihan Pinjaman & Simpanan</option>
+                  </select>
+                </div>
+              </div>
+            <?php } ?>
             <div class="form-group required">
               <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Dinas</label>
               <div class="col-md-6 col-sm-6 col-xs-12">
@@ -60,6 +73,7 @@
               <div class="col-md-6 col-sm-6 col-xs-12">
                 <select class="form-control" name="fk_anggota_id" id="fk_anggota_id" required>
                   <option value="">.: Pilih :.</option>
+
                 </select>
               </div>
             </div>
@@ -70,9 +84,11 @@
       <div id="tampilData">
 
       </div>
-      <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
-        <button type="submit" class="btn btn-success"><?= $button ?></button>
-      </div>
+      <?php if ($method == 'POST') { ?>
+        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+          <button type="submit" class="btn btn-success"><?= $button ?></button>
+        </div>
+      <?php } ?>
     </form>
   </div>
 </div>
@@ -88,7 +104,7 @@
         fk_skpd_id
       },
       success: function(msg) {
-        $('#fk_anggota_id').html(msg.data).trigger('change');
+        $('#fk_anggota_id').html(msg.data).val('<?=$fk_anggota_id ?? ''?>').trigger('change');
       }
     });
   });
@@ -108,11 +124,13 @@
       url = "<?php echo base_url() ?>Tagihan/getDataIndividu";
     }
     let fk_anggota_id = $('#fk_anggota_id').val()
+    let jenis = $('#jenis').val()
     $.ajax({
       type: 'post',
       url: url,
       data: {
         fk_anggota_id,
+        jenis,
       },
       beforeSend: function() {
         $("body").css("cursor", "progress");
@@ -150,16 +168,20 @@
       const_bunga = $('#const_bunga').val(),
       const_jml_tagihan = $('#const_jml_tagihan').val()
     console.table(const_pokok, x, x * const_pokok);
-    $('#pokok').val(convertToRupiah(x * const_pokok))
-    $('#tapim').val(convertToRupiah(x * const_tapim))
-    $('#bunga').val(convertToRupiah(x * const_bunga))
-    $('#jml_tagihan').val(convertToRupiah(x * const_jml_tagihan))
+    $('#label_pokok').html(numberWithCommas(x * const_pokok))
+    $('#label_tapim').html(numberWithCommas(x * const_tapim))
+    $('#label_bunga').html(numberWithCommas(x * const_bunga))
+    $('#label_jml_tagihan').html(numberWithCommas(x * const_jml_tagihan))
+    $('#pokok').val(x * const_pokok)
+    $('#tapim').val(x * const_tapim)
+    $('#bunga').val(x * const_bunga)
+    $('#jml_tagihan').val(x * const_jml_tagihan)
   }
-  $(document).on('change', '#jml', function() {
-    let sw = $('#sw').val(),
-      jml = $('#jml').val()
-    $('#wajib').val(convertToRupiah(sw * jml))
 
-
-  })
+  $(document).ready(function() {
+    <?php if ($id) { ?>
+      loadDetail(<?= $id ?>)
+      $('#fk_skpd_id').trigger('change');
+    <?php } ?>
+  });
 </script>
