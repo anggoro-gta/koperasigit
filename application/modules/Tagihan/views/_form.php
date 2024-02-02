@@ -63,7 +63,7 @@
                             <td><?= number_format($p->bunga) ?></td>
                             <td><?= $p->tenor ?></td>
                             <td><?= number_format($p->jml_tagihan) ?></td>
-                            <?php if ($readonly&&$p->angsuran_ke==$p->jml_angsuran) { ?>
+                            <?php if ($readonly && $p->angsuran_ke == $p->jml_angsuran && $status_posting == 0 && in_array($this->session->userdata('fk_cb_level_id'), [1, 2])) { ?>
                                 <td>
                                     <div class="btn-group text-center"><a class="btn btn-xs btn-danger" onclick="return confirm('Apakah Anda akan menghapus data?');" href="<?php echo base_url() ?>/Tagihan/delete_pinjaman/<?= $p->id ?>/<?= $p->fk_tagihan_id ?>"><i class="fa fa-trash"></i></a></div>
                                 </td>
@@ -125,7 +125,7 @@
                                     <?= number_format($value->sukarela) ?>
                                 <?php  } ?>
                             </td>
-                            <?php if ($readonly) { ?>
+                            <?php if ($readonly && $status_posting == 0 && in_array($this->session->userdata('fk_cb_level_id'), [1, 2])) { ?>
                                 <td>
                                     <div class="btn-group text-center"><a class="btn btn-xs btn-danger" onclick="return confirm('Apakah Anda akan menghapus data?');" href="<?php echo base_url() ?>/Tagihan/delete_simpanan/<?= $value->id ?>/<?= $value->fk_tagihan_id ?>"><i class="fa fa-trash"></i></a></div>
                                 </td>

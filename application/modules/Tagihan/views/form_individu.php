@@ -38,10 +38,11 @@
           </div>
           <div class="x_content">
             <br />
+
             <div class="form-group required">
               <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Tagihan Bulan</label>
               <div class="col-md-6 col-sm-6 col-xs-12">
-                <input type="text" name="periode" required class="form-control col-md-7 col-xs-12 blnThn" value="<?= $periode ?>">
+                <input <?= $disable ?> type="text" name="periode" required class="form-control col-md-7 col-xs-12 blnThn" value="<?= $periode ?>">
               </div>
             </div>
             <?php if ($method == 'POST') { ?>
@@ -60,7 +61,7 @@
             <div class="form-group required">
               <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Dinas</label>
               <div class="col-md-6 col-sm-6 col-xs-12">
-                <select class="form-control" name="fk_skpd_id" id="fk_skpd_id" required>
+                <select <?= $disable ?> class="form-control" name="fk_skpd_id" id="fk_skpd_id" required>
                   <option value="">.: Pilih :.</option>
                   <?php foreach ($arrSKPD as $skpd) { ?>
                     <option <?= $fk_skpd_id == $skpd['id'] ? 'selected' : '' ?> value="<?= $skpd['id'] ?>"><?= $skpd['nama_skpd'] ?></option>
@@ -71,7 +72,7 @@
             <div class="form-group required">
               <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Anggota</label>
               <div class="col-md-6 col-sm-6 col-xs-12">
-                <select class="form-control" name="fk_anggota_id" id="fk_anggota_id" required>
+                <select <?= $disable ?> class="form-control" name="fk_anggota_id" id="fk_anggota_id" required>
                   <option value="">.: Pilih :.</option>
 
                 </select>
@@ -89,6 +90,12 @@
           <button type="submit" class="btn btn-success"><?= $button ?></button>
         </div>
       <?php } ?>
+
+      <?php if (in_array($this->session->userdata('fk_cb_level_id'), [1, 3]) && $method == 'PUT') : ?>
+        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+          <a onclick="return confirm('Apakah Anda akan <?= $label_posting ?> data?');" href="<?= base_url() ?>Tagihan/posting/<?= $id ?>" class="btn btn-primary"><?= $label_posting ?></a>
+        </div>
+      <?php endif; ?>
     </form>
   </div>
 </div>
@@ -104,18 +111,20 @@
         fk_skpd_id
       },
       success: function(msg) {
-        $('#fk_anggota_id').html(msg.data).val('<?=$fk_anggota_id ?? ''?>').trigger('change');
+        $('#fk_anggota_id').html(msg.data).val('<?= $fk_anggota_id ?? '' ?>').trigger('change');
       }
     });
   });
 
 
-  $(document).on('change', '#fk_anggota_id', function() {
-    let fk_anggota_id = $('#fk_anggota_id').val()
-    if (fk_anggota_id != '') {
-      loadDetail()
-    }
-  });
+  <?php if ($method == 'POST') : ?>
+    $(document).on('change', '#fk_anggota_id', function() {
+      let fk_anggota_id = $('#fk_anggota_id').val()
+      if (fk_anggota_id != '') {
+        loadDetail()
+      }
+    });
+  <?php endif; ?>
 
   function loadDetail(id) {
     if (id) {

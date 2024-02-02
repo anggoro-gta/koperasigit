@@ -27,7 +27,6 @@ class Tagihan extends CI_Controller
 		// $data['arrcabang'] = $this->MMsCabang->get();
 		$this->template->load('Homeadmin/templateadmin', 'Tagihan/list', $data);
 	}
-
 	public function getListDetail()
 	{
 		$this->MHome->ceklogin();
@@ -61,7 +60,7 @@ class Tagihan extends CI_Controller
 		$this->datatables->select("t.*,nama_skpd,CONCAT(bulan, ' ', tahun) AS periode");
 		$this->datatables->from("t_cb_tagihan t");
 		$this->datatables->join("ms_cb_skpd skpd", "t.fk_skpd_id=skpd.id");
-        $this->db->order_by("cast(tahun * 100 + bulan as char) desc");
+		$this->db->order_by("cast(tahun * 100 + bulan as char) desc");
 		// $this->datatables->add_column('action', '<div class="btn-group">' . anchor(site_url('MscbAnggota/update/$1'), '<i title="detail" class="glyphicon glyphicon-share-alt icon-white"></i>', 'class="btn btn-xs btn-success"') . '</div>', 'id');
 
 		echo $this->datatables->generate();
@@ -80,6 +79,7 @@ class Tagihan extends CI_Controller
 			'wajib' => set_value('wajib'),
 			'sukarela' => set_value('sukarela'),
 			'arrSKPD' => $skpd,
+			'disable' => '',
 			'method' => 'POST'
 		);
 
@@ -118,6 +118,7 @@ class Tagihan extends CI_Controller
 		where
 			fk_tagihan_id = ?",  [$id])->result();
 			$readonly = true;
+			$status_posting = $this->db->query("select * from t_cb_tagihan where id = ? ", [$id])->row()->status_posting;
 		} else {
 			$simpanan = $this->db->query("SELECT id,nama,nip FROM ms_cb_user_anggota where fk_id_skpd = ?",  [$fk_skpd_id])->result();
 			$sw = $this->db->query("SELECT nominal FROM ms_cb_simpanan where id = ? ", [2])->row()->nominal;
@@ -143,8 +144,10 @@ class Tagihan extends CI_Controller
 			join ms_cb_kategori_pinjam mckp on
 				tcp.fk_kategori_id = mckp.id
 				where status=0 and mcua.fk_id_skpd = ?",  [$fk_skpd_id])->result();
+			$status_posting = 0;
 		}
 		$data = [
+			'status_posting' => $status_posting,
 			'simpanan' => $simpanan,
 			'pinjaman' => $pinjaman,
 			'sw' => $sw,
@@ -232,15 +235,18 @@ class Tagihan extends CI_Controller
 		$this->MHome->ceklogin();
 		$skpd = $this->db->query("select * from ms_cb_skpd")->result_array();
 		$tagihan = $this->db->query("select * from t_cb_tagihan where id = ? ", [$id])->row();
+		$label_posting =  $tagihan->status_posting == 1 ? 'Batal Posting' : 'Posting';
 		$data = array(
 			'action' => base_url() . 'Tagihan/save_kolektif',
 			'button' => 'Buat Tagihan',
 			'id' => set_value('id', $id),
 			'fk_skpd_id' => set_value('fk_skpd_id', $tagihan->fk_skpd_id),
+			'label_posting' => set_value('label_posting', $label_posting),
 			'periode' => set_value('periode', $tagihan->bulan . '-' . $tagihan->tahun),
 			'wajib' => set_value('wajib'),
 			'sukarela' => set_value('sukarela'),
 			'arrSKPD' => $skpd,
+			'disable' => 'disabled',
 			'method' => 'PUT'
 		);
 
@@ -334,6 +340,7 @@ class Tagihan extends CI_Controller
 			'wajib' => set_value('wajib'),
 			'sukarela' => set_value('sukarela'),
 			'arrSKPD' => $skpd,
+			'disable' => '',
 			'method' => 'POST'
 		);
 
@@ -357,7 +364,6 @@ class Tagihan extends CI_Controller
 	function getDataIndividu($id = null)
 	{
 		$fk_anggota_id = $this->input->post('fk_anggota_id');
-		$jenis = $this->input->post('jenis');
 		if ($id) {
 			$simpanan = $this->db->query("select
 					tcts.*, mcua.nama ,mcua.nip
@@ -385,8 +391,18 @@ class Tagihan extends CI_Controller
 				where
 					fk_tagihan_id = ?",  [$id])->row();
 			$readonly = true;
+			$status_posting = $this->db->query("select * from t_cb_tagihan where id = ? ", [$id])->row()->status_posting;
 		} else {
-			$simpanan = true;
+			$simpanan = false;
+			$showPinjaman = false;
+			$jenis = $this->input->post('jenis');
+			if (in_array($jenis, [2, 3])) {
+				$simpanan = true;
+			}
+			if (in_array($jenis, [1, 3])) {
+				$showPinjaman = true;
+			}
+			$simpanan = $simpanan;
 			$sw = $this->db->query("SELECT nominal FROM ms_cb_simpanan where id = ? ", [2])->row()->nominal;
 			$readonly = false;
 			$pinjaman = $this->db->query("select
@@ -410,12 +426,14 @@ class Tagihan extends CI_Controller
 			join ms_cb_kategori_pinjam mckp on
 				tcp.fk_kategori_id = mckp.id
 				where status=0 and tcp.fk_anggota_id = ?",  [$fk_anggota_id])->row();
+			$status_posting = 0;
 		}
 		$data = [
+			'status_posting' => $status_posting,
 			'simpanan' => $simpanan,
+			'showPinjaman' => $showPinjaman ?? true,
 			'pinjaman' => $pinjaman,
 			'sw' => $sw,
-			'jenis' => $jenis,
 			'readonly' => $readonly
 		];
 		$this->load->view('Tagihan/_form_individu', $data);
@@ -518,19 +536,22 @@ class Tagihan extends CI_Controller
 		$skpd = $this->db->query("select * from ms_cb_skpd")->result_array();
 		$tagihan = $this->db->query("select * from t_cb_tagihan where id = ? ", [$id])->row();
 		$fk_anggota_id = $this->db->query("select * from t_cb_tagihan_pinjaman where fk_tagihan_id = ? ", [$id])->row()->fk_anggota_id;
-		if ($fk_anggota_id==null) {
+		if ($fk_anggota_id == null) {
 			$fk_anggota_id = $this->db->query("select * from t_cb_tagihan_pinjaman where fk_tagihan_id = ? ", [$id])->row()->fk_anggota_id;
 		}
+		$label_posting =  $tagihan->status_posting == 1 ? 'Batal Posting' : 'Posting';
 		$data = array(
 			'action' => base_url() . 'Tagihan/save_kolektif',
 			'button' => 'Buat Tagihan',
 			'id' => set_value('id', $id),
 			'fk_skpd_id' => set_value('fk_skpd_id', $tagihan->fk_skpd_id),
 			'fk_anggota_id' => set_value('fk_anggota_id', $fk_anggota_id),
+			'label_posting' => set_value('label_posting', $label_posting),
 			'periode' => set_value('periode', $tagihan->bulan . '-' . $tagihan->tahun),
 			'wajib' => set_value('wajib'),
 			'sukarela' => set_value('sukarela'),
 			'arrSKPD' => $skpd,
+			'disable' => 'disabled',
 			'method' => 'PUT'
 		);
 
@@ -538,5 +559,14 @@ class Tagihan extends CI_Controller
 		$data['act_back'] = base_url() . 'Tagihan';
 		$data['arrUserAnggota'] = $this->MMscbUseranggota->get();
 		$this->template->load('Homeadmin/templateadmin', 'Tagihan/form_individu', $data);
+	}
+	function posting($id)
+	{
+		$tagihan = $this->db->query("select * from t_cb_tagihan where id = ? ", [$id])->row();
+		$status = $tagihan->status_posting == 1 ? 0 : 1;
+		$msg = $tagihan->status_posting == 1 ? 'Berhasil Batal Posting' : 'Berhasil Posting';
+		$this->db->query("update  t_cb_tagihan set status_posting = ? where id =? ", [$status, $id]);
+		$this->session->set_flashdata('success', $msg);
+		redirect('Tagihan');
 	}
 }

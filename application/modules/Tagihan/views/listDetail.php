@@ -30,6 +30,9 @@
                                     <th>
                                         <center>Kategori</center>
                                     </th>
+                                    <th>
+                                        <center>Status Posting</center>
+                                    </th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -100,10 +103,26 @@
                     "className": "text-center"
                 },
                 {
+                    "data": "status_posting",
+                    "orderable": false,
+                    "className": "text-center",
+                    render: function(data, type, row) {
+                        status = row.status_posting == 1 ? 'Sudah Posting' : 'Belum Posting';
+                        return status
+                    }
+                },
+                {
                     "data": "id",
                     render: function(data, type, row) {
-                        aksi = `<div class="btn-group text-center"><a class="btn btn-xs btn-success" href="<?= base_url() ?>/Tagihan/detail_${row.kategori}/${row.id}"><i class="fa fa-eye" title="Detail"></i></a>
-                        <a class="btn btn-xs btn-danger" onclick="return confirm('Apakah Anda akan menghapus data?');"  href="<?= base_url() ?>/Tagihan/delete_${row.kategori}/${row.id}"><i class="fa fa-trash" title="Detail"></i></a></div>`
+                        btnDelete = ''
+                        <?php if (in_array($this->session->userdata('fk_cb_level_id'), [1, 2])) : ?>
+                            btnDelete = `
+                        <a class="btn btn-xs btn-danger" onclick="return confirm('Apakah Anda akan menghapus data?');"  href="<?= base_url() ?>/Tagihan/delete_${row.kategori}/${row.id}"><i class="fa fa-trash" title="delete"></i>`
+                            if (row.status_posting == '1') {
+                                btnDelete = '';
+                            }
+                        <?php endif; ?>
+                        aksi = `<div class="btn-group text-center"><a class="btn btn-xs btn-success" href="<?= base_url() ?>/Tagihan/detail_${row.kategori}/${row.id}"><i class="fa fa-eye" title="Detail"></i></a>${btnDelete}</a></div>`
                         return aksi;
                     },
                     "orderable": false,
