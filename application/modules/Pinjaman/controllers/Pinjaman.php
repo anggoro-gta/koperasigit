@@ -86,7 +86,7 @@ class Pinjaman extends CI_Controller
 
 		$data['Pinjaman'] = 'active';
 		$data['act_back'] = base_url() . 'Pinjaman';
-		$data['arrUserAnggota'] = $this->MMscbUseranggota->get();
+		$data['arrUserAnggota'] = $this->db->query("SELECT a.id,a.nama,s.nama_skpd FROM ms_cb_user_anggota a INNER JOIN ms_cb_skpd s ON s.id=a.fk_id_skpd")->result_array();
 		$data['arrKategori'] = $this->MMscbKategoripinjam->get();
 		$this->template->load('Homeadmin/templateadmin', 'Pinjaman/form', $data);
 	}

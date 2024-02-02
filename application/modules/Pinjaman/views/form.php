@@ -49,7 +49,7 @@
                 <select class="form-control" name="fk_anggota_id" id="fk_anggota_id" required>
                   <option value="">.: Pilih :.</option>
                   <?php foreach ($arrUserAnggota as $valanggota) { ?>
-                    <option <?= $fk_anggota_id == $valanggota['id'] ? 'selected' : '' ?> value="<?= $valanggota['id'] ?>"><?= $valanggota['nama'] ?></option>
+                    <option <?= $fk_anggota_id == $valanggota['id'] ? 'selected' : '' ?> value="<?= $valanggota['id'] ?>"><?= $valanggota['nama'].' ('.$valanggota['nama_skpd'].')' ?></option>
                   <?php } ?>
                 </select>
               </div>
