@@ -12,14 +12,23 @@ class Laporan extends CI_Controller
 		$this->load->model('MMsCabang');
 		$this->load->model('MMsTerapis');
 	}
+
 	public function index()
 	{
+
+		$periode = $this->input->post('periode');
+		$fk_skpd_id = $this->input->post('fk_skpd_id');
 		$data['lapTransaksi'] = 'active';
-		$data['arrcabang'] = $this->MMsCabang->get();
-		$data['arrPelanggan'] = $this->MMsPelanggan->get();
-		$data['arrTerapis'] = $this->MMsTerapis->get();
+		$data['periode'] = $periode;
+		$data['fk_skpd_id'] = $fk_skpd_id;
 		$data['action'] = base_url() . 'Laporan/cetak_transaksi';
-		$this->template->load('Home/template', 'Laporan/form', $data);
+		$data['arrSKPD'] = $this->db->query("select * from ms_cb_skpd")->result_array();
+		if ($periode) {
+			$periode = explode('-', $periode);
+			$periode = $periode[1] . '-' . $periode[0] . '-01';
+			$data['data'] = $this->db->query("CALL getTunggakanPinjaman (?,?)", [$periode, $fk_skpd_id])->result();
+		}
+		$this->template->load('Homeadmin/templateadmin', 'Laporan/form', $data);
 	}
 
 	public function cetak_transaksi()
@@ -30,15 +39,16 @@ class Laporan extends CI_Controller
 		$fk_pelanggan_id = $this->input->post('fk_pelanggan_id');
 		$fk_terapis_id = $this->input->post('fk_terapis_id');
 
-		$andWhre = ""; $cbg='';
-		if($fk_cabang_id){
+		$andWhre = "";
+		$cbg = '';
+		if ($fk_cabang_id) {
 			$andWhre .= " AND t.fk_cabang_id=$fk_cabang_id";
-			$cbg = $this->MMsCabang->get(array('id'=>$fk_cabang_id));
+			$cbg = $this->MMsCabang->get(array('id' => $fk_cabang_id));
 		}
-		if($fk_pelanggan_id){
+		if ($fk_pelanggan_id) {
 			$andWhre .= " AND fk_pelanggan_id=$fk_pelanggan_id";
 		}
-		if($fk_terapis_id){
+		if ($fk_terapis_id) {
 			$andWhre .= " AND td.fk_terapis_id=$fk_terapis_id";
 		}
 
@@ -65,22 +75,24 @@ class Laporan extends CI_Controller
 		// echo $html;die();
 		$this->pdf($title, $html, $this->help->folio_L(), false);
 	}
-	public function excel_transaksi(){
+	public function excel_transaksi()
+	{
 		$tgl_dari = $this->input->get('tgl_dari');
 		$tgl_sampai = $this->input->get('tgl_sampai');
 		$fk_cabang_id = $this->input->get('fk_cabang_id');
 		$fk_pelanggan_id = $this->input->get('fk_pelanggan_id');
 		$fk_terapis_id = $this->input->get('fk_terapis_id');
 
-		$andWhre = ""; $cbg='';
-		if($fk_cabang_id){
+		$andWhre = "";
+		$cbg = '';
+		if ($fk_cabang_id) {
 			$andWhre .= " AND t.fk_cabang_id=$fk_cabang_id";
-			$cbg = $this->MMsCabang->get(array('id'=>$fk_cabang_id));
+			$cbg = $this->MMsCabang->get(array('id' => $fk_cabang_id));
 		}
-		if($fk_pelanggan_id){
+		if ($fk_pelanggan_id) {
 			$andWhre .= " AND fk_pelanggan_id=$fk_pelanggan_id";
 		}
-		if($fk_terapis_id){
+		if ($fk_terapis_id) {
 			$andWhre .= " AND td.fk_terapis_id=$fk_terapis_id";
 		}
 
@@ -106,12 +118,13 @@ class Laporan extends CI_Controller
 		$this->excel($title, $html);
 	}
 
-	protected function pdf($title, $html, $page, $batas = false){
+	protected function pdf($title, $html, $page, $batas = false)
+	{
 		// echo $html;
 		if ($batas) {
-			$mpdf = new \Mpdf\Mpdf(['mode'=>'utf-8', 'format' =>$page]);
+			$mpdf = new \Mpdf\Mpdf(['mode' => 'utf-8', 'format' => $page]);
 		} else {
-			$mpdf = new \Mpdf\Mpdf(['mode'=>'utf-8', 'format' =>$page, 0, '', 8, 8, 8, 8, 8, 8]);
+			$mpdf = new \Mpdf\Mpdf(['mode' => 'utf-8', 'format' => $page, 0, '', 8, 8, 8, 8, 8, 8]);
 		}
 		$mpdf->AddPage();
 		// $mpdf->SetFooter('{PAGENO}/{nbpg}');
@@ -119,13 +132,12 @@ class Laporan extends CI_Controller
 		$mpdf->Output($title . '.pdf', 'I');
 	}
 
-	protected function excel($title, $html, $ext = 'xls'){
+	protected function excel($title, $html, $ext = 'xls')
+	{
 		header("Content-type: application/x-msdownload");
 		header("Content-Disposition: attachment; filename=$title.$ext");
 		header("Pragma: no-cache");
 		header("Expires: 0");
 		echo $html;
 	}
-	
-
 }

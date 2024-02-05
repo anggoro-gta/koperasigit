@@ -26,73 +26,98 @@
         </div>
         <div class="x_content">
           <br />
-          <form action="<?= $action; ?>" method="post" id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" target="_blank" autocomplete="off">
-            <div class="form-group required">
-              <label class="control-label col-md-2 col-sm-2 col-xs-12" for="last-name">Tanggal</label>
-              <div class="col-md-4 col-sm-6 col-xs-12">
-                <div class="input-group">
-                  <input type="text" name="tgl_dari" id="tgl_dari" required class="form-control col-md-2 col-xs-10 tanggal text-center">
-                  <span class="input-group-addon"><b>s/d</b></span>
-                  <input type="text" name="tgl_sampai" id="tgl_sampai" required class="form-control col-md-2 col-xs-10 tanggal text-center">
+
+          <form action="#" method="post" id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" autocomplete='off'>
+            <div class="col-md-12 col-sm-12 col-xs-12">
+
+              <?php if ($this->session->flashdata('success')) : ?>
+                <div class="alert alert-success">
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <strong>Sukses!</strong> <?php echo $this->session->flashdata('success') ?>
+                </div>
+              <?php endif; ?>
+              <?php if ($this->session->flashdata('error')) : ?>
+                <div class="alert alert-danger">
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <strong>Error!</strong> <?php echo $this->session->flashdata('error') ?>
+                </div>
+              <?php endif; ?>
+              <div class="x_panel">
+                <div class="x_title">
+                  <ul class="nav navbar-left panel_toolbox">
+                    <div class="pull-left">
+
+                    </div>
+                  </ul>
+                  <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                  <br />
+                  <div class="form-group required">
+                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Tagihan Bulan</label>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                      <input type="text" name="periode" required class="form-control col-md-7 col-xs-12 blnThn" value="<?=$periode?>">
+                    </div>
+                  </div>
+                  <div class="form-group required">
+                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Dinas</label>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                      <select class="form-control" name="fk_skpd_id" id="fk_skpd_id" required>
+                        <option value="">.: Pilih :.</option>
+                        <?php foreach ($arrSKPD as $skpd) { ?>
+                          <option <?= $skpd['id']==$fk_skpd_id? 'selected':'' ?> value="<?= $skpd['id'] ?>"><?= $skpd['nama_skpd'] ?></option>
+                        <?php } ?>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                    <button type="submit" class="btn btn-success">lihat</button>
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="form-group">
-                <label class="control-label col-md-2 col-sm-2 col-xs-12">Cabang</label>
-                <div class="col-md-4 col-sm-6 col-xs-12">
-                    <select class="form-control" name="fk_cabang_id" id="fk_cabang_id">
-                        <option value="">.: Pilih :.</option>
-                        <?php foreach ($arrcabang as $val) { ?>
-                            <option value="<?=$val['id']?>"><?=$val['nama_cabang']?></option>
-                        <?php } ?>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="control-label col-md-2 col-sm-2 col-xs-12">Pelanggan</label>
-                <div class="col-md-4 col-sm-6 col-xs-12">
-                    <select class="form-control" name="fk_pelanggan_id" id="fk_pelanggan_id">
-                        <option value="">.: Pilih :.</option>
-                        <?php foreach ($arrPelanggan as $valP) { ?>
-                            <option value="<?=$valP['id']?>"><?=$valP['nama'].' ('.$valP['no_hp'].')'?></option>
-                        <?php } ?>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="control-label col-md-2 col-sm-2 col-xs-12">Terapis</label>
-                <div class="col-md-4 col-sm-6 col-xs-12">
-                    <select class="form-control" name="fk_terapis_id" id="fk_terapis_id">
-                        <option value="">.: Pilih :.</option>
-                        <?php foreach ($arrTerapis as $valT) { ?>
-                            <option value="<?=$valT['id']?>"><?=$valT['nama_lengkap']?></option>
-                        <?php } ?>
-                    </select>
-                </div>
-            </div>
-          </div>
+            <div id="tampilData">
 
-            <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
-                <button type="reset" class="btn btn-primary">Batal</button>
-                <button type="submit" class="btn btn-success"><i class="glyphicon glyphicon-file"></i> Cetak PDF</button>
-                <a title="Download Excel" class="btn btn-md btn-warning" id="cetakExcel" ><i class="glyphicon glyphicon-download"></i> Download Excel</a>
+
+              <?php if ($data) : ?>
+                <table class="table">
+
+                  <tr>
+                    <th>No</th>
+                    <th>Nip</th>
+                    <th>Nama</th>
+                    <th>Terakhir Bayar</th>
+                    <th>Jumlah Tunggakan</th>
+                  </tr>
+
+                  <?php foreach ($data as $key => $value) : ?>
+                    <tr>
+                      <td><?= ++$key ?></td>
+                      <td><?= $value->nip ?></td>
+                      <td><?= $value->nama ?></td>
+                      <td><?= $value->last_tx ?></td>
+                      <td><?= $value->jml_tunggakan ?></td>
+                    </tr>
+                  <?php endforeach; ?>
+                </table>
+              <?php endif; ?>
             </div>
           </form>
-          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+</div>
 <script type="text/javascript">
-$("#cetakExcel").click(function(){
+  $("#cetakExcel").click(function() {
     tgl_dari = $("#tgl_dari").val();
-    if(tgl_dari==''){
+    if (tgl_dari == '') {
       alert('Tanggal Harus Diisi semua.');
       return false;
     }
     tgl_sampai = $("#tgl_sampai").val();
-    if(tgl_sampai==''){
+    if (tgl_sampai == '') {
       alert('Tanggal Harus Diisi semua.');
       return false;
     }
@@ -101,6 +126,6 @@ $("#cetakExcel").click(function(){
     fk_pelanggan_id = $("#fk_pelanggan_id").val();
     fk_terapis_id = $("#fk_terapis_id").val();
 
-    window.location.href="<?= base_url()?>Laporan/excel_transaksi?tgl_dari="+tgl_dari+'&tgl_sampai='+tgl_sampai+'&fk_cabang_id='+fk_cabang_id+'&fk_pelanggan_id='+fk_pelanggan_id+'&fk_terapis_id='+fk_terapis_id;
-});
+    window.location.href = "<?= base_url() ?>Laporan/excel_transaksi?tgl_dari=" + tgl_dari + '&tgl_sampai=' + tgl_sampai + '&fk_cabang_id=' + fk_cabang_id + '&fk_pelanggan_id=' + fk_pelanggan_id + '&fk_terapis_id=' + fk_terapis_id;
+  });
 </script>
