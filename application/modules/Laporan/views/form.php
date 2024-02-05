@@ -1,7 +1,7 @@
 <div class="">
   <div class="page-title">
     <div class="title_left">
-      <h3>Laporan Transaksi</h3>
+      <h3>Laporan Tunggakan</h3>
     </div>
 
     <div class="title_right">
@@ -56,7 +56,7 @@
                   <div class="form-group required">
                     <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Tagihan Bulan</label>
                     <div class="col-md-6 col-sm-6 col-xs-12">
-                      <input type="text" name="periode" required class="form-control col-md-7 col-xs-12 blnThn" value="<?=$periode?>">
+                      <input type="text" name="periode" required class="form-control col-md-7 col-xs-12 blnThn" value="<?= $periode ?>">
                     </div>
                   </div>
                   <div class="form-group required">
@@ -65,7 +65,7 @@
                       <select class="form-control" name="fk_skpd_id" id="fk_skpd_id" required>
                         <option value="">.: Pilih :.</option>
                         <?php foreach ($arrSKPD as $skpd) { ?>
-                          <option <?= $skpd['id']==$fk_skpd_id? 'selected':'' ?> value="<?= $skpd['id'] ?>"><?= $skpd['nama_skpd'] ?></option>
+                          <option <?= $skpd['id'] == $fk_skpd_id ? 'selected' : '' ?> value="<?= $skpd['id'] ?>"><?= $skpd['nama_skpd'] ?></option>
                         <?php } ?>
                       </select>
                     </div>
@@ -79,7 +79,7 @@
             <div id="tampilData">
 
 
-              <?php if ($data) : ?>
+              <?php if (isset($data)) : ?>
                 <table class="table">
 
                   <tr>
