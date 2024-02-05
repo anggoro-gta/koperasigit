@@ -26,11 +26,11 @@ class Homeanggota extends MX_Controller
 			) ss ON ss.fk_anggota_id=a.id
 			WHERE a.id=$idANggota ";
 		$smpn = $this->db->query($que1)->row();
-		$data['simpanan'] = !isset($smpn)?'0':$smpn->simpanan;
+		$data['simpanan'] = !isset($smpn) ? '0' : $smpn->simpanan;
 
-		$que2 = "SELECT pinjaman FROM t_cb_pinjaman WHERE id=$idANggota AND status=0";
+		$que2 = "SELECT sum(pinjaman) pinjaman FROM t_cb_pinjaman WHERE fk_anggota_id=$idANggota AND status=0";
 		$pnjm = $this->db->query($que2)->row();
-		$data['pinjaman'] = !isset($pnjm)?'0':$pnjm->pinjaman;
+		$data['pinjaman'] = !isset($pnjm) ? '0' : $pnjm->pinjaman;
 
 		$this->template->load('Homeanggota/templateanggota', 'Homeanggota/berandaanggota', $data);
 	}
@@ -38,22 +38,22 @@ class Homeanggota extends MX_Controller
 	public function getListDtlSimpanan()
 	{
 		$idANggota = $this->session->id;
-		$angg = $this->MMscbUseranggota->get(array('id'=>$idANggota));
-		$data['angg']=$angg[0];
+		$angg = $this->MMscbUseranggota->get(array('id' => $idANggota));
+		$data['angg'] = $angg[0];
 		$que = "SELECT max(t.bulan) bulan, max(tahun) tahun, sum(s.wajib) wajib,  sum(s.sukarela) sukarela FROM t_cb_tagihan_simpanan s INNER JOIN t_cb_tagihan t ON t.id=s.fk_tagihan_id WHERE fk_anggota_id=$idANggota";
 		$data['wjb'] = $this->db->query($que)->row();
 
 		$que2 = "SELECT max(t.bulan) bulan, max(tahun) tahun,sum(p.tapim) tapim FROM t_cb_tagihan_pinjaman p INNER JOIN t_cb_tagihan t ON t.id=p.fk_tagihan_id WHERE fk_anggota_id=$idANggota";
 		$data['tpm'] = $this->db->query($que2)->row();
-		
+
 		$this->load->view('Homeanggota/listDtlSimpanan', $data);
 	}
 
 	public function getListDtlPinjaman()
 	{
 		$idANggota = $this->session->id;
-		$angg = $this->MMscbUseranggota->get(array('id'=>$idANggota));
-		$data['angg']=$angg[0];
+		$angg = $this->MMscbUseranggota->get(array('id' => $idANggota));
+		$data['angg'] = $angg[0];
 
 		$que = "SELECT tenor FROM t_cb_pinjaman WHERE fk_anggota_id=$idANggota";
 		$data['pinjam'] = $this->db->query($que)->row();
