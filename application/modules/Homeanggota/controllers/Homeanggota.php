@@ -51,9 +51,21 @@ class Homeanggota extends MX_Controller
 
 	public function getListDtlPinjaman()
 	{
-		die('pinjaman');
-		$data = null;
-		$this->load->view('Homeanggota/listDtlSimpanan', $data);
+		$idANggota = $this->session->id;
+		$angg = $this->MMscbUseranggota->get(array('id'=>$idANggota));
+		$data['angg']=$angg[0];
+
+		$que = "SELECT tenor FROM t_cb_pinjaman WHERE fk_anggota_id=$idANggota";
+		$data['pinjam'] = $this->db->query($que)->row();
+
+		$que1 = "SELECT t.bulan,t.tahun,tp.angsuran_ke,tp.pokok,tp.tapim,tp.bunga,tp.jml_tagihan FROM t_cb_tagihan_pinjaman tp 
+				INNER JOIN t_cb_tagihan t ON t.id=tp.fk_tagihan_id
+				INNER JOIN t_cb_pinjaman p ON p.id=tp.fk_pinjaman_id
+				WHERE p.status=0 AND t.status_posting=1 AND tp.fk_anggota_id=$idANggota
+				ORDER BY tp.angsuran_ke DESC";
+		$data['detail'] = $this->db->query($que1)->result();
+
+		$this->load->view('Homeanggota/listDtlPinjaman', $data);
 	}
 
 	public function getListDtlSimulasi()
