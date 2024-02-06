@@ -5,7 +5,6 @@
             <div class="x_title">
                 <h2>
                     Info Pinjaman - <?=$angg['nama'].' ('.$angg['nip'].')'?><br>
-                    Tenor = <?=$pinjam->tenor?>
                 </h2>
                 <ul class="nav navbar-right panel_toolbox">
                 </ul>
@@ -15,32 +14,35 @@
                 <br />
                 <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left">
                     <div class="form-group">
-                        <table class="table table-bordered table-striped" id="example2" style="width: 100%">
-                            <thead>
-                                <tr>
-                                    <th width="5%">No</th>
-                                    <th><center>Transaksi Terakhir</center></th>
-                                    <th><center>Angsuran Ke</center></th>
-                                    <th><center>Pokok</center></th>
-                                    <th><center>Tapim</center></th>
-                                    <th><center>Bunga</center></th>
-                                    <th><center>Jml Tagihan</center></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php $no=1; foreach ($detail as $val) { ?>
+                        <?php foreach ($pinjam as $pj) { ?>
+                            <legend style="color:magenta">KATEGORI PINJAM = <?=strtoupper($pj->kategori)?>, TENOR = <?=$pj->tenor?>, JML PINJAMAN = Rp. <?=number_format($pj->pinjaman)?></legend>
+                            <table class="table table-bordered table-striped" id="example2" style="width: 100%">
+                                <thead>
                                     <tr>
-                                        <td align="center"><?=$no++?></td>
-                                        <td align="center"><?=$val->bulan.'-'.$val->tahun?></td>
-                                        <td align="center"><?=$val->angsuran_ke?></td>
-                                        <td align="right"><?=number_format($val->pokok)?></td>
-                                        <td align="right"><?=number_format($val->tapim)?></td>
-                                        <td align="right"><?=number_format($val->bunga)?></td>
-                                        <td align="right"><?=number_format($val->jml_tagihan)?></td>
+                                        <th width="5%">No</th>
+                                        <th><center>Transaksi Terakhir</center></th>
+                                        <th><center>Angsuran Ke</center></th>
+                                        <th><center>Pokok</center></th>
+                                        <th><center>Tapim</center></th>
+                                        <th><center>Bunga</center></th>
+                                        <th><center>Jml Tagihan</center></th>
                                     </tr>
-                                <?php } ?>
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    <?php $no=1; foreach ((array)$detailnya[$pj->id] as $val) { ?>
+                                        <tr>
+                                            <td align="center"><?=$no++?></td>
+                                            <td align="center"><?=$val->bulan.'-'.$val->tahun?></td>
+                                            <td align="center"><?=$val->angsuran_ke?></td>
+                                            <td align="right"><?=number_format($val->pokok)?></td>
+                                            <td align="right"><?=number_format($val->tapim)?></td>
+                                            <td align="right"><?=number_format($val->bunga)?></td>
+                                            <td align="right"><?=number_format($val->jml_tagihan)?></td>
+                                        </tr> 
+                                    <?php } ?>
+                                </tbody>
+                            </table>
+                        <?php } ?>
                     </div>
                 </form>
             </div>

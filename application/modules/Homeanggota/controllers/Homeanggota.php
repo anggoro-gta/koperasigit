@@ -55,15 +55,24 @@ class Homeanggota extends MX_Controller
 		$angg = $this->MMscbUseranggota->get(array('id' => $idANggota));
 		$data['angg'] = $angg[0];
 
-		$que = "SELECT tenor FROM t_cb_pinjaman WHERE fk_anggota_id=$idANggota";
-		$data['pinjam'] = $this->db->query($que)->row();
+		$que = "SELECT p.id,tenor,pinjaman,kategori FROM t_cb_pinjaman p
+				INNER JOIN ms_cb_kategori_pinjam kp ON kp.id=p.fk_kategori_id
+				WHERE p.status=0 AND fk_anggota_id=$idANggota ORDER BY tgl DESC;";
+		$dataPnjam = $this->db->query($que)->result();
+		$data['pinjam'] = $dataPnjam;
 
-		$que1 = "SELECT t.bulan,t.tahun,tp.angsuran_ke,tp.pokok,tp.tapim,tp.bunga,tp.jml_tagihan FROM t_cb_tagihan_pinjaman tp 
+		$que1 = "SELECT fk_pinjaman_id,t.bulan,t.tahun,tp.angsuran_ke,tp.pokok,tp.tapim,tp.bunga,tp.jml_tagihan FROM t_cb_tagihan_pinjaman tp 
 				INNER JOIN t_cb_tagihan t ON t.id=tp.fk_tagihan_id
 				INNER JOIN t_cb_pinjaman p ON p.id=tp.fk_pinjaman_id
 				WHERE p.status=0 AND t.status_posting=1 AND tp.fk_anggota_id=$idANggota
-				ORDER BY tp.angsuran_ke DESC";
-		$data['detail'] = $this->db->query($que1)->result();
+				ORDER BY fk_pinjaman_id,tp.angsuran_ke DESC";
+		$dtl = $this->db->query($que1)->result();
+
+		$arrDetail = array();
+		foreach ($dtl as $val) {
+			$arrDetail[$val->fk_pinjaman_id][]=$val;
+		}
+		$data['detailnya'] = $arrDetail;
 
 		$this->load->view('Homeanggota/listDtlPinjaman', $data);
 	}
