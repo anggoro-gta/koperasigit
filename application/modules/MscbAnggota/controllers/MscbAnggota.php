@@ -302,7 +302,7 @@ class MscbAnggota extends CI_Controller
 	public function resetpassword($id)
 	{
 		$this->MHome->ceklogin();
-		$data['password'] = md5('admin');
+		$data['password'] = md5('kedirikab');
 		// if($this->session->fk_level_id==1){
 		$this->MMscbUseranggota->update($id, $data);
 		$this->session->set_flashdata('success', 'Data berhasil direset passwordnya.');
