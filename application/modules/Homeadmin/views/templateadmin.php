@@ -137,7 +137,13 @@
                     <ul class="nav child_menu">
                       <li class="<?php if (isset($lapTransaksi)) {
                                     echo 'active';
-                                  } ?>"><a href="<?php echo base_url('Laporan') ?>">Lap Transaksi</a></li>
+                                  } ?>"><a href="<?php echo base_url('Laporan/tunggakan') ?>">Lap Tunggakan</a></li>
+                      <li class="<?php if (isset($lapPinjaman)) {
+                                    echo 'active';
+                                  } ?>"><a href="<?php echo base_url('Laporan/pinjaman') ?>">Lap Pinjaman</a></li>
+                      <li class="<?php if (isset($lapSimpanan)) {
+                                    echo 'active';
+                                  } ?>"><a href="<?php echo base_url('Laporan/simpanan') ?>">Lap Simpanan</a></li>
                     </ul>
                   </li>
                 <?php } ?>
