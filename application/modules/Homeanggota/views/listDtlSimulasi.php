@@ -79,6 +79,12 @@
         });
     });
 
+    $(".angka").keypress(function(data) {
+        if (data.which != 8 && data.which != 0 && (data.which < 48 || data.which > 57)) {
+            return false;
+        }
+    });
+
     $("#idkategorisimulasi").change(function() {
         let idkategorisimulasi = $("#idkategorisimulasi").val();
         nipval = $("#nip").val();
@@ -126,6 +132,7 @@
     });
 
     function data() {
+        kategorisimulasi = $("#idkategorisimulasi").val();
         sisagajipokok = $("#gajipk").val();
         jumlahpinjam = $("#pinjaman_simulasi").val();
         jumlahangsuran = $("#angsuran").val();
@@ -176,6 +183,7 @@
                 type: 'post',
                 url: "<?php echo base_url() ?>Simulasi/getTableSimulasi",
                 data: {
+                    kategorisimulasi,
                     sisagajipokok,
                     jumlahpinjam,
                     jumlahangsuran,

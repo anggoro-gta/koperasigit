@@ -46,15 +46,7 @@
                                         <td align="right"><?= number_format($perhitungan_simulasi[$i]['tapim']); ?></td>
                                         <td align="right"><?= number_format($perhitungan_simulasi[$i]['bunga']); ?></td>
                                         <td align="right"><?= number_format($perhitungan_simulasi[$i]['total_angsuran']); ?></td>
-                                        <?php if ($perhitungan_simulasi[$i]['angsuranke'] > $sisamasajabatan && $perhitungan_simulasi[$i]['total_angsuran'] > $sisagajipokok) { ?>
-                                            <td bgcolor="red">
-                                                <font color="white">Simulasi tidak dapat digunakan, karena melebihi sisa gaji pokok dan sisa masa jabatan (bulan).</font>
-                                            </td>
-                                        <?php } else if ($perhitungan_simulasi[$i]['angsuranke'] > $sisamasajabatan) { ?>
-                                            <td bgcolor="red">
-                                                <font color="white">Simulasi tidak dapat digunakan, karena melebihi sisa masa jabatan (bulan).</font>
-                                            </td>
-                                        <?php } else if ($perhitungan_simulasi[$i]['total_angsuran'] > $sisagajipokok) { ?>
+                                        <?php if ($perhitungan_simulasi[$i]['total_angsuran'] > $sisagajipokok) { ?>
                                             <td bgcolor="red">
                                                 <font color="white">Simulasi tidak dapat digunakan, karena melebihi sisa gaji pokok.</font>
                                             </td>

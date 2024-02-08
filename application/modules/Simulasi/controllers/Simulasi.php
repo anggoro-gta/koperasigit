@@ -40,6 +40,8 @@ class Simulasi extends CI_Controller
 	{
 		$this->MHome->ceklogin();
 
+		$simulasikategori = $this->input->post('kategorisimulasi');
+
 		$sisagajipokok = $this->input->post('sisagajipokok');
 		$strreplacesisagajipokok = str_replace(",", "", $sisagajipokok);
 		$intsisagajipokok = intval($strreplacesisagajipokok);
@@ -91,7 +93,11 @@ class Simulasi extends CI_Controller
 		// $data['jumlahtagihan'] = $jumlahtagihan;
 		$data['perhitungan_simulasi'] = $arraytemp;
 
-		$this->load->view('Simulasi/listDetailsimulasi', $data);
+		if ($simulasikategori == "umum") {
+			$this->load->view('Simulasi/listDetailsimulasiumum', $data);
+		} else {
+			$this->load->view('Simulasi/listDetailsimulasi', $data);
+		}
 	}
 
 	public function getDatatables()
