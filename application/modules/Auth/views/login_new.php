@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Koperasi CB</title>
+    <title>KPRI. CANDA BHIRAWA</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!--===============================================================================================-->
@@ -35,7 +35,7 @@
         <div class="container-login100" style="background-image: url('<?php echo base_url() ?>assets_login/images/bg.jpg');">
             <div class="wrap-login100 p-t-30 p-b-50">
                 <span class="login100-form-title p-b-41">
-                    Account Login<br>Koperasi Chanda Bhirawa
+                    Account Login<br>KPRI. CANDA BHIRAWA
                 </span>
                 <?php if ($this->session->flashdata('error')) : ?>
                     <div class="alert alert-warning">
