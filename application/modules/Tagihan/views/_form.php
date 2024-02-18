@@ -18,18 +18,18 @@
                             </th>
                         <?php } ?>
 
-                        <th width="5%">No</th>
-                        <th>Piut</th>
-                        <th>Nama</th>
+                        <th width="5%">NO</th>
+                        <th>PIUT</th>
+                        <th>NAMA</th>
                         <th>NIP</th>
-                        <th>Pinjaman</th>
-                        <th>Jns Pinjam</th>
-                        <th>Ke</th>
-                        <th>Pokok</th>
-                        <th>Tapim</th>
-                        <th>Bunga</th>
+                        <th>PINJAMAN</th>
+                        <th>JNS PINJAM</th>
+                        <th>KE</th>
+                        <th>POKOK</th>
+                        <th>TAPIM</th>
+                        <th>BUNGA</th>
                         <th>X</th>
-                        <th>Jumlah</th>
+                        <th>JUMLAH</th>
                         <?php if ($readonly) { ?>
                             <th></th>
                         <?php } ?>
@@ -93,11 +93,11 @@
                             </th>
                         <?php } ?>
 
-                        <th width="5%">No</th>
-                        <th>Nama</th>
+                        <th width="5%">NO</th>
+                        <th>NAMA</th>
                         <th>NIP</th>
                         <th>SW</th>
-                        <th>Sukarela</th>
+                        <th>SUKARELA</th>
                         <?php if ($readonly) { ?>
                             <th></th>
                         <?php } ?>

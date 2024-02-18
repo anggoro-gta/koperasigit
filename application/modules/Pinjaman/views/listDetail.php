@@ -19,42 +19,42 @@
                         <table class="table table-bordered table-striped" id="example2" style="width: 100%">
                             <thead>
                                 <tr>
-                                    <th width="5%">No</th>
+                                    <th width="5%">NO</th>
                                     <!-- <th><center>Cabang</center></th> -->
                                     <th>
-                                        <center>Nama Anggota</center>
+                                        <center>NAMA ANGGOTA</center>
                                     </th>
                                     <th>
-                                        <center>Tanggal Pinjam</center>
+                                        <center>TANGGAL PINJAM</center>
                                     </th>
                                     <th>
-                                        <center>Jumlah Pinjaman</center>
+                                        <center>JUMLAH PINJAMAN</center>
                                     </th>
                                     <th>
-                                        <center>Angsuran yg terbayar</center>
+                                        <center>ANGSURAN YG TERBAYAR</center>
                                     </th>
                                     <th>
-                                        <center>Tenor</center>
+                                        <center>TENOR</center>
                                     </th>
                                     <th>
-                                        <center>Pokok</center>
+                                        <center>POKOK</center>
                                     </th>
                                     <th>
-                                        <center>Tapim</center>
+                                        <center>TAPIM</center>
                                     </th>
                                     <th>
-                                        <center>Bunga</center>
+                                        <center>BUNGA</center>
                                     </th>
                                     <th>
-                                        <center>Tagihan Bulanan</center>
+                                        <center>TAGIHAN BULANAN</center>
                                     </th>
                                     <th>
-                                        <center>Jenis</center>
+                                        <center>JENIS</center>
                                     </th>
                                     <th>
-                                        <center>Status Lunas</center>
+                                        <center>STATUS LUNAS</center>
                                     </th>
-                                    <th>Aksi</th>
+                                    <th>AKSI</th>
                                 </tr>
                             </thead>
                         </table>

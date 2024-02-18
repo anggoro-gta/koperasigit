@@ -19,21 +19,21 @@
                         <table class="table table-bordered table-striped" id="example2" style="width: 100%">
                             <thead>
                                 <tr>
-                                    <th width="5%">No</th>
+                                    <th width="5%">NO</th>
                                     <!-- <th><center>Cabang</center></th> -->
                                     <th>
                                         <center>SKPD</center>
                                     </th>
                                     <th>
-                                        <center>Bulan Tahun</center>
+                                        <center>BULAN TAHUN</center>
                                     </th>
                                     <th>
-                                        <center>Kategori</center>
+                                        <center>KATEGORI</center>
                                     </th>
                                     <th>
-                                        <center>Status Posting</center>
+                                        <center>STATUS POSTING</center>
                                     </th>
-                                    <th>Aksi</th>
+                                    <th>AKSI</th>
                                 </tr>
                             </thead>
                         </table>
