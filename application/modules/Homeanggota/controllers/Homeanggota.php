@@ -101,7 +101,7 @@ class Homeanggota extends MX_Controller
 		$dataPnjam = $this->db->query($que)->result();
 		$data['pinjam'] = $dataPnjam;
 
-		$que1 = "SELECT fk_pinjaman_id,t.bulan,t.tahun,tp.angsuran_ke,tp.pokok,tp.tapim,tp.bunga,tp.jml_tagihan FROM t_cb_tagihan_pinjaman tp
+		$que1 = "SELECT fk_pinjaman_id,t.bulan,t.tahun,tp.angsuran_ke,tp.pokok,p.tapim,tp.bunga,tp.jml_tagihan FROM t_cb_tagihan_pinjaman tp
 				INNER JOIN t_cb_tagihan t ON t.id=tp.fk_tagihan_id
 				INNER JOIN t_cb_pinjaman p ON p.id=tp.fk_pinjaman_id
 				WHERE p.status=0 AND t.status_posting=1 AND tp.fk_anggota_id=$idANggota
