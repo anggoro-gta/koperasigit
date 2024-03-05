@@ -12,7 +12,7 @@
                 <td colspan="5" align="center"><b>LAPORAN PINJAMAN</b></td>
             </tr>
             <tr>
-                <td colspan="5" align="center"><b>Dinas <?= $skpd ?></b></td>
+                <td colspan="5" align="center"><b> <?= $skpd ?></b></td>
             </tr>
         </table>
         <br>
