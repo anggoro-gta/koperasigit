@@ -20,7 +20,7 @@ class Homeanggota extends MX_Controller
 		$que1 = "SELECT (COALESCE(a.simpanan_pokok,0)+COALESCE(a.simpanan_wajib,0)+COALESCE(ss.wajib,0)+COALESCE(ss.sukarela,0)+COALESCE(pp.tapim,0)) simpanan FROM ms_cb_user_anggota a
 			LEFT JOIN (
 					SELECT p.fk_anggota_id,sum(p.tapim) tapim,g1.status_posting FROM t_cb_tagihan_pinjaman p INNER JOIN t_cb_tagihan g1 ON g1.id=p.fk_tagihan_id WHERE p.fk_anggota_id=$idANggota AND g1.status_posting=1
-			) pp ON pp.fk_anggota_id=a.id	
+			) pp ON pp.fk_anggota_id=a.id
 			LEFT JOIN (
 				SELECT s.fk_anggota_id,sum(s.wajib) wajib, sum(s.sukarela) sukarela  FROM t_cb_tagihan_simpanan s INNER JOIN t_cb_tagihan g2 ON g2.id=s.fk_tagihan_id WHERE s.fk_anggota_id=$idANggota AND g2.status_posting=1
 			) ss ON ss.fk_anggota_id=a.id
@@ -47,9 +47,11 @@ class Homeanggota extends MX_Controller
 			'id' => set_value('id', $kat->id),
 			'nama' => set_value('nama', $kat->nama),
 			'nik' => set_value('nik', $kat->nik),
-			'nip' => set_value('nip', $kat->nip),
+			'nip' => set_value('nip', $kat->nip_gabung),
 			'nomor_hp' => set_value('nomor_hp', $kat->nomor_hp),
 			'alamat' => set_value('alamat', $kat->alamat),
+			'fk_id_status_pekerjaan' => set_value('fk_id_status_pekerjaan', $kat->fk_id_status_pekerjaan),
+			'arrPekerjaan' => $this->db->query("select * from ms_cb_status_pekerjaan order by id")->result_array()
 		);
 
 		$data['dataanggota'] = 'active';
@@ -57,6 +59,22 @@ class Homeanggota extends MX_Controller
 		$this->template->load('Homeanggota/templateanggota', 'Homeanggota/formupdateanggota', $data);
 	}
 
+	function saveupdatedataanggota()
+	{
+		// 8 6 1 3
+		$nip = $this->input->post('nip');
+		$data['nama'] = $this->input->post('nama');
+		$data['nik'] = $this->input->post('nik');
+		$data['nip'] = substr($nip, 0, 8) . ' ' . substr($nip, 8, 6) . ' ' . substr($nip, 14, 1) . ' ' . substr($nip, -3);
+		$data['nip_gabung'] = $this->input->post('nip');
+		$data['nomor_hp'] = $this->input->post('nomor_hp');
+		$data['alamat'] = $this->input->post('alamat');
+		$data['fk_id_status_pekerjaan'] = $this->input->post('fk_id_status_pekerjaan');
+
+		$this->MMscbUseranggota->update($this->input->post('id'), $data);
+		$this->session->set_flashdata('success', 'Data Berhasil diupdate.');
+		redirect('Homeanggota/updatedataanggota');
+	}
 	public function getListDtlSimpanan()
 	{
 		$idANggota = $this->session->id;
@@ -83,7 +101,7 @@ class Homeanggota extends MX_Controller
 		$dataPnjam = $this->db->query($que)->result();
 		$data['pinjam'] = $dataPnjam;
 
-		$que1 = "SELECT fk_pinjaman_id,t.bulan,t.tahun,tp.angsuran_ke,tp.pokok,tp.tapim,tp.bunga,tp.jml_tagihan FROM t_cb_tagihan_pinjaman tp 
+		$que1 = "SELECT fk_pinjaman_id,t.bulan,t.tahun,tp.angsuran_ke,tp.pokok,tp.tapim,tp.bunga,tp.jml_tagihan FROM t_cb_tagihan_pinjaman tp
 				INNER JOIN t_cb_tagihan t ON t.id=tp.fk_tagihan_id
 				INNER JOIN t_cb_pinjaman p ON p.id=tp.fk_pinjaman_id
 				WHERE p.status=0 AND t.status_posting=1 AND tp.fk_anggota_id=$idANggota
