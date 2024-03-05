@@ -32,7 +32,7 @@ class Laporan extends CI_Controller
 		$periode = explode('-', $periode);
 		$periode = $periode[1] . '-' . $periode[0] . '-01';
 		$data['skpd'] = $this->db->query("select nama_skpd from ms_cb_skpd where id = ? ", [$fk_skpd_id])->row()->nama_skpd;
-		$data['hasil'] = $this->db->query("CALL getTunggakanPinjaman (?,?)", [$periode, $fk_skpd_id])->result();
+		$data['hasil'] = $this->getTunggakanPinjaman($periode, $fk_skpd_id);
 		$data['periode'] = $this->help->namaBulan(substr($periode, 5, 2));
 		$data['tahun'] = substr($periode, 0, 4);
 		$html = $this->load->view('Laporan/tunggakan_pdf', $data, true);
@@ -42,6 +42,34 @@ class Laporan extends CI_Controller
 		} else {
 			$this->excel($title, $html);
 		}
+	}
+	function getTunggakanPinjaman($periode, $fk_skpd_id)
+	{
+		return $this->db->query("	select * from (SELECT
+			nip,
+			nama,
+			jml_angsuran,
+			tenor,
+			MAX(
+			STR_TO_DATE( CONCAT( tahun, '-', bulan, '-', 01 ), '%Y-%m-%d' )) last_tx,
+		CASE
+
+				WHEN tenor - jml_angsuran < TIMESTAMPDIFF( MONTH, MAX( STR_TO_DATE( CONCAT( tahun, '-', bulan, '-', 01 ), '%Y-%m-%d' )), ? ) THEN
+				tenor - jml_angsuran ELSE TIMESTAMPDIFF( MONTH, MAX( STR_TO_DATE( CONCAT( tahun, '-', bulan, '-', 01 ), '%Y-%m-%d' )), ? )
+			END AS jml_tunggakan
+		FROM
+			t_cb_pinjaman
+			JOIN t_cb_tagihan_pinjaman ON t_cb_tagihan_pinjaman.fk_pinjaman_id = t_cb_pinjaman.id
+			JOIN ms_cb_user_anggota ON ms_cb_user_anggota.id = t_cb_tagihan_pinjaman.fk_anggota_id
+			JOIN t_cb_tagihan ON t_cb_tagihan.id = t_cb_tagihan_pinjaman.fk_tagihan_id
+		WHERE
+			status = 0
+			AND fk_id_skpd = ?
+		GROUP BY
+			t_cb_pinjaman.id
+		) a WHERE jml_tunggakan > 0
+	ORDER BY
+		jml_tunggakan DESC;", [$periode, $periode, $fk_skpd_id])->result();
 	}
 
 	public function pinjaman()

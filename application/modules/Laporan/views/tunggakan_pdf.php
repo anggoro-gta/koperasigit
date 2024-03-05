@@ -34,8 +34,8 @@
                     <td align="center"><?= ++$key ?></td>
                     <td><?= $value->nip ?></td>
                     <td><?= $value->nama ?></td>
-                    <td><?= $value->last_tx ?></td>
-                    <td><?= $value->jml_tunggakan ?></td>
+                    <td align="center"><?= $this->help->ReverseTgl($value->last_tx) ?></td>
+                    <td align="center"><?= $value->jml_tunggakan ?></td>
                 </tr>
             <?php endforeach; ?>
         </table>
