@@ -81,6 +81,10 @@
             <div class="menu_section">
               <h3>&nbsp;</h3>
               <ul class="nav side-menu">
+                <li class="<?php if (isset($dataanggota)) {
+                              echo 'active';
+                            } ?>"><a href="<?php echo base_url('Homeanggota/updatedataanggota') ?>"><i class="fa fa-database"></i> Update Data</a>
+                </li>
                 <li class="<?php if (isset($beranda)) {
                               echo 'active';
                             } ?>"><a href="<?php echo base_url('Homeanggota') ?>"><i class="fa fa-home"></i> Beranda</a>

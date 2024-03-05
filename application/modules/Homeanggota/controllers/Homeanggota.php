@@ -35,6 +35,28 @@ class Homeanggota extends MX_Controller
 		$this->template->load('Homeanggota/templateanggota', 'Homeanggota/berandaanggota', $data);
 	}
 
+	public function updatedataanggota()
+	{
+		$id = $_SESSION['id'];
+
+		$kat = $this->db->query("SELECT * FROM ms_cb_user_anggota WHERE id=$id")->row();
+
+		$data = array(
+			'action' => base_url() . 'Homeanggota/saveupdatedataanggota',
+			'button' => 'Update',
+			'id' => set_value('id', $kat->id),
+			'nama' => set_value('nama', $kat->nama),
+			'nik' => set_value('nik', $kat->nik),
+			'nip' => set_value('nip', $kat->nip),
+			'nomor_hp' => set_value('nomor_hp', $kat->nomor_hp),
+			'alamat' => set_value('alamat', $kat->alamat),
+		);
+
+		$data['dataanggota'] = 'active';
+
+		$this->template->load('Homeanggota/templateanggota', 'Homeanggota/formupdateanggota', $data);
+	}
+
 	public function getListDtlSimpanan()
 	{
 		$idANggota = $this->session->id;
@@ -70,7 +92,7 @@ class Homeanggota extends MX_Controller
 
 		$arrDetail = array();
 		foreach ($dtl as $val) {
-			$arrDetail[$val->fk_pinjaman_id][]=$val;
+			$arrDetail[$val->fk_pinjaman_id][] = $val;
 		}
 		$data['detailnya'] = $arrDetail;
 

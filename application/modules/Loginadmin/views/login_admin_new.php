@@ -28,7 +28,9 @@
                 <div class="col-md-12 col-lg-10">
                     <div class="wrap d-md-flex">
 
-                        <img class="img" src="<?php echo base_url() . 'assets_login_admin/' ?>images/bg-2.jpg" alt="">
+                        <!-- <img class="img" src="<?php echo base_url() . 'assets_login_admin/' ?>images/bg-2.jpg" alt=""> -->
+                        <div class="img" style="background-image: url(assets_login_admin/images/bg-2.jpg);">
+                        </div>
 
                         <div class="login-wrap p-4 p-md-5">
                             <div class="d-flex">

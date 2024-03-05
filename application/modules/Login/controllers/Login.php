@@ -20,7 +20,7 @@ class Login extends CI_Controller
 		$user = $this->input->post('username');
 		$pass = md5($this->input->post('password'));
 
-		$this->db->select('*')->from('ms_cb_user_anggota')->where(array('blokir'=>'N', 'username'=>$user,'password'=>$pass));
+		$this->db->select('*')->from('ms_cb_user_anggota')->where(array('blokir' => 'N', 'username' => $user, 'password' => $pass));
 		$hasil = $this->db->get()->row();
 
 		if (isset($hasil)) {
@@ -55,7 +55,7 @@ class Login extends CI_Controller
 
 			$this->session->set_userdata($data);
 
-			redirect('Homeanggota');
+			redirect('Homeanggota/updatedataanggota');
 		} else {
 			$data['username'] = $user;
 			$this->session->set_flashdata('error', 'username atau password anda salah.');
