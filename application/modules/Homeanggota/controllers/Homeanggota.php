@@ -40,6 +40,9 @@ class Homeanggota extends MX_Controller
 		$id = $_SESSION['id'];
 
 		$kat = $this->db->query("SELECT * FROM ms_cb_user_anggota WHERE id=$id")->row();
+		if ($kat->status_update == 1) {
+			redirect('Homeanggota');
+		}
 
 		$data = array(
 			'action' => base_url() . 'Homeanggota/saveupdatedataanggota',
@@ -69,11 +72,12 @@ class Homeanggota extends MX_Controller
 		$data['nip_gabung'] = $this->input->post('nip');
 		$data['nomor_hp'] = $this->input->post('nomor_hp');
 		$data['alamat'] = $this->input->post('alamat');
+		$data['status_update'] = 1;
 		$data['fk_id_status_pekerjaan'] = $this->input->post('fk_id_status_pekerjaan');
 
 		$this->MMscbUseranggota->update($this->input->post('id'), $data);
 		$this->session->set_flashdata('success', 'Data Berhasil diupdate.');
-		redirect('Homeanggota/updatedataanggota');
+		redirect('Homeanggota');
 	}
 	public function getListDtlSimpanan()
 	{
