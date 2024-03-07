@@ -144,6 +144,52 @@ class Laporan extends CI_Controller
 			$this->excel($title, $html);
 		}
 	}
+
+	public function updateanggota()
+	{
+		$data['judul'] = 'Laporan Update Anggota';
+		$data['lapUpdateAnggota'] = 'active';
+		$data['action'] = base_url() . 'Laporan/cetak_update_anggota';
+		$data['arrSKPD'] = $this->db->query("select * from ms_cb_skpd")->result_array();
+		$this->template->load('Homeadmin/templateadmin', 'Laporan/update_anggota_form', $data);
+	}
+
+	public function cetak_update_anggota()
+	{
+		$type = $this->input->post('type');
+		$jenis = $this->input->post('jenis');
+		$fk_skpd_id = $this->input->post('fk_skpd_id');
+		$data['skpd'] = $this->db->query("select nama_skpd from ms_cb_skpd where id = ? ", [$fk_skpd_id])->row()->nama_skpd;
+		$data['jenis'] = $jenis;
+		if ($jenis == 1) {
+			$data['hasil'] = $this->db->query("select
+			nama_skpd,
+				sum(case
+					when status_update = 0 then 1
+				end ) as belum_update,
+				COALESCE(sum(case
+					when status_update = 1 then 1
+				end) ,0) as sudah_update
+			from
+				ms_cb_user_anggota mcua
+			join ms_cb_skpd mcs on
+				mcua.fk_id_skpd = mcs.id
+			group by
+				nama_skpd
+				order by nama_skpd")->result();
+		} else {
+			$data['hasil'] = $this->db->query("select
+			nama,status_update from ms_cb_user_anggota where fk_id_skpd = ?
+				order by nama", [$fk_skpd_id])->result();
+		}
+		$html = $this->load->view('Laporan/update_anggota_pdf', $data, true);
+		$title = 'Laporan Simpanan';
+		if ($type == 'pdf') {
+			$this->pdf($title, $html, $this->help->folio_P(), false);
+		} else {
+			$this->excel($title, $html);
+		}
+	}
 	protected function pdf($title, $html, $page, $batas = false)
 	{
 		// echo $html;
@@ -160,10 +206,10 @@ class Laporan extends CI_Controller
 
 	protected function excel($title, $html, $ext = 'xls')
 	{
-		header("Content-type: application/x-msdownload");
-		header("Content-Disposition: attachment; filename=$title.$ext");
-		header("Pragma: no-cache");
-		header("Expires: 0");
+		// header("Content-type: application/x-msdownload");
+		// header("Content-Disposition: attachment; filename=$title.$ext");
+		// header("Pragma: no-cache");
+		// header("Expires: 0");
 		echo $html;
 	}
 }

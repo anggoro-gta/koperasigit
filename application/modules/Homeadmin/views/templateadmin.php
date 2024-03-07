@@ -144,6 +144,9 @@
                       <li class="<?php if (isset($lapSimpanan)) {
                                     echo 'active';
                                   } ?>"><a href="<?php echo base_url('Laporan/simpanan') ?>">Lap Simpanan</a></li>
+                      <li class="<?php if (isset($lapUpdateAnggota)) {
+                                    echo 'active';
+                                  } ?>"><a href="<?php echo base_url('Laporan/updateanggota') ?>">Lap Update Anggota</a></li>
                     </ul>
                   </li>
                 <?php } ?>
