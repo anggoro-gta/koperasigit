@@ -94,12 +94,14 @@ class Tagihan extends CI_Controller
 		if ($id) {
 			$sw = 0;
 			$simpanan = $this->db->query("select
-			tcts.*, mcua.nama ,mcua.nip
+			tcts.*, mcua.nama ,mcua.nip,tapim
 		from
 			t_cb_tagihan_simpanan tcts
 			join ms_cb_user_anggota mcua on tcts.fk_anggota_id = mcua.id
+			left join t_cb_tagihan_pinjaman tctp on tctp.fk_anggota_id=tcts.fk_anggota_id and tctp.fk_tagihan_id=tcts.fk_tagihan_id
 		where
-			fk_tagihan_id = ?",  [$id])->result();
+			tcts.fk_tagihan_id=?
+			ORDER BY tcts.fk_anggota_id asc",  [$id])->result();
 			$pinjaman = $this->db->query("select
 			tgl,
 			nama,
@@ -116,7 +118,7 @@ class Tagihan extends CI_Controller
 			join t_cb_pinjaman tcp on tcp.id =tctp.fk_pinjaman_id
 			join ms_cb_kategori_pinjam mckp on mckp.id = tcp.fk_kategori_id
 		where
-			fk_tagihan_id = ?",  [$id])->result();
+			fk_tagihan_id = ? ORDER BY fk_anggota_id asc",  [$id])->result();
 			$readonly = true;
 			$status_posting = $this->db->query("select * from t_cb_tagihan where id = ? ", [$id])->row()->status_posting;
 		} else {
