@@ -48,28 +48,28 @@
                 <input type="text" name="nama" required class="form-control col-md-7 col-xs-12" value="<?= $nama ?>">
               </div>
             </div>
-            <div class="form-group required">
+            <div class="form-group">
               <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Alamat</label>
               <div class="col-md-6 col-sm-6 col-xs-12">
-                <input type="text" name="alamat" required class="form-control col-md-7 col-xs-12" value="<?= $alamat ?>">
+                <input type="text" name="alamat" class="form-control col-md-7 col-xs-12" value="<?= $alamat ?>">
               </div>
             </div>
-            <div class="form-group required">
+            <div class="form-group">
               <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">NIK</label>
               <div class="col-md-6 col-sm-6 col-xs-12">
-                <input type="text" name="nik" required class="form-control col-md-7 col-xs-12 angka" value="<?= $nik ?>">
+                <input type="text" name="nik" class="form-control col-md-7 col-xs-12 angka" value="<?= $nik ?>">
               </div>
             </div>
-            <div class="form-group required">
+            <div class="form-group">
               <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">NIP</label>
               <div class="col-md-6 col-sm-6 col-xs-12">
-                <input type="text" name="nip" required class="form-control col-md-7 col-xs-12 upper" value="<?= $nip ?>">
+                <input type="text" name="nip" class="form-control col-md-7 col-xs-12 upper" value="<?= $nip ?>">
               </div>
             </div>
-            <div class="form-group required">
+            <div class="form-group">
               <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">No. HP</label>
               <div class="col-md-6 col-sm-6 col-xs-12">
-                <input type="text" name="nomor_hp" required class="form-control col-md-7 col-xs-12 upper" value="<?= $nomor_hp ?>">
+                <input type="text" name="nomor_hp" class="form-control col-md-7 col-xs-12 upper" value="<?= $nomor_hp ?>">
               </div>
             </div>
             <div class="form-group required">

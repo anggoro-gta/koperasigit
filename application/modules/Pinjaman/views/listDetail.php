@@ -148,6 +148,7 @@
             },
             processing: true,
             serverSide: true,
+            "pageLength": 100,
             ajax: {
                 "url": "<?= base_url() ?>Pinjaman/getDatatables",
                 "type": "POST",

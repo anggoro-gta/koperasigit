@@ -69,6 +69,7 @@
                     "sLast": ">>"
                 }
             },
+            "pageLength": 100,
             processing: true,
             serverSide: true,
             ajax: {

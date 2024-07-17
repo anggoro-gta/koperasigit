@@ -93,6 +93,7 @@
             },
             processing: true,
             serverSide: true,
+            "pageLength": 100,
             ajax: {
                 "url": "<?= base_url() ?>MscbAnggota/getDatatables",
                 "type": "POST",
