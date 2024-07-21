@@ -31,7 +31,7 @@ class Auth extends CI_Controller
 			$data['username'] = $hasil->username;
 			$data['password'] = $hasil->password;
 			$data['nama_lengkap'] = $hasil->nama_lengkap;
-			$data['fk_level_id'] = $hasil->fk_level_id;
+			$data['fk_level_id'] = 99;
 			$data['fk_cabang_id'] = $hasil->fk_cabang_id;
 			$data['kode_pj'] = $hasil->kode_pj;
 

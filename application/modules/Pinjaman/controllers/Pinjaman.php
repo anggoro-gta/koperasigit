@@ -108,7 +108,7 @@ class Pinjaman extends CI_Controller
 		$data['jml_tagihan'] = str_replace(",", "", $this->input->post('bunga'));
 		$data['status'] = 0;
 
-		$get_hutang = $this->db->query("SELECT * FROM t_cb_pinjaman where id = '$id_anggota'")->row();
+		$get_hutang = $this->db->query("SELECT * FROM t_cb_pinjaman where id = '$id_anggota' and status = 0")->row();
 
 		if ($get_hutang == NULL) {
 			$this->McbPinjaman->insert($data);
@@ -181,5 +181,21 @@ class Pinjaman extends CI_Controller
 		// $data['fee_terapis'] = number_format($hsl['fee_terapis']);
 
 		echo json_encode($data);
+	}
+
+	public function delete($id)
+	{
+		if ($this->session->fk_level_id == 1) {
+			$result = $this->McbPinjaman->delete($id);
+			if ($result) {
+				$this->session->set_flashdata('success', 'Data berhasil dihapus.');
+			} else {
+				$this->session->set_flashdata('error', 'Data hanya bisa diupdate');
+			}
+		} else {
+			$this->session->set_flashdata('error', 'Data hanya bisa diupdate');
+		}
+
+		redirect('Pinjaman');
 	}
 }

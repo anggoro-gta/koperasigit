@@ -6,7 +6,6 @@
                 <h2>List</h2>
                 <ul class="nav navbar-right panel_toolbox">
                     <div class="pull-right">
-                        <!-- <a href="#" id="upload_file" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-cloud-upload"></i> Upload</a> -->
                         <a href="<?= $act_add ?>" class="btn btn-sm btn-success"><i class="glyphicon glyphicon-plus"></i> Tambah</a>
                     </div>
                 </ul>
@@ -19,42 +18,39 @@
                         <table class="table table-bordered table-striped" id="example2" style="width: 100%">
                             <thead>
                                 <tr>
-                                    <th width="5%">NO</th>
+                                    <th width="5%">No</th>
                                     <!-- <th><center>Cabang</center></th> -->
                                     <th>
-                                        <center>NAMA ANGGOTA</center>
+                                        <center>id</center>
                                     </th>
                                     <th>
-                                        <center>TANGGAL PINJAM</center>
+                                        <center>Nama</center>
                                     </th>
                                     <th>
-                                        <center>JUMLAH PINJAMAN</center>
+                                        <center>Alamat</center>
                                     </th>
                                     <th>
-                                        <center>ANGSURAN YG TERBAYAR</center>
+                                        <center>NIK</center>
                                     </th>
                                     <th>
-                                        <center>TENOR</center>
+                                        <center>NIP</center>
                                     </th>
                                     <th>
-                                        <center>POKOK</center>
+                                        <center>No. HP</center>
                                     </th>
                                     <th>
-                                        <center>TAPIM</center>
+                                        <center>Jenis Kelamin</center>
                                     </th>
                                     <th>
-                                        <center>BUNGA</center>
+                                        <center>Status</center>
                                     </th>
                                     <th>
-                                        <center>TAGIHAN BULANAN</center>
+                                        <center>SKPD</center>
                                     </th>
                                     <th>
-                                        <center>JENIS</center>
+                                        <center>Pengingat<br>(Kirim WA)</center>
                                     </th>
-                                    <th>
-                                        <center>STATUS LUNAS</center>
-                                    </th>
-                                    <th>AKSI</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                         </table>
@@ -64,59 +60,8 @@
         </div>
     </div>
 </div>
-<div class="modal fade slide-up disable-scroll" id="modal_upload" role="dialog" aria-hidden="false">
-    <div class="modal-dialog" style="width: 50%;padding: 0px">
-        <div class="modal-content">
-            <form method="post" action="<?= base_url("Simpanan/saveUpload") ?>" enctype="multipart/form-data" class="form-horizontal">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-                    <h5><b>UPLOAD SIMPANAN</b></h5>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group required">
-                        <label class="control-label col-md-3 col-sm-6 col-xs-12">SKPD</label>
-                        <div class="col-md-8 col-sm-10 col-xs-12">
-                            <div class="input-group">
-                                <select class="form-control" name="fk_id_skpd" id="fk_id_skpd" required>
-                                    <option value="">.: Pilih :.</option>
-                                    <?php foreach ($arrSkpd as $val) { ?>
-                                        <option value="<?= $val['id'] ?>"><?= $val['nama_skpd'] ?></option>
-                                    <?php } ?>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group required">
-                        <label class="col-md-3 col-sm-6 col-xs-12 control-label">Tanggal</label>
-                        <div class="col-md-3">
-                            <input type="text" class="form-control tanggal text-center" name="tgl" required>
-                        </div>
-                    </div>
-                    <div class="form-group required">
-                        <label class="col-md-3 col-sm-6 col-xs-12 control-label">Upload File</label>
-                        <div class="col-md-9">
-                            <input type="file" class="form-control" name="fileExcel" accept=".xsl, .xlsx" required>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-md btn-default pull-left inline" data-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-md btn-success pull-left inline">Proses Upload</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 <script type="text/javascript">
     level = "<?= $this->session->fk_level_id ?>";
-
-    statuslunas = "lunas";
-    statusblmlunas = "belum lunas"
-
-    $("#fk_id_skpd").select2();
-    $('.tanggal').datepicker({
-        autoclose: true,
-    });
     $(document).ready(function() {
         var t = $("#example2").dataTable({
             initComplete: function() {
@@ -150,7 +95,7 @@
             serverSide: true,
             "pageLength": 100,
             ajax: {
-                "url": "<?= base_url() ?>Pinjaman/getDatatables",
+                "url": "<?= base_url() ?>MscbAnggota/getDatatables",
                 "type": "POST",
                 "data": {
                     "skpd": "<?= $skpd ?>",
@@ -162,80 +107,68 @@
                     "className": "text-center"
                 },
                 {
+                    "data": "id",
+                    "orderable": false,
+                },
+                {
                     "data": "nama",
                     "orderable": false,
                 },
                 {
-                    "data": "tgl",
+                    "data": "alamat",
                     "orderable": false,
-                    "className": "text-center",
-                    "searchable": false,
+                    "className": "text-center"
                 },
                 {
-                    "data": "pinjaman",
+                    "data": "nik",
                     "orderable": false,
-                    "className": "text-right",
                     "searchable": false,
+                    "className": "text-center"
                 },
                 {
-                    "data": "jml_angsuran",
+                    "data": "nip",
                     "orderable": false,
-                    "className": "text-center",
-                    "searchable": false,
+                    "className": "text-center"
                 },
                 {
-                    "data": "tenor",
+                    "data": "nomor_hp",
                     "orderable": false,
-                    "className": "text-center",
                     "searchable": false,
+                    "className": "text-center"
                 },
                 {
-                    "data": "pokok",
+                    "data": "jenis_kelamin",
                     "orderable": false,
-                    "className": "text-right",
                     "searchable": false,
+                    "className": "text-center"
                 },
                 {
-                    "data": "tapim",
+                    "data": "status_keaktifan",
                     "orderable": false,
-                    "className": "text-right",
                     "searchable": false,
+                    "className": "text-center"
                 },
                 {
-                    "data": "bunga",
+                    "data": "nama_skpd",
                     "orderable": false,
-                    "className": "text-right",
                     "searchable": false,
-                },
-                {
-                    "data": "jml_tagihan",
-                    "orderable": false,
-                    "className": "text-right",
-                    "searchable": false,
-                },
-                {
-                    "data": "kategori",
-                    "orderable": false,
-                    "className": "text-center",
-                    "searchable": false,
-                },
-                {
-                    "data": "status",
-                    "orderable": false,
-                    "className": "text-center",
+                    "className": "text-center"
                 },
                 {
                     "data": "id",
                     "orderable": false,
+                    "searchable": false,
                     "className": "text-center",
                     render: function(data, type, row) {
-                        aksi = '<div class="btn-group">';
-                        if (row.jml_angsuran == 0) {
-                            aksi += '<a class="btn btn-xs btn-danger" href="<?= base_url() ?>Pinjaman/delete/' + data + '"><i class="glyphicon glyphicon-trash icon-white" title="Hapus" onclick="return confirmDelete()"></i></a>';
-                        }
-                        aksi += '</div>';
-                        return aksi;
+                        hsl = '<a class="btn btn-xs" style="background-color: orange; color:white" onclick="kirimWA(' + row.id + ')"><i class="glyphicon glyphicon-bullhorn icon-white" title="Kirim Whatsapp"></i></a>';
+                        return hsl;
                     },
+                },
+                {
+                    "data": "action",
+                    "orderable": false,
+                    "className": "text-center",
+                    "visible": level == 2 ? false : true,
                 },
             ],
             order: [
@@ -267,12 +200,4 @@
             }
         })
     }
-
-    function confirmDelete() {
-        return confirm('Apakah anda yakin?');
-    };
-
-    $("#upload_file").click(function() {
-        $("#modal_upload").modal("show");
-    });
 </script>

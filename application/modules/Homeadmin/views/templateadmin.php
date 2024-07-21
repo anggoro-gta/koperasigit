@@ -50,7 +50,7 @@
 
   // });
 </script>
-<?php $level = $this->session->fk_cb_level_id; ?>
+<?php $level = $this->session->fk_level_id; ?>
 
 <body class="nav-md">
   <div class="container body">

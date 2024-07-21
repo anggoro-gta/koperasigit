@@ -20,7 +20,7 @@ class Loginadmin extends CI_Controller
 		$user = $this->input->post('username');
 		$pass = md5($this->input->post('password'));
 
-		$this->db->select('*')->from('ms_cb_user_sistem')->where(array('blokir'=>'N', 'username'=>$user,'password'=>$pass));
+		$this->db->select('*')->from('ms_cb_user_sistem')->where(array('blokir' => 'N', 'username' => $user, 'password' => $pass));
 		$hasil = $this->db->get()->row();
 
 		if (isset($hasil)) {
@@ -32,7 +32,7 @@ class Loginadmin extends CI_Controller
 			$data['username'] = $hasil->username;
 			$data['password'] = $hasil->password;
 			$data['nama_lengkap'] = $hasil->nama_lengkap;
-			$data['fk_cb_level_id'] = $hasil->fk_cb_level_id;
+			$data['fk_level_id'] = $hasil->fk_cb_level_id;
 			// $data['fk_cabang_id'] = $hasil->fk_cabang_id;
 			// $data['kode_pj'] = $hasil->kode_pj;
 

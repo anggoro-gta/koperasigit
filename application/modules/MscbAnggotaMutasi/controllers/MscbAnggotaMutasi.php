@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class MscbAnggota extends CI_Controller
+class MscbAnggotaMutasi extends CI_Controller
 {
 
 	function __construct()
@@ -12,6 +12,7 @@ class MscbAnggota extends CI_Controller
 		$this->load->model('MMscbUseranggota');
 		$this->load->model('MMscbSkpd');
 		$this->load->model('MMscbStatuspekerjaan');
+		$this->load->model('MMscbUserAnggotaMutasi');
 		// $this->load->model('MMscbSimpanan');
 
 		// $this->load->model('MMsCabang');
@@ -21,8 +22,8 @@ class MscbAnggota extends CI_Controller
 	{
 		$this->MHome->ceklogin();
 		$data = null;
-		$data['MscbAnggota'] = 'active';
-		$data['arrAnggota'] = $this->MMscbSkpd->get();
+		$data['MscbAnggotaMutasi'] = 'active';
+		$data['arrAnggotaMutasi'] = $this->MMscbSkpd->get();
 		// $data['arrcabang'] = $this->MMsCabang->get();
 		$this->template->load('Homeadmin/templateadmin', 'MscbAnggota/list', $data);
 	}
@@ -70,7 +71,7 @@ class MscbAnggota extends CI_Controller
 		$this->datatables->from("ms_cb_user_anggota a");
 		$this->datatables->join('ms_cb_skpd s', 'a.fk_id_skpd=s.id', 'inner');
 		$this->db->order_by('id', 'asc');
-		$this->datatables->add_column('action', '<div class="btn-group">' . anchor(site_url('MscbAnggota/update/$1'), '<i title="edit" class="glyphicon glyphicon-edit icon-white"></i>', 'class="btn btn-xs btn-success"') . anchor(site_url('MscbAnggota/delete/$1'), '<i title="hapus" class="glyphicon glyphicon-trash icon-white"></i>', 'class="btn btn-xs btn-danger" onclick="javasciprt: return confirm(\'Apakah anda yakin?\')"') . anchor(site_url('MscbAnggota/resetpassword/$1'), '<i title="reset password" class="glyphicon glyphicon-refresh icon-white"></i>', 'class="btn btn-xs btn-warning" onclick="javasciprt: return confirm(\'Apakah anda yakin?\')"') . anchor(site_url('MscbAnggotaMutasi/update/$1'), '<i title="mutasi" class="glyphicon glyphicon-share icon-white"></i>', 'class="btn btn-xs btn-primary"') . anchor(site_url('MscbAnggotaMutasi/detail_mutasi/$1'), '<i title="histori mutasi" class="glyphicon glyphicon-list-alt icon-white"></i>', 'class="btn btn-xs btn-primary"') . '</div>', 'id');
+		$this->datatables->add_column('action', '<div class="btn-group">' . anchor(site_url('MscbAnggota/update/$1'), '<i title="edit" class="glyphicon glyphicon-edit icon-white"></i>', 'class="btn btn-xs btn-success"') . anchor(site_url('MscbAnggota/delete/$1'), '<i title="hapus" class="glyphicon glyphicon-trash icon-white"></i>', 'class="btn btn-xs btn-danger" onclick="javasciprt: return confirm(\'Apakah anda yakin?\')"') . anchor(site_url('MscbAnggota/resetpassword/$1'), '<i title="reset password" class="glyphicon glyphicon-refresh icon-white"></i>', 'class="btn btn-xs btn-warning" onclick="javasciprt: return confirm(\'Apakah anda yakin?\')"') . '</div>', 'id');
 
 		echo $this->datatables->generate();
 	}
@@ -83,7 +84,7 @@ class MscbAnggota extends CI_Controller
 		$wajib = $this->db->query("SELECT * FROM ms_cb_simpanan WHERE kategori='wajib'")->row();
 
 		$data = array(
-			'action' => base_url() . 'MscbAnggota/save',
+			'action' => base_url() . 'MscbAnggotaMutasi/save',
 			'button' => 'Simpan',
 			'id' => set_value('id'),
 			'nama' => set_value('nama'),
@@ -115,10 +116,11 @@ class MscbAnggota extends CI_Controller
 		$kat = $this->db->query("SELECT * FROM ms_cb_user_anggota WHERE id=$id")->row();
 
 		$data = array(
-			'action' => base_url() . 'MscbAnggota/save',
+			'action' => base_url() . 'MscbAnggotaMutasi/savemutasi',
 			'button' => 'Update',
 			'id' => set_value('id', $kat->id),
 			'nama' => set_value('nama', $kat->nama),
+			'tgl' => set_value('tgl'),
 			'alamat' => set_value('alamat', $kat->alamat),
 			'nik' => set_value('nik', $kat->nik),
 			'nip' => set_value('nip', $kat->nip),
@@ -131,12 +133,39 @@ class MscbAnggota extends CI_Controller
 			'simpanan_wajib' => set_value('simpanan_wajib', $kat->simpanan_wajib),
 			'keterangan' => set_value('keterangan', $kat->keterangan),
 		);
-		$data['MscbAnggota'] = 'active';
+		$data['MscbAnggotaMutasi'] = 'active';
 		$data['act_back'] = base_url() . 'MscbAnggota';
-		$data['arrStatuspekerjaan'] = $this->MMscbStatuspekerjaan->get();
+		// $data['arrStatuspekerjaan'] = $this->MMscbStatuspekerjaan->get();
 		$data['arrSkpd'] = $this->MMscbSkpd->get();
 		// $data['arrSimpanan'] = $this->MMscbSimpanan->get();
-		$this->template->load('Homeadmin/templateadmin', 'MscbAnggota/form', $data);
+		$this->template->load('Homeadmin/templateadmin', 'MscbAnggotaMutasi/form', $data);
+	}
+
+	public function savemutasi()
+	{
+		$this->MHome->ceklogin();
+		$id = $this->input->post('id');
+		$fk_id_skpd_lama = $this->input->post('fk_id_skpd_lama');
+		$fk_id_skpd = $this->input->post('fk_id_skpd');
+
+		if ($fk_id_skpd == $fk_id_skpd_lama) {
+			$this->session->set_flashdata('error', 'Data gagal diupdate');
+		} else {
+			$data['fk_id_skpd'] = $this->input->post('fk_id_skpd');
+
+			$this->MMscbUseranggota->update($id, $data);
+
+			$datamutasi['fk_user_anggota_id'] = $this->input->post('id');
+			$datamutasi['tgl_mutasi'] = $this->help->ReverseTgl($this->input->post('tgl'));
+			$datamutasi['fk_opd_sebelum'] = $this->input->post('fk_id_skpd_lama');
+			$datamutasi['fk_opd_sesudah'] = $this->input->post('fk_id_skpd');
+			$datamutasi['user_act'] = $this->session->id;
+			$datamutasi['time_act'] = date('Y-m-d H:i:s');
+
+			$this->MMscbUserAnggotaMutasi->insert($datamutasi);
+			$this->session->set_flashdata('success', 'Data Berhasil diupdate.');
+		}
+		redirect('MscbAnggota');
 	}
 
 	public function save()
@@ -260,6 +289,42 @@ class MscbAnggota extends CI_Controller
 		}
 
 		redirect('MscbAnggota');
+	}
+
+	public function detail_mutasi($id)
+	{
+		$this->MHome->ceklogin();
+		$skpd = $this->db->query("select * from ms_cb_skpd")->result_array();
+		$data = array(
+			'action' => base_url() . 'Tagihan/save_kolektif',
+			'button' => 'Buat Tagihan',
+			'id' => set_value('id', $id)
+		);
+
+		$data['MscbAnggota'] = 'active';
+		$data['act_back'] = base_url() . 'MscbAnggota';
+		$data['arrUserAnggota'] = $this->MMscbUseranggota->get();
+		$this->template->load('Homeadmin/templateadmin', 'MscbAnggotaMutasi/formdetailmutasi', $data);
+	}
+
+	function getData($id = null)
+	{
+		$getdatapost = $this->input->post('datatest');
+
+		$detailmutasi = $this->db->query('select
+			m.id,m.tgl_mutasi,m.fk_user_anggota_id,a.nama,sb.nama_skpd as sebelum,sd.nama_skpd as sesudah
+		from
+			ms_cb_user_anggota_mutasi m
+			join ms_cb_user_anggota a on a.id= m.fk_user_anggota_id
+			join ms_cb_skpd sb on m.fk_opd_sebelum = sb.id
+			join ms_cb_skpd sd on m.fk_opd_sesudah = sd.id
+		where
+			m.fk_user_anggota_id =' . $id . ' ORDER BY m.id DESC')->result();
+
+		$data = [
+			'detailmutasi' => $detailmutasi
+		];
+		$this->load->view('MscbAnggotaMutasi/_formdetailmutasi', $data);
 	}
 
 	public function prosesKirimWA()
