@@ -33,6 +33,7 @@ class Loginadmin extends CI_Controller
 			$data['password'] = $hasil->password;
 			$data['nama_lengkap'] = $hasil->nama_lengkap;
 			$data['fk_level_id'] = $hasil->fk_cb_level_id;
+			$data['fk_cb_level_id'] = $hasil->fk_cb_level_id;
 			// $data['fk_cabang_id'] = $hasil->fk_cabang_id;
 			// $data['kode_pj'] = $hasil->kode_pj;
 
