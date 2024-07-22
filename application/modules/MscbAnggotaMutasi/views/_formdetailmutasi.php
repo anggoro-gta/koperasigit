@@ -26,6 +26,9 @@
                             <td><?= $this->help->ReverseTgl($p->tgl_mutasi) ?></td>
                             <td><?= $p->sebelum ?></td>
                             <td><?= $p->sesudah ?></td>
+                            <td>
+                                <div class="btn-group text-center"><a class="btn btn-xs btn-danger" onclick="return confirm('Apakah Anda akan menghapus data?');" href="<?php echo base_url() ?>/MscbAnggotaMutasi/delete_detailmutasi/<?= $p->id ?>"><i class="fa fa-trash"></i></a></div>
+                            </td>
                         </tr>
                     <?php } ?>
                 </tbody>

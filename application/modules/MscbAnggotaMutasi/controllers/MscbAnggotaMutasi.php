@@ -327,6 +327,23 @@ class MscbAnggotaMutasi extends CI_Controller
 		$this->load->view('MscbAnggotaMutasi/_formdetailmutasi', $data);
 	}
 
+	public function delete_detailmutasi($id)
+	{
+		$this->MHome->ceklogin();
+		// if($this->session->fk_level_id==1){
+		$result = $this->MMscbUserAnggotaMutasi->delete($id);
+		if ($result) {
+			$this->session->set_flashdata('success', 'Data berhasil dihapus.');
+		} else {
+			$this->session->set_flashdata('error', 'Data hanya bisa diupdate');
+		}
+		// }else{
+		// 	$this->session->set_flashdata('error', 'Data hanya bisa diupdate');
+		// }
+
+		redirect('MscbAnggota');
+	}
+
 	public function prosesKirimWA()
 	{
 		$this->MHome->ceklogin();
