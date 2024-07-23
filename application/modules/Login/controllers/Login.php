@@ -12,6 +12,7 @@ class Login extends CI_Controller
 	public function index()
 	{
 		$data['username'] = '';
+		// redirect('/');
 		$this->load->view('login_new', $data);
 	}
 
@@ -59,13 +60,14 @@ class Login extends CI_Controller
 		} else {
 			$data['username'] = $user;
 			$this->session->set_flashdata('error', 'username atau password anda salah.');
-			$this->load->view('login_new', $data);
+			// $this->load->view('login_new', $data);
+			redirect('/');
 		}
 	}
 
 	function logout()
 	{
 		$this->session->sess_destroy();
-		redirect('Login');
+		redirect('/');
 	}
 }

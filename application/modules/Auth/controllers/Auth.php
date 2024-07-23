@@ -12,7 +12,8 @@ class Auth extends CI_Controller
 	public function index()
 	{
 		$data['username'] = '';
-		$this->load->view('login_new', $data);
+		// $this->load->view('login_new', $data);
+		redirect('/');
 	}
 
 	public function prosesLogin()

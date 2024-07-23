@@ -49,7 +49,8 @@ class Loginadmin extends CI_Controller
 		} else {
 			$data['username'] = $user;
 			$this->session->set_flashdata('error', 'username atau password anda salah.');
-			$this->load->view('login_admin_new', $data);
+			// $this->load->view('login_admin_new', $data);
+			redirect('Loginadmin');
 		}
 	}
 
