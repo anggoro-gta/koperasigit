@@ -105,10 +105,12 @@ class Pinjaman extends CI_Controller
 		$data['pokok'] = str_replace(",", "", $this->input->post('pokok'));
 		$data['tapim'] = str_replace(",", "", $this->input->post('tapim'));
 		$data['bunga'] = str_replace(",", "", $this->input->post('bunga'));
-		$data['jml_tagihan'] = str_replace(",", "", $this->input->post('bunga'));
+		$data['jml_tagihan'] = str_replace(",", "", $this->input->post('jml_tagihan'));
 		$data['status'] = 0;
+		$data['user_act'] = $this->session->id;
+		$data['time_act'] = date('Y-m-d H:i:s');
 
-		$get_hutang = $this->db->query("SELECT * FROM t_cb_pinjaman where id = '$id_anggota' and status = 0")->row();
+		$get_hutang = $this->db->query("SELECT * FROM t_cb_pinjaman where fk_anggota_id = '$id_anggota' and status = 0")->row();		
 
 		if ($get_hutang == NULL) {
 			$this->McbPinjaman->insert($data);

@@ -365,6 +365,7 @@ class Tagihan extends CI_Controller
 	}
 	function getDataIndividu($id = null)
 	{
+		$jenis = $this->input->post('jenis');
 		$fk_anggota_id = $this->input->post('fk_anggota_id');
 		if ($id) {
 			$simpanan = $this->db->query("select
@@ -397,11 +398,10 @@ class Tagihan extends CI_Controller
 		} else {
 			$simpanan = false;
 			$showPinjaman = false;
-			$jenis = $this->input->post('jenis');
 			if (in_array($jenis, [2, 3])) {
 				$simpanan = true;
 			}
-			if (in_array($jenis, [1, 3])) {
+			if (in_array($jenis, [1, 3, 4, 5])) {
 				$showPinjaman = true;
 			}
 			$simpanan = $simpanan;
@@ -436,7 +436,8 @@ class Tagihan extends CI_Controller
 			'showPinjaman' => $showPinjaman ?? true,
 			'pinjaman' => $pinjaman,
 			'sw' => $sw,
-			'readonly' => $readonly
+			'readonly' => $readonly,
+			'jenis' => $jenis
 		];
 		$this->load->view('Tagihan/_form_individu', $data);
 	}
@@ -459,6 +460,7 @@ class Tagihan extends CI_Controller
 
 		$wajib = $this->input->post('wajib');
 		$sukarela = $this->input->post('sukarela');
+		$jenis = $this->input->post('jenis');
 
 		$data['fk_skpd_id'] = $fk_skpd_id;
 		$data['bulan'] = explode('-', $periode)[0];
@@ -469,33 +471,41 @@ class Tagihan extends CI_Controller
 		$this->MTagihan->insert($data);
 		$tagihanId = $this->db->insert_id();
 
-		$dataPinjaman = [];
+		if (in_array($jenis, [1, 3, 4, 5])) {
 
-		$pinjaman = [
-			'fk_tagihan_id' => $tagihanId,
-			'fk_pinjaman_id' => $fk_pinjaman_id,
-			'fk_anggota_id' => $fk_anggota_id,
-			'angsuran_ke' => str_replace(",", "", $angsuran_ke),
-			'pokok' => str_replace(",", "", $pokok),
-			'tapim' => str_replace(",", "", $tapim),
-			'bunga' => str_replace(",", "", $bunga),
-			'jml_tagihan' => str_replace(",", "", $jml_tagihan),
-		];
-		$this->db->query("update  t_cb_pinjaman set jml_angsuran = ? where id =? ", [$angsuran_ke, $fk_pinjaman_id]);
-		if ($angsuran_ke == $tenor) {
-			$this->db->query("update  t_cb_pinjaman set status = ? where id =? ", [1, $fk_pinjaman_id]);
-		}
-		$this->MTagihanPinjaman->insert($pinjaman);
-		// insert tagihan simpanan
-		if ($wajib) {
-			$simpanan = [
+			$dataPinjaman = [];
+
+			$pinjaman = [
 				'fk_tagihan_id' => $tagihanId,
-				'fk_skpd_id' => $fk_skpd_id,
+				'fk_pinjaman_id' => $fk_pinjaman_id,
 				'fk_anggota_id' => $fk_anggota_id,
-				'wajib' => str_replace(",", "", $wajib),
-				'sukarela' => str_replace(",", "", $sukarela),
+				'angsuran_ke' => str_replace(",", "", $angsuran_ke),
+				'pokok' => str_replace(",", "", $pokok),
+				'tapim' => str_replace(",", "", $tapim),
+				'bunga' => str_replace(",", "", $bunga),
+				'jml_tagihan' => str_replace(",", "", $jml_tagihan),
+				'is_kompensasi' => $jenis == 4 ? 1 : 0,
+				'is_pelunasan' => $jenis == 5 ? 1 : 0,
 			];
-			$this->MTagihanSimpanan->insert($simpanan);
+			$this->db->query("update  t_cb_pinjaman set jml_angsuran = ? where id =? ", [$angsuran_ke, $fk_pinjaman_id]);
+			if ($angsuran_ke == $tenor) {
+				$this->db->query("update  t_cb_pinjaman set status = ? where id =? ", [1, $fk_pinjaman_id]);
+			}
+			$this->MTagihanPinjaman->insert($pinjaman);
+		}
+		if (in_array($jenis, [2, 3])) {
+
+			// insert tagihan simpanan
+			if ($wajib) {
+				$simpanan = [
+					'fk_tagihan_id' => $tagihanId,
+					'fk_skpd_id' => $fk_skpd_id,
+					'fk_anggota_id' => $fk_anggota_id,
+					'wajib' => str_replace(",", "", $wajib),
+					'sukarela' => str_replace(",", "", $sukarela),
+				];
+				$this->MTagihanSimpanan->insert($simpanan);
+			}
 		}
 		$this->db->trans_complete();
 

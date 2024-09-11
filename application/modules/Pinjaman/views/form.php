@@ -49,7 +49,7 @@
                 <select class="form-control" name="fk_anggota_id" id="fk_anggota_id" required>
                   <option value="">.: Pilih :.</option>
                   <?php foreach ($arrUserAnggota as $valanggota) { ?>
-                    <option <?= $fk_anggota_id == $valanggota['id'] ? 'selected' : '' ?> value="<?= $valanggota['id'] ?>"><?= $valanggota['nama'].' ('.$valanggota['nama_skpd'].')' ?></option>
+                    <option <?= $fk_anggota_id == $valanggota['id'] ? 'selected' : '' ?> value="<?= $valanggota['id'] ?>"><?= $valanggota['nama'] . ' (' . $valanggota['nama_skpd'] . ')' ?></option>
                   <?php } ?>
                 </select>
               </div>
@@ -83,7 +83,7 @@
                 <input type="text" name="tenor" id="idtenor" required class="form-control col-md-7 col-xs-12 angka" value="<?= $tenor ?>">
               </div>
             </div>
-            <div class="form-group required">
+            <div class="form-group required non_palen">
               <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Pembulatan Pinjaman</label>
               <div class="col-md-6 col-sm-6 col-xs-12">
                 <input type="text" name="bulat_pinjam" id="idbulat_pinjam" required class="form-control col-md-7 col-xs-12 nominal" readonly value="<?= $bulat_pinjam ?>">
@@ -95,7 +95,7 @@
                 <input type="text" name="pokok" id="idpokok" required class="form-control col-md-7 col-xs-12 nominal" readonly value="<?= $pokok ?>">
               </div>
             </div>
-            <div class="form-group required">
+            <div class="form-group required non_palen">
               <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Tapim</label>
               <div class="col-md-6 col-sm-6 col-xs-12">
                 <input type="text" name="tapim" id="idtapim" required class="form-control col-md-7 col-xs-12 nominal" readonly value="<?= $tapim ?>">
@@ -131,6 +131,19 @@
 <script type="text/javascript">
   $("#fk_kategori_id").change(function() {
     idkategori = $(this).val();
+
+    $(".non_palen").show();
+    $('#idtenor').prop('readonly', false);
+    $('#idpokok').prop('readonly', true);
+    $('#idbunga').prop('readonly', true);
+    $('#idtenor').val('');
+    if (idkategori == 3) {
+      $(".non_palen").hide();
+      $('#idtenor').val(1);
+      $('#idtenor').prop('readonly', true);
+      $('#idpokok').prop('readonly', false);
+      $('#idbunga').prop('readonly', false);
+    }
     $.ajax({
       type: "POST",
       url: "<?php echo base_url() . 'Pinjaman/cariBunga' ?>",
@@ -144,7 +157,38 @@
     });
   });
 
+  $("#idjml_pinjam").keyup(function() {
+    if ($('#idtenor').val() != '') {
+      hitungJml();
+    }
+  });
+
   $("#idtenor").keyup(function() {
+    hitungJml();
+  });
+
+  $("#idpokok").keyup(function() {
+    hitungJmlPalen();
+  });
+
+  $("#idbunga").keyup(function() {
+    hitungJmlPalen();
+  });
+
+  function hitungJmlPalen() {
+    jumlah_pinjam = $('#idjml_pinjam').val();
+    jumlah_pinjam_replace = jumlah_pinjam.replaceAll(",", "");
+    jml_pokok = $('#idpokok').val();
+    jml_pokok_replace = jml_pokok.replaceAll(",", "");
+    jumlah_bunga = $('#idbunga').val();
+    jumlah_bunga_replace = jumlah_bunga.replaceAll(",", "");
+
+    tot = parseInt(jumlah_pinjam_replace) + parseInt(jml_pokok_replace) + parseInt(jumlah_bunga_replace);
+    $('#idjml_tagihan').val(tot);
+  }
+
+  function hitungJml() {
+    fk_kategori_id = $('#fk_kategori_id').val();
     jumlah_pinjam = $('#idjml_pinjam').val();
     jumlah_pinjam_replace = jumlah_pinjam.replaceAll(",", "");
     angkajumlah_pinjam_replace = Math.round(jumlah_pinjam_replace);
@@ -185,6 +229,12 @@
     pokok = hasil / jumlah_angsuran;
     tapim = (10 / 100) * pokok;
     bunga = hasil * (sukubunga / 100);
+
+    if (fk_kategori_id == 3) { //tapim
+      tapim = 0;
+      pokok = 0;
+      hasil = jumlah_pinjam;
+    }
     jml_tagihan = pokok + tapim + bunga;
 
     $('#idbulat_pinjam').val(hasil);
@@ -193,5 +243,5 @@
     $('#idtapim').val(tapim);
     $('#idjml_tagihan').val(jml_tagihan);
 
-  });
+  };
 </script>

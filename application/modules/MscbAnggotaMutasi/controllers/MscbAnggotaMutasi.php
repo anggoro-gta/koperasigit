@@ -327,6 +327,44 @@ class MscbAnggotaMutasi extends CI_Controller
 		$this->load->view('MscbAnggotaMutasi/_formdetailmutasi', $data);
 	}
 
+	public function update_tgl_mutasi($id)
+	{
+		$this->MHome->ceklogin();
+		$kat = $this->db->query("SELECT * FROM ms_cb_user_anggota_mutasi WHERE id=$id")->row();
+		$nama_anggota = $this->db->query("SELECT * FROM ms_cb_user_anggota WHERE id = $kat->fk_user_anggota_id")->row();
+		$skpd_lama = $this->db->query("SELECT * FROM ms_cb_skpd WHERE id = $kat->fk_opd_sebelum")->row();
+		$skpd_baru = $this->db->query("SELECT * FROM ms_cb_skpd WHERE id = $kat->fk_opd_sesudah")->row();
+
+		$data = array(
+			'action' => base_url() . 'MscbAnggotaMutasi/saveupdatetglmutasi',
+			'button' => 'Update',
+			'id' => set_value('id', $kat->id),
+			'nama' => set_value('nama', $nama_anggota->nama),
+			'tgl' => set_value('tgl', $this->help->ReverseTgl($kat->tgl_mutasi)),
+			'skpd_lama' => set_value('skpd_lama', $skpd_lama->nama_skpd),
+			'skpd_baru' => set_value('skpd_baru', $skpd_baru->nama_skpd)
+		);
+		$data['MscbAnggotaMutasi'] = 'active';
+		$data['act_back'] = base_url() . 'MscbAnggotaMutasi/detail_mutasi/' . $kat->fk_user_anggota_id;
+		// $data['arrStatuspekerjaan'] = $this->MMscbStatuspekerjaan->get();
+		// $data['arrSkpd'] = $this->MMscbSkpd->get();
+		// $data['arrSimpanan'] = $this->MMscbSimpanan->get();
+		$this->template->load('Homeadmin/templateadmin', 'MscbAnggotaMutasi/formupdatetglmutasi', $data);
+	}
+
+	public function saveupdatetglmutasi()
+	{
+		$this->MHome->ceklogin();
+		$id = $this->input->post('id');
+
+		$data['tgl_mutasi'] = $this->help->ReverseTgl($this->input->post('tgl'));
+
+		$this->MMscbUserAnggotaMutasi->update($id, $data);
+		$this->session->set_flashdata('success', 'Tanggal mutasi berhasil di update');
+
+		redirect('MscbAnggota');
+	}
+
 	public function delete_detailmutasi($id)
 	{
 		$this->MHome->ceklogin();

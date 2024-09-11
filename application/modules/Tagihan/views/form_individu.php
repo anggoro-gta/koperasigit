@@ -54,6 +54,8 @@
                     <option value="1">Tagihan Pinjaman</option>
                     <option value="2">Tagihan Simpanan</option>
                     <option value="3">Tagihan Pinjaman & Simpanan</option>
+                    <option value="4">Tagihan Pinjaman Kompensasi</option>
+                    <option value="5">Tagihan Pinjaman Pelunasan</option>
                   </select>
                 </div>
               </div>
@@ -151,6 +153,13 @@
     });
   }
 
+  $(document).on('change', '#jenis', function() {
+
+    $("#tampilData").html('');
+    $('#fk_anggota_id').val('').trigger("change")
+    $('#fk_skpd_id').val('').trigger("change")
+
+  })
   $(document).on('change', '#angsuran_ke', function() {
     let angsuran_ke = $('#angsuran_ke').val(),
       min_angsuran = $('#min_angsuran').val(),
@@ -170,6 +179,50 @@
     hitung(angsuran_ke - min_angsuran + 1)
 
   });
+
+  $(document).on('change', '#label_tapim', function() {
+    let angsuran_ke = $('#angsuran_ke').val(),
+      min_angsuran = $('#min_angsuran').val(),
+      max_angsuran = $('#max_angsuran').val();
+    hitung_pelunasan(angsuran_ke - min_angsuran + 1);
+  });
+
+  $(document).on('change', '#label_bunga', function() {
+    let angsuran_ke = $('#angsuran_ke').val(),
+      min_angsuran = $('#min_angsuran').val(),
+      max_angsuran = $('#max_angsuran').val();
+    hitung_pelunasan(angsuran_ke - min_angsuran + 1);
+  });
+
+  function hitung_pelunasan(x) {
+    let const_pokok = $('#const_pokok').val(),
+      const_tapim_count = $('#label_tapim').val(),
+      const_bunga_count = $('#label_bunga').val(),
+      const_tapim = $('#const_tapim').val(),
+      const_bunga = $('#const_bunga').val(),
+      const_jml_tagihan = $('#const_jml_tagihan').val();
+
+    const_tapim_remove_koma = const_tapim_count.replace(/,/g, "");
+    const_bunga_remove_koma = const_bunga_count.replace(/,/g, "");
+
+    const_tapim_count_number = parseInt(const_tapim_remove_koma);
+    const_bunga_count_number = parseInt(const_bunga_remove_koma);
+
+    const_pokok_count = $('#pokok').val();
+
+    const_pokok_count_number = parseInt(const_pokok_count);
+
+    console.log(const_pokok_count_number + const_tapim_count_number + const_bunga_count_number);
+
+    $('#label_pokok').html(numberWithCommas(x * const_pokok));
+    $('#label_tapim').html(numberWithCommas(x * const_tapim));
+    $('#label_bunga').html(numberWithCommas(x * const_bunga));
+    $('#label_jml_tagihan').html(numberWithCommas(const_pokok_count_number + const_tapim_count_number + const_bunga_count_number));
+    $('#pokok').val(x * const_pokok);
+    $('#tapim').val(const_tapim_count_number);
+    $('#bunga').val(const_bunga_count_number);
+    $('#jml_tagihan').val(const_pokok_count_number + const_tapim_count_number + const_bunga_count_number);
+  }
 
   function hitung(x) {
     let const_pokok = $('#const_pokok').val(),

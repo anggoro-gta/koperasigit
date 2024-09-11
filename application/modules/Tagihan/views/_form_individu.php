@@ -48,15 +48,33 @@
                                 <td><?= $pinjaman->tgl ?></td>
                                 <td><?= number_format($pinjaman->pinjaman) ?></td>
                                 <td><?= $pinjaman->kategori ?></td>
+
                                 <?php if ($readonly) { ?>
                                     <td><?= $pinjaman->angsuran_ke ?></td>
                                 <?php } else { ?>
-                                    <td><input type="text" name="angsuran_ke" class="form-control" id="angsuran_ke" value="<?= $pinjaman->angsuran_ke ?>"></td>
-
+                                    <td><input <?= $jenis == 4 || $jenis == 5 ? 'readonly' : '' ?> type="text" name="angsuran_ke" class="form-control" id="angsuran_ke" value="<?= $pinjaman->angsuran_ke ?>"></td>
                                 <?php } ?>
+
                                 <td id="label_pokok"><?= number_format($pinjaman->pokok) ?></td>
-                                <td id="label_tapim"><?= number_format($pinjaman->tapim) ?></td>
-                                <td id="label_bunga"><?= number_format($pinjaman->bunga) ?></td>
+
+                                <?php if ($jenis == 5) { ?>
+                                    <?php
+                                    $var_tapim_number = (int)$pinjaman->tapim;
+                                    $var_bunga_number = (int)$pinjaman->bunga;
+
+                                    $var_tenor_number = (int)$pinjaman->tenor;
+                                    $var_angsuran_ke_number = (int)$pinjaman->angsuran_ke;
+
+                                    $result_tapim = ($var_tapim_number * (($var_tenor_number - $var_angsuran_ke_number) + 1));
+                                    $result_bunga = ($var_bunga_number * (($var_tenor_number - $var_angsuran_ke_number) + 1));
+                                    ?>
+                                    <td><input type="text" name="label_tapim" id="label_tapim" class="form-control nominal" value="<?= $result_tapim ?>"></td>
+                                    <td><input type="text" name="label_bunga" id="label_bunga" class="form-control nominal" value="<?= $result_bunga ?>"></td>
+                                <?php } else { ?>
+                                    <td id="label_tapim"><?= number_format($pinjaman->tapim) ?></td>
+                                    <td id="label_bunga"><?= number_format($pinjaman->bunga) ?></td>
+                                <?php } ?>
+
                                 <td><?= $pinjaman->tenor ?></td>
                                 <td id="label_jml_tagihan"><?= number_format($pinjaman->jml_tagihan) ?></td>
                                 <?php if ($readonly && $pinjaman->angsuran_ke == $pinjaman->jml_angsuran && $status_posting == 0 && in_array($this->session->userdata('fk_cb_level_id'), [1, 2])) { ?>
@@ -128,4 +146,9 @@
         vMax: 9999999999999,
         vMin: -9999999999999
     });
+    <?php
+    if ($jenis == 4 || $jenis == 5) { ?>
+        $("#angsuran_ke").val(<?= $pinjaman->tenor ?>).trigger("change");
+    <?php }
+    ?>
 </script>

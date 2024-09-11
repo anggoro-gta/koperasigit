@@ -27,7 +27,8 @@
                             <td><?= $p->sebelum ?></td>
                             <td><?= $p->sesudah ?></td>
                             <td>
-                                <div class="btn-group text-center"><a class="btn btn-xs btn-danger" onclick="return confirm('Apakah Anda akan menghapus data?');" href="<?php echo base_url() ?>/MscbAnggotaMutasi/delete_detailmutasi/<?= $p->id ?>"><i class="fa fa-trash"></i></a></div>
+                                <div class="btn-group text-center"><a class="btn btn-xs btn-success" href="<?php echo base_url() ?>/MscbAnggotaMutasi/update_tgl_mutasi/<?= $p->id ?>"><i class="glyphicon glyphicon-edit icon-white"></i></a><a class="btn btn-xs btn-danger" onclick="return confirm('Apakah Anda akan menghapus data?');" href="<?php echo base_url() ?>/MscbAnggotaMutasi/delete_detailmutasi/<?= $p->id ?>"><i class="fa fa-trash"></i></a>
+                                </div>
                             </td>
                         </tr>
                     <?php } ?>

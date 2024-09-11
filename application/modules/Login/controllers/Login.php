@@ -14,6 +14,7 @@ class Login extends CI_Controller
 		$data['username'] = '';
 		// redirect('/');
 		$this->load->view('login_new', $data);
+		// $this->load->view('errors/html/error_general', $data);
 	}
 
 	public function prosesLogin()

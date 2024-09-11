@@ -147,6 +147,12 @@
                       <li class="<?php if (isset($lapUpdateAnggota)) {
                                     echo 'active';
                                   } ?>"><a href="<?php echo base_url('Laporan/updateanggota') ?>">Lap Update Anggota</a></li>
+                      <li class="<?php if (isset($lapKompensasi)) {
+                                    echo 'active';
+                                  } ?>"><a href="<?php echo base_url('Laporan/kompensasi') ?>">Lap Kompensasi</a></li>
+                      <li class="<?php if (isset($lapPelunasan)) {
+                                    echo 'active';
+                                  } ?>"><a href="<?php echo base_url('Laporan/pelunasan') ?>">Lap Pelunasan</a></li>
                     </ul>
                   </li>
                 <?php } ?>

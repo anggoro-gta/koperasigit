@@ -13,6 +13,7 @@ class Loginadmin extends CI_Controller
 	{
 		$data['username'] = '';
 		$this->load->view('login_admin_new', $data);
+		// $this->load->view('errors/html/error_general', $data);
 	}
 
 	public function prosesLogin()

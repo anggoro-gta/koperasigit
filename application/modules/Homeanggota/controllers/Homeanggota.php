@@ -74,6 +74,12 @@ class Homeanggota extends MX_Controller
 		$data['alamat'] = $this->input->post('alamat');
 		$data['status_update'] = 1;
 		$data['fk_id_status_pekerjaan'] = $this->input->post('fk_id_status_pekerjaan');
+		$jk = substr($data['nip_gabung'], 14, 1);
+		$jenisKelamin = [
+			1 => 'Laki-laki',
+			2 => 'Perempuan',
+		];
+		$data['jenis_kelamin'] = $jenisKelamin[$jk] ?? null;
 
 		$this->MMscbUseranggota->update($this->input->post('id'), $data);
 		$this->session->set_flashdata('success', 'Data Berhasil diupdate.');
