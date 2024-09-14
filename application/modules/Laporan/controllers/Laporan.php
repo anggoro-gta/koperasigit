@@ -190,6 +190,92 @@ class Laporan extends CI_Controller
 			$this->excel($title, $html);
 		}
 	}
+
+	public function kompensasi()
+	{
+		$data['type'] = 'pinjaman';
+		$data['judul'] = 'Laporan Kompensasi';
+		$data['lapKompensasi'] = 'active';
+		$data['action'] = base_url() . 'Laporan/cetak_kompensasi';
+		$data['arrSKPD'] = $this->db->query("select * from ms_cb_skpd")->result_array();
+		$this->template->load('Homeadmin/templateadmin', 'Laporan/kompensasi_form', $data);
+	}
+
+	public function cetak_kompensasi()
+	{
+		$type = $this->input->post('type');
+		$fk_skpd_id = $this->input->post('fk_skpd_id');
+		$data['skpd'] = $this->db->query("select nama_skpd from ms_cb_skpd where id = ? ", [$fk_skpd_id])->row()->nama_skpd;
+
+		$data['hasil'] = $this->db->query("SELECT
+			a.nama,
+			tp.fk_anggota_id,
+			DATE_FORMAT(p.tgl,'%d-%m-%Y') tgl,
+			p.pinjaman,
+			tp.jml_tagihan 
+		from
+			t_cb_tagihan_pinjaman tp
+			join t_cb_tagihan t ON tp.fk_tagihan_id = t.id
+			join t_cb_pinjaman p ON tp.fk_pinjaman_id = p.id
+			join ms_cb_user_anggota a ON tp.fk_anggota_id = a.id 
+		where
+			tp.is_kompensasi = 1 
+			and t.fk_skpd_id = ? ", [$fk_skpd_id])->result();
+
+		$html = $this->load->view('Laporan/kompensasi_pdf', $data, true);
+
+		$title = 'Laporan Kompensasi';
+		if ($type == 'pdf') {
+			$this->pdf($title, $html, $this->help->folio_P(), false);
+		} else {
+			$this->excel($title, $html);
+		}
+	}
+
+	public function pelunasan()
+	{
+		$data['type'] = 'pinjaman';
+		$data['judul'] = 'Laporan Pelunasan';
+		$data['lapPelunasan'] = 'active';
+		$data['action'] = base_url() . 'Laporan/cetak_pelunasan';
+		$data['arrSKPD'] = $this->db->query("select * from ms_cb_skpd")->result_array();
+		$this->template->load('Homeadmin/templateadmin', 'Laporan/pelunasan_form', $data);
+	}
+
+	public function cetak_pelunasan()
+	{
+		$type = $this->input->post('type');
+		$fk_skpd_id = $this->input->post('fk_skpd_id');
+		$data['skpd'] = $this->db->query("select nama_skpd from ms_cb_skpd where id = ? ", [$fk_skpd_id])->row()->nama_skpd;
+
+		$data['hasil'] = $this->db->query("SELECT
+			a.nama,
+			tp.fk_anggota_id,
+			DATE_FORMAT( p.tgl, '%d-%m-%Y' ) tgl,
+			p.pinjaman,
+			tp.pokok,
+			tp.tapim,
+			tp.bunga,
+			tp.jml_tagihan 
+		FROM
+			t_cb_tagihan_pinjaman AS tp
+			INNER JOIN t_cb_tagihan AS t ON tp.fk_tagihan_id = t.id
+			INNER JOIN t_cb_pinjaman AS p ON tp.fk_pinjaman_id = p.id
+			INNER JOIN ms_cb_user_anggota AS a ON tp.fk_anggota_id = a.id 
+		WHERE
+			tp.is_pelunasan = 1 
+			AND t.fk_skpd_id  = ? ", [$fk_skpd_id])->result();
+
+		$html = $this->load->view('Laporan/pelunasan_pdf', $data, true);
+
+		$title = 'Laporan Pelunasan';
+		if ($type == 'pdf') {
+			$this->pdf($title, $html, $this->help->folio_P(), false);
+		} else {
+			$this->excel($title, $html);
+		}
+	}
+
 	protected function pdf($title, $html, $page, $batas = false)
 	{
 		// echo $html;
