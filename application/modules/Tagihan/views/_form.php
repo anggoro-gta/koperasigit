@@ -40,7 +40,7 @@
                         <tr>
                             <?php if ($readonly == false) { ?>
                                 <td class="text-center">
-                                    <input type="checkbox" class="pinjaman" name="pinjaman[]" class="flat" />
+                                    <input type="checkbox" class="pinjaman" name="pinjaman[]" class="flat" value="<?= $p->fk_anggota_id ?>"/>
                                     <input type="hidden" name="fk_anggota_id[]" value="<?= $p->fk_anggota_id ?>">
                                     <input type="hidden" name="fk_pinjaman_id[]" value="<?= $p->id ?>">
                                     <input type="hidden" name="angsuran_ke[]" value="<?= $p->angsuran_ke ?>">
@@ -112,7 +112,7 @@
                                 <td class="text-center">
                                     <input type="checkbox" class="simpanan" name="simpanan[]" class="flat" />
                                     <input type="hidden" name="wajib[]" value="<?= number_format($simpananWajib) ?>">
-                                    <input type="hidden" name="fk_anggota_id[]" value="<?= $value->id ?>">
+                                    <input type="hidden" name="fk_anggota_id_simpanan[]" value="<?= $value->id ?>">
                                 </td>
                             <?php } ?>
                             <td scope="row"><?= ++$key ?></td>

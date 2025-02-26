@@ -188,21 +188,21 @@ class Tagihan extends CI_Controller
 
 		$dataPinjaman = [];
 		for ($i = 0; $i < count($this->input->post('pinjaman')); $i++) {
-			$pinjaman = [
-				'fk_tagihan_id' => $tagihanId,
-				'fk_pinjaman_id' => $fk_pinjaman_id[$i],
-				'fk_anggota_id' => $fk_anggota_id[$i],
-				'angsuran_ke' => str_replace(",", "", $angsuran_ke[$i]),
-				'pokok' => str_replace(",", "", $pokok[$i]),
-				'tapim' => str_replace(",", "", $tapim[$i]),
-				'bunga' => str_replace(",", "", $bunga[$i]),
-				'jml_tagihan' => str_replace(",", "", $jml_tagihan[$i]),
-			];
-			$this->db->query("update  t_cb_pinjaman set jml_angsuran = ? where id =? ", [$angsuran_ke[$i], $fk_pinjaman_id[$i]]);
-			if ($angsuran_ke[$i] == $tenor[$i]) {
-				$this->db->query("update  t_cb_pinjaman set status = ? where id =? ", [1, $fk_pinjaman_id[$i]]);
-			}
-			array_push($dataPinjaman, $pinjaman);
+				$pinjaman = [
+					'fk_tagihan_id' => $tagihanId,
+					'fk_pinjaman_id' => $fk_pinjaman_id[$i],
+					'fk_anggota_id' => $this->input->post('pinjaman')[$i],
+					'angsuran_ke' => str_replace(",", "", $angsuran_ke[$i]),
+					'pokok' => str_replace(",", "", $pokok[$i]),
+					'tapim' => str_replace(",", "", $tapim[$i]),
+					'bunga' => str_replace(",", "", $bunga[$i]),
+					'jml_tagihan' => str_replace(",", "", $jml_tagihan[$i]),
+				];
+				$this->db->query("update  t_cb_pinjaman set jml_angsuran = ? where id =? ", [$angsuran_ke[$i], $fk_pinjaman_id[$i]]);
+				if ($angsuran_ke[$i] == $tenor[$i]) {
+					$this->db->query("update  t_cb_pinjaman set status = ? where id =? ", [1, $fk_pinjaman_id[$i]]);
+				}
+				array_push($dataPinjaman, $pinjaman);
 		}
 		if (count($dataPinjaman) > 0) {
 			$this->MTagihanPinjaman->insert_batch($dataPinjaman);
@@ -213,7 +213,7 @@ class Tagihan extends CI_Controller
 			$simpanan = [
 				'fk_tagihan_id' => $tagihanId,
 				'fk_skpd_id' => $fk_skpd_id,
-				'fk_anggota_id' => $fk_anggota_id[$i],
+				'fk_anggota_id' => $this->input->post('fk_anggota_id_simpanan')[$i],
 				'wajib' => str_replace(",", "", $wajib[$i]),
 				'sukarela' => str_replace(",", "", $sukarela[$i]),
 			];
