@@ -93,12 +93,12 @@ class Tagihan extends CI_Controller
 		$fk_skpd_id = $this->input->post('fk_skpd_id');
 		if ($id) {
 			$sw = 0;
+			// left join t_cb_tagihan_pinjaman tctp on tctp.fk_anggota_id=tcts.fk_anggota_id and tctp.fk_tagihan_id=tcts.fk_tagihan_id
 			$simpanan = $this->db->query("select
-			tcts.*, mcua.nama ,mcua.nip,tapim
+			tcts.*, mcua.nama ,mcua.nip
 		from
 			t_cb_tagihan_simpanan tcts
 			join ms_cb_user_anggota mcua on tcts.fk_anggota_id = mcua.id
-			left join t_cb_tagihan_pinjaman tctp on tctp.fk_anggota_id=tcts.fk_anggota_id and tctp.fk_tagihan_id=tcts.fk_tagihan_id
 		where
 			tcts.fk_tagihan_id=?
 			ORDER BY tcts.fk_anggota_id asc",  [$id])->result();

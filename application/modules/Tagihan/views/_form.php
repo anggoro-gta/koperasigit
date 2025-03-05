@@ -99,7 +99,6 @@
                         <th>SW</th>
                         <th>SUKARELA</th>
                         <?php if ($readonly) { ?>
-                            <th>TAPIM</th>
                             <th></th>
                         <?php } ?>
                     </tr>
@@ -126,9 +125,6 @@
                                     <?= number_format($value->sukarela) ?>
                                 <?php  } ?>
                             </td>
-                            <?php if ($readonly) : ?>
-                                <td><?= number_format($value->tapim) ?></td>
-                            <?php endif; ?>
 
                             <?php if ($readonly && $status_posting == 0 && in_array($this->session->userdata('fk_cb_level_id'), [1, 2])) { ?>
                                 <td>
