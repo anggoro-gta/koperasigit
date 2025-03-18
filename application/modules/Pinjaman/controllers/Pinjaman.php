@@ -94,10 +94,11 @@ class Pinjaman extends CI_Controller
 	public function save()
 	{
 		$this->MHome->ceklogin();
+		$kategori_hutang = $this->input->post('fk_kategori_id');
 
 		$id_anggota = $this->input->post('fk_anggota_id');
 
-		$data['fk_kategori_id'] = $this->input->post('fk_kategori_id');
+		$data['fk_kategori_id'] = $kategori_hutang;
 		$data['fk_anggota_id'] = $id_anggota;
 		$data['tgl'] = $this->help->ReverseTgl($this->input->post('tgl_mulai_hutang'));
 		$data['tenor'] = $this->input->post('tenor');
@@ -110,13 +111,21 @@ class Pinjaman extends CI_Controller
 		$data['user_act'] = $this->session->id;
 		$data['time_act'] = date('Y-m-d H:i:s');
 
-		$get_hutang = $this->db->query("SELECT * FROM t_cb_pinjaman where fk_anggota_id = '$id_anggota' and status = 0")->row();		
-
-		if ($get_hutang == NULL) {
+		if ($kategori_hutang == 3) {
 			$this->McbPinjaman->insert($data);
 			$this->session->set_flashdata('success', 'Data Berhasil disimpan.');
-		} else {
-			$this->session->set_flashdata('error', 'Sudah ada data pinjaman mohon cek data pinjaman');
+		} else if ($kategori_hutang == 2) {
+			$this->McbPinjaman->insert($data);
+			$this->session->set_flashdata('success', 'Data Berhasil disimpan.');
+		} else if ($kategori_hutang == 1) {
+			$get_hutang = $this->db->query("SELECT * FROM t_cb_pinjaman where fk_anggota_id = '$id_anggota' and status = 0 and fk_kategori_id = 1")->row();
+
+			if ($get_hutang == NULL) {
+				$this->McbPinjaman->insert($data);
+				$this->session->set_flashdata('success', 'Data Berhasil disimpan.');
+			} else {
+				$this->session->set_flashdata('error', 'Sudah ada data pinjaman UANG mohon cek data pinjaman');
+			}
 		}
 		redirect('Pinjaman');
 	}
