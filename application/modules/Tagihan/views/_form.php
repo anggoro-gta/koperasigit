@@ -40,15 +40,15 @@
                         <tr>
                             <?php if ($readonly == false) { ?>
                                 <td class="text-center">
-                                    <input type="checkbox" class="pinjaman" name="pinjaman[]" class="flat" value="<?= $p->fk_anggota_id ?>"/>
+                                    <input type="checkbox" class="pinjaman" name="pinjaman[]" class="flat" value="<?= $p->fk_anggota_id ?>" />
                                     <input type="hidden" name="fk_anggota_id[]" value="<?= $p->fk_anggota_id ?>">
-                                    <input type="hidden" name="fk_pinjaman_id[]" value="<?= $p->id ?>">
-                                    <input type="hidden" name="angsuran_ke[]" value="<?= $p->angsuran_ke ?>">
-                                    <input type="hidden" name="tenor[]" value="<?= $p->tenor ?>">
-                                    <input type="hidden" name="pokok[]" value="<?= number_format($p->pokok)  ?>">
-                                    <input type="hidden" name="tapim[]" value="<?= number_format($p->tapim)  ?>">
-                                    <input type="hidden" name="bunga[]" value="<?= number_format($p->bunga)  ?>">
-                                    <input type="hidden" name="jml_tagihan[]" value="<?= number_format($p->jml_tagihan)  ?>">
+                                    <input type="hidden" name="fk_pinjaman_id[<?= $p->fk_anggota_id ?>]" value="<?= $p->id ?>">
+                                    <input type="hidden" name="angsuran_ke[<?= $p->fk_anggota_id ?>]" value="<?= $p->angsuran_ke ?>">
+                                    <input type="hidden" name="tenor[<?= $p->fk_anggota_id ?>]" value="<?= $p->tenor ?>">
+                                    <input type="hidden" name="pokok[<?= $p->fk_anggota_id ?>]" value="<?= number_format($p->pokok)  ?>">
+                                    <input type="hidden" name="tapim[<?= $p->fk_anggota_id ?>]" value="<?= number_format($p->tapim)  ?>">
+                                    <input type="hidden" name="bunga[<?= $p->fk_anggota_id ?>]" value="<?= number_format($p->bunga)  ?>">
+                                    <input type="hidden" name="jml_tagihan[<?= $p->fk_anggota_id ?>]" value="<?= number_format($p->jml_tagihan)  ?>">
                                 </td>
                             <?php } ?>
                             <td scope="row"><?= ++$key ?></td>

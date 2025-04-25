@@ -122,7 +122,7 @@ class Tagihan extends CI_Controller
 			$readonly = true;
 			$status_posting = $this->db->query("select * from t_cb_tagihan where id = ? ", [$id])->row()->status_posting;
 		} else {
-			$simpanan = $this->db->query("SELECT id,nama,nip FROM ms_cb_user_anggota where fk_id_skpd = ? and status_keaktifan = 'Aktif'",  [$fk_skpd_id])->result();
+			$simpanan = $this->db->query("SELECT id,nama,nip FROM ms_cb_user_anggota where fk_id_skpd = ?",  [$fk_skpd_id])->result();
 			$sw = $this->db->query("SELECT nominal FROM ms_cb_simpanan where id = ? ", [2])->row()->nominal;
 			$readonly = false;
 			$pinjaman = $this->db->query("select
@@ -185,22 +185,22 @@ class Tagihan extends CI_Controller
 		$data['time_act'] = date('Y-m-d H:i:s');
 		$this->MTagihan->insert($data);
 		$tagihanId = $this->db->insert_id();
-
 		$dataPinjaman = [];
 		for ($i = 0; $i < count($this->input->post('pinjaman')); $i++) {
+			$pinjamanId = $this->input->post('pinjaman')[$i];
 			$pinjaman = [
 				'fk_tagihan_id' => $tagihanId,
-				'fk_pinjaman_id' => $fk_pinjaman_id[$i],
+				'fk_pinjaman_id' => $fk_pinjaman_id[$pinjamanId],
 				'fk_anggota_id' => $this->input->post('pinjaman')[$i],
-				'angsuran_ke' => str_replace(",", "", $angsuran_ke[$i]),
-				'pokok' => str_replace(",", "", $pokok[$i]),
-				'tapim' => str_replace(",", "", $tapim[$i]),
-				'bunga' => str_replace(",", "", $bunga[$i]),
-				'jml_tagihan' => str_replace(",", "", $jml_tagihan[$i]),
+				'angsuran_ke' => str_replace(",", "", $angsuran_ke[$pinjamanId]),
+				'pokok' => str_replace(",", "", $pokok[$pinjamanId]),
+				'tapim' => str_replace(",", "", $tapim[$pinjamanId]),
+				'bunga' => str_replace(",", "", $bunga[$pinjamanId]),
+				'jml_tagihan' => str_replace(",", "", $jml_tagihan[$pinjamanId]),
 			];
-			$this->db->query("update  t_cb_pinjaman set jml_angsuran = ? where id =? ", [$angsuran_ke[$i], $fk_pinjaman_id[$i]]);
-			if ($angsuran_ke[$i] == $tenor[$i]) {
-				$this->db->query("update  t_cb_pinjaman set status = ? where id =? ", [1, $fk_pinjaman_id[$i]]);
+			$this->db->query("update  t_cb_pinjaman set jml_angsuran = ? where id =? ", [$angsuran_ke[$pinjamanId], $fk_pinjaman_id[$pinjamanId]]);
+			if ($angsuran_ke[$pinjamanId] == $tenor[$pinjamanId]) {
+				$this->db->query("update  t_cb_pinjaman set status = ? where id =? ", [1, $fk_pinjaman_id[$pinjamanId]]);
 			}
 			array_push($dataPinjaman, $pinjaman);
 		}
