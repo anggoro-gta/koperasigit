@@ -230,6 +230,11 @@
     tapim = (10 / 100) * pokok;
     bunga = hasil * (sukubunga / 100);
 
+    if(fk_kategori_id == 2){ //barang biar tapimnya 0
+      tapim = 0;      
+      hasil = jumlah_pinjam;
+    }
+
     if (fk_kategori_id == 3) { //tapim
       tapim = 0;
       pokok = 0;
