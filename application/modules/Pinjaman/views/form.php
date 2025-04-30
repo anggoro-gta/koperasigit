@@ -159,20 +159,44 @@
 
   $("#idjml_pinjam").keyup(function() {
     if ($('#idtenor').val() != '') {
-      hitungJml();
+      if (idkategori == 1) {
+        hitungJml();
+      } else if (idkategori == 2) {
+        hitungJml();
+      } else if (idkategori == 3) {
+        hitungJmlPalen();
+      }
     }
   });
 
   $("#idtenor").keyup(function() {
-    hitungJml();
+    if (idkategori == 1) {
+      hitungJml();
+    } else if (idkategori == 2) {
+      hitungJml();
+    } else if (idkategori == 3) {
+      hitungJmlPalen();
+    }
   });
 
   $("#idpokok").keyup(function() {
-    hitungJmlPalen();
+    if (idkategori == 1) {
+      hitungJml();
+    } else if (idkategori == 2) {
+      hitungJml();
+    } else if (idkategori == 3) {
+      hitungJmlPalen();
+    }
   });
 
   $("#idbunga").keyup(function() {
-    hitungJmlPalen();
+    if (idkategori == 1) {
+      hitungJml();
+    } else if (idkategori == 2) {
+      hitungJml();
+    } else if (idkategori == 3) {
+      hitungJmlPalen();
+    }
   });
 
   function hitungJmlPalen() {
@@ -183,7 +207,8 @@
     jumlah_bunga = $('#idbunga').val();
     jumlah_bunga_replace = jumlah_bunga.replaceAll(",", "");
 
-    tot = parseInt(jumlah_pinjam_replace) + parseInt(jml_pokok_replace) + parseInt(jumlah_bunga_replace);
+    // tot = parseInt(jumlah_pinjam_replace) + parseInt(jml_pokok_replace) + parseInt(jumlah_bunga_replace);
+    tot = parseInt(jml_pokok_replace) + parseInt(jumlah_bunga_replace);
     $('#idjml_tagihan').val(tot);
   }
 
@@ -230,8 +255,12 @@
     tapim = (10 / 100) * pokok;
     bunga = hasil * (sukubunga / 100);
 
-    if(fk_kategori_id == 2){ //barang biar tapimnya 0
-      tapim = 0;      
+    if (fk_kategori_id == 1) {
+      hasil = jumlah_pinjam;
+    }
+
+    if (fk_kategori_id == 2) { //barang biar tapimnya 0
+      tapim = 0;
       hasil = jumlah_pinjam;
     }
 
