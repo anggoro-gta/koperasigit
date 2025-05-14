@@ -137,6 +137,9 @@
     $('#idpokok').prop('readonly', true);
     $('#idbunga').prop('readonly', true);
     $('#idtenor').val('');
+    if (idkategori == 1) {
+      $('#idbunga').prop('readonly', false);
+    }
     if (idkategori == 3) {
       $(".non_palen").hide();
       $('#idtenor').val(1);
@@ -191,7 +194,7 @@
 
   $("#idbunga").keyup(function() {
     if (idkategori == 1) {
-      hitungJml();
+      hitungJmlbungamanual();
     } else if (idkategori == 2) {
       hitungJml();
     } else if (idkategori == 3) {
@@ -277,5 +280,79 @@
     $('#idtapim').val(tapim);
     $('#idjml_tagihan').val(jml_tagihan);
 
-  };
+  }
+
+  //jumlah khusus bunga manual
+  function hitungJmlbungamanual() {
+    fk_kategori_id = $('#fk_kategori_id').val();
+    jumlah_pinjam = $('#idjml_pinjam').val();
+    jumlah_pinjam_replace = jumlah_pinjam.replaceAll(",", "");
+    angkajumlah_pinjam_replace = Math.round(jumlah_pinjam_replace);
+
+    jumlah_angsuran = $('#idtenor').val();
+
+    total_tagihan = jumlah_pinjam_replace / jumlah_angsuran;
+    pembulatan_total_tagihan = Math.round(total_tagihan);
+    stringpembulatan_total_tagihan = pembulatan_total_tagihan.toString();
+
+    get3laststring = stringpembulatan_total_tagihan.slice(-3);
+    get2laststring = stringpembulatan_total_tagihan.slice(-2);
+
+    sukubunga = $('#idnilaibunga').val();
+
+    let hasil = 0;
+    let kelipatanseribu = 0;
+    for (let i = 0; i <= 30; i++) {
+      kelipatanseribu = kelipatanseribu + 1000;
+      if (get2laststring == "00" || get2laststring == "50" || get3laststring == "000") {
+        hasil = angkajumlah_pinjam_replace;
+        break;
+      } else {
+        plusseribu = angkajumlah_pinjam_replace + kelipatanseribu;
+        plusseributagihan = plusseribu / jumlah_angsuran;
+        pembulatan_plusseributagihan = Math.round(plusseributagihan);
+        stringpembulatan_plusseributagihan = pembulatan_plusseributagihan.toString();
+
+        plusseribu3laststring = stringpembulatan_plusseributagihan.slice(-3);
+        plusseribu2laststring = stringpembulatan_plusseributagihan.slice(-2);
+        if (plusseribu2laststring == "00" || plusseribu2laststring == "50" || plusseribu3laststring == "000") {
+          hasil = plusseribu;
+          break;
+        }
+      }
+    }
+  
+    bunganumb = $('#idbunga').val();
+    bunganumbreal = bunganumb.replaceAll(",", "");
+    bungastringtonumb = parseInt(bunganumbreal);
+
+    // console.log(bunganumbreal);
+
+    pokok = hasil / jumlah_angsuran;
+    tapim = (10 / 100) * pokok;
+    bunga = bungastringtonumb;
+
+    if (fk_kategori_id == 1) {
+      hasil = jumlah_pinjam;
+    }
+
+    if (fk_kategori_id == 2) { //barang biar tapimnya 0
+      tapim = 0;
+      hasil = jumlah_pinjam;
+    }
+
+    if (fk_kategori_id == 3) { //tapim
+      tapim = 0;
+      pokok = 0;
+      hasil = jumlah_pinjam;
+    }
+    jml_tagihan = pokok + tapim + bunga;
+
+    $('#idbulat_pinjam').val(hasil);
+    $('#idpokok').val(pokok);
+    // $('#idbunga').val(bunga);
+    $('#idtapim').val(tapim);
+    $('#idjml_tagihan').val(jml_tagihan);
+
+  }
 </script>
