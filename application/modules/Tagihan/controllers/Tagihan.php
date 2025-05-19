@@ -128,6 +128,7 @@ class Tagihan extends CI_Controller
 			$pinjaman = $this->db->query("select
 				tcp.id,
 				tcp.fk_anggota_id,
+				tcp.fk_kategori_id ,
 				tgl,
 				nama,
 				nip,
@@ -188,19 +189,20 @@ class Tagihan extends CI_Controller
 		$dataPinjaman = [];
 		for ($i = 0; $i < count($this->input->post('pinjaman')); $i++) {
 			$pinjamanId = $this->input->post('pinjaman')[$i];
+			$tcp_id = $this->input->post('tcp_id')[$i];
 			$pinjaman = [
 				'fk_tagihan_id' => $tagihanId,
-				'fk_pinjaman_id' => $fk_pinjaman_id[$pinjamanId],
+				'fk_pinjaman_id' => $fk_pinjaman_id[$tcp_id],
 				'fk_anggota_id' => $this->input->post('pinjaman')[$i],
-				'angsuran_ke' => str_replace(",", "", $angsuran_ke[$pinjamanId]),
-				'pokok' => str_replace(",", "", $pokok[$pinjamanId]),
-				'tapim' => str_replace(",", "", $tapim[$pinjamanId]),
-				'bunga' => str_replace(",", "", $bunga[$pinjamanId]),
-				'jml_tagihan' => str_replace(",", "", $jml_tagihan[$pinjamanId]),
+				'angsuran_ke' => str_replace(",", "", $angsuran_ke[$tcp_id]),
+				'pokok' => str_replace(",", "", $pokok[$tcp_id]),
+				'tapim' => str_replace(",", "", $tapim[$tcp_id]),
+				'bunga' => str_replace(",", "", $bunga[$tcp_id]),
+				'jml_tagihan' => str_replace(",", "", $jml_tagihan[$tcp_id]),
 			];
-			$this->db->query("update  t_cb_pinjaman set jml_angsuran = ? where id =? ", [$angsuran_ke[$pinjamanId], $fk_pinjaman_id[$pinjamanId]]);
-			if ($angsuran_ke[$pinjamanId] == $tenor[$pinjamanId]) {
-				$this->db->query("update  t_cb_pinjaman set status = ? where id =? ", [1, $fk_pinjaman_id[$pinjamanId]]);
+			$this->db->query("update  t_cb_pinjaman set jml_angsuran = ? where id =? ", [$angsuran_ke[$tcp_id], $fk_pinjaman_id[$tcp_id]]);
+			if ($angsuran_ke[$tcp_id] == $tenor[$tcp_id]) {
+				$this->db->query("update  t_cb_pinjaman set status = ? where id =? ", [1, $fk_pinjaman_id[$tcp_id]]);
 			}
 			array_push($dataPinjaman, $pinjaman);
 		}
