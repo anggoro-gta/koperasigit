@@ -110,7 +110,7 @@
                         <tr>
                             <?php if ($readonly == false) { ?>
                                 <td class="text-center">
-                                    <input type="checkbox" class="simpanan" name="simpanan[]" class="flat" />
+                                    <input type="checkbox" class="simpanan" name="simpanan[]" class="flat"  value="<?= $value->id ?>"/>
                                     <input type="hidden" name="wajib[]" value="<?= number_format($simpananWajib) ?>">
                                     <input type="hidden" name="fk_anggota_id_simpanan[]" value="<?= $value->id ?>">
                                 </td>

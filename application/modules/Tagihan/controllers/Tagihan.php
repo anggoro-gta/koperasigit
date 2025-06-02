@@ -211,11 +211,12 @@ class Tagihan extends CI_Controller
 		}
 		// insert tagihan simpanan
 		$dataSimpanan = [];
+
 		for ($i = 0; $i < count($this->input->post('simpanan')); $i++) {
 			$simpanan = [
 				'fk_tagihan_id' => $tagihanId,
 				'fk_skpd_id' => $fk_skpd_id,
-				'fk_anggota_id' => $this->input->post('fk_anggota_id_simpanan')[$i],
+				'fk_anggota_id' => $this->input->post('simpanan')[$i],
 				'wajib' => str_replace(",", "", $wajib[$i]),
 				'sukarela' => str_replace(",", "", $sukarela[$i]),
 			];
