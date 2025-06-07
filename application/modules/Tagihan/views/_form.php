@@ -121,7 +121,7 @@
                             <td><?= number_format($simpananWajib) ?></td>
                             <td>
                                 <?php if ($readonly == false) { ?>
-                                    <input type="text" name="sukarela[]" class="form-control col-md-7 col-xs-12 nominal" value="">
+                                    <input type="text" name="sukarela[<?= $value->id ?>]" class="form-control col-md-7 col-xs-12 nominal" value="">
                                 <?php } else { ?>
                                     <?= number_format($value->sukarela) ?>
                                 <?php  } ?>

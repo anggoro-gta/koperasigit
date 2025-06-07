@@ -218,7 +218,7 @@ class Tagihan extends CI_Controller
 				'fk_skpd_id' => $fk_skpd_id,
 				'fk_anggota_id' => $this->input->post('simpanan')[$i],
 				'wajib' => str_replace(",", "", $wajib[$i]),
-				'sukarela' => str_replace(",", "", $sukarela[$i]),
+				'sukarela' => str_replace(",", "", $sukarela[$this->input->post('simpanan')[$i]]),
 			];
 			array_push($dataSimpanan, $simpanan);
 		}
