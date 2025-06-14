@@ -167,7 +167,10 @@ class Tagihan extends CI_Controller
 		$fk_skpd_id = $this->input->post('fk_skpd_id');
 		$fk_anggota_id = $this->input->post('fk_anggota_id');
 		$fk_pinjaman_id = $this->input->post('fk_pinjaman_id');
-
+		// 		echo "<pre>";
+		// print_r($this->input->post('tcp_id'));
+		// echo "</pre>";
+		// die();
 		$angsuran_ke = $this->input->post('angsuran_ke');
 		$pokok = $this->input->post('pokok');
 		$tapim = $this->input->post('tapim');
@@ -187,13 +190,12 @@ class Tagihan extends CI_Controller
 		$this->MTagihan->insert($data);
 		$tagihanId = $this->db->insert_id();
 		$dataPinjaman = [];
-		for ($i = 0; $i < count($this->input->post('pinjaman')); $i++) {
-			$pinjamanId = $this->input->post('pinjaman')[$i];
+		for ($i = 0; $i < count($this->input->post('tcp_id')); $i++) {
 			$tcp_id = $this->input->post('tcp_id')[$i];
 			$pinjaman = [
 				'fk_tagihan_id' => $tagihanId,
 				'fk_pinjaman_id' => $fk_pinjaman_id[$tcp_id],
-				'fk_anggota_id' => $this->input->post('pinjaman')[$i],
+				'fk_anggota_id' => $this->input->post('fk_anggota_id')[$tcp_id],
 				'angsuran_ke' => str_replace(",", "", $angsuran_ke[$tcp_id]),
 				'pokok' => str_replace(",", "", $pokok[$tcp_id]),
 				'tapim' => str_replace(",", "", $tapim[$tcp_id]),
