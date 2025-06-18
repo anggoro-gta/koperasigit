@@ -122,7 +122,7 @@ class Tagihan extends CI_Controller
 			$readonly = true;
 			$status_posting = $this->db->query("select * from t_cb_tagihan where id = ? ", [$id])->row()->status_posting;
 		} else {
-			$simpanan = $this->db->query("SELECT id,nama,nip FROM ms_cb_user_anggota where fk_id_skpd = ?",  [$fk_skpd_id])->result();
+			$simpanan = $this->db->query("SELECT id,nama,nip FROM ms_cb_user_anggota where fk_id_skpd = ? AND status_keaktifan='Aktif'",  [$fk_skpd_id])->result();
 			$sw = $this->db->query("SELECT nominal FROM ms_cb_simpanan where id = ? ", [2])->row()->nominal;
 			$readonly = false;
 			$pinjaman = $this->db->query("select
@@ -146,7 +146,7 @@ class Tagihan extends CI_Controller
 				tcp.fk_anggota_id = mcua.id
 			join ms_cb_kategori_pinjam mckp on
 				tcp.fk_kategori_id = mckp.id
-				where status=0 and mcua.fk_id_skpd = ?",  [$fk_skpd_id])->result();
+				where status=0 and mcua.fk_id_skpd = ? ",  [$fk_skpd_id])->result();
 			$status_posting = 0;
 		}
 		$data = [
