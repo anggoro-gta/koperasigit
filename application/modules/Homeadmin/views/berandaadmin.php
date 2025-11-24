@@ -18,12 +18,23 @@
     </div>
     <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12" id='simulasi'>
       <div class="tile-stats" style="background-color: orange;color: white">
-        <div class="icon"><i class="fa fa-sort-amount-desc" style="color: white"></i></div>
-        <div class="count">&nbsp;</div>
-        <h3 style="color: white">Simulasi</h3>
-        <p>Perhitungan Pinjaman</p>
+        <div class="icon"><i class="fa fa-money" style="color: white"></i></div>
+        <div class="count"><?= number_format($saldo) ?></div>
+        <h3 style="color: white">Saldo</h3>
+        <p>Sisa Saldo</p>
       </div>
     </div>
+  </div>
+
+  <div class="row top_tiles" style="margin: 10px 0;">
+    <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12" id='simpanan'>
+      <div class="tile-stats" style="background-color: green;color: white">
+        <div class="icon"><i class="fa fa-money" style="color: white"></i></div>
+        <div class="count"><?= number_format($piupinjaman) ?></div>
+        <h3 style="color: white">PIUTANG PINJAMAN</h3>
+        <p>Jumlah Piutang Pinjaman</p>
+      </div>
+    </div>    
   </div>
   <br />
 
