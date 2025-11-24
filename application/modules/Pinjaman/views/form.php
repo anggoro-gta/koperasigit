@@ -137,7 +137,7 @@
     $('#idpokok').prop('readonly', true);
     $('#idbunga').prop('readonly', true);
     $('#idtenor').val('');
-    if (idkategori == 1) {
+    if (idkategori == 1 || idkategori == 2) {
       $('#idbunga').prop('readonly', false);
       $('#idpokok').prop('readonly', false);
       $('#idtapim').prop('readonly', false);
@@ -164,9 +164,7 @@
 
   $("#idjml_pinjam").keyup(function() {
     if ($('#idtenor').val() != '') {
-      if (idkategori == 1) {
-        hitungJmlbungamanual();
-      } else if (idkategori == 2) {
+      if (idkategori == 1 || idkategori == 2) {
         hitungJml();
       } else if (idkategori == 3) {
         hitungJmlPalen();
@@ -175,9 +173,7 @@
   });
 
   $("#idtenor").keyup(function() {
-    if (idkategori == 1) {
-      hitungJml();
-    } else if (idkategori == 2) {
+    if (idkategori == 1 || idkategori == 2) {
       hitungJml();
     } else if (idkategori == 3) {
       hitungJmlPalen();
@@ -185,30 +181,24 @@
   });
 
   $("#idpokok").keyup(function() {
-    if (idkategori == 1) {
+    if (idkategori == 1 || idkategori == 2) {
       hitungJmlbungamanual();
-    } else if (idkategori == 2) {
-      hitungJml();
     } else if (idkategori == 3) {
       hitungJmlPalen();
     }
   });
 
   $("#idtapim").keyup(function() {
-    if (idkategori == 1) {
+    if (idkategori == 1 || idkategori == 2) {
       hitungJmlbungamanual();
-    } else if (idkategori == 2) {
-      hitungJml();
     } else if (idkategori == 3) {
       hitungJmlPalen();
     }
   });
 
   $("#idbunga").keyup(function() {
-    if (idkategori == 1) {
+    if (idkategori == 1 || idkategori == 2) {
       hitungJmlbungamanual();
-    } else if (idkategori == 2) {
-      hitungJml();
     } else if (idkategori == 3) {
       hitungJmlPalen();
     }
