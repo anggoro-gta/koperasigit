@@ -13,7 +13,7 @@
         <div class="icon"><i class="fa fa-money" style="color: white"></i></div>
         <div class="count"><?= number_format($pinjaman) ?></div>
         <h3 style="color: white">PINJAMAN</h3>
-        <p>Jumlah Pinjaman</p>
+        <p>Jumlah Pinjaman Aktif</p>
       </div>
     </div>
     <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12" id='simulasi'>
@@ -34,8 +34,17 @@
         <h3 style="color: white">PIUTANG PINJAMAN</h3>
         <p>Jumlah Piutang Pinjaman</p>
       </div>
+    </div>
+    <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12" id='pinjaman'>
+      <div class="tile-stats" style="background-color: red;color: white">
+        <div class="icon"><i class="fa fa-money" style="color: white"></i></div>
+        <div class="count"><?= number_format($pinjamanlunas) ?></div>
+        <h3 style="color: white">LUNAS</h3>
+        <p>Jumlah Pinjaman Lunas</p>
+      </div>
     </div>    
   </div>
+  
   <br />
 
   <div class="row">

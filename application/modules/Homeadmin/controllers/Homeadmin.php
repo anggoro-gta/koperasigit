@@ -42,8 +42,8 @@ class homeadmin extends MX_Controller
 		$totaluserpokokwajib = $doubleuserpokok + $doubleuserwajib;
 
 		//TOTAL KESELURUHAN SIMPANAN
-		$totalall = $totaltagihansimpanan + $totaluserpokokwajib;	
-		
+		$totalall = $totaltagihansimpanan + $totaluserpokokwajib;
+
 		//get PIUTANG PINJAMAN
 		$quepiupokok = "SELECT SUM(pokok) pokok FROM t_cb_tagihan_pinjaman";
 		$quepiutapim = "SELECT SUM(tapim) tapim FROM t_cb_tagihan_pinjaman";
@@ -60,8 +60,13 @@ class homeadmin extends MX_Controller
 
 		$doublepinjaman = doubleval($this->db->query($quepinjaman)->row()->pinjaman);
 
+		//total pinjaman lunas
+		$quepinjamanlunas = "SELECT sum(pinjaman) pinjaman FROM t_cb_pinjaman WHERE status = 1";
+
+		$doublepinjamanlunas = doubleval($this->db->query($quepinjamanlunas)->row()->pinjaman);
+
 		//TOTAL SALDO
-		$saldo = $totalall + $totalpiu - $doublepinjaman;
+		$saldo = $totalall + $totalpiu - $doublepinjaman - $doublepinjamanlunas;
 
 		// $que1 = "SELECT (COALESCE(sum(simpanan_pokok),0)+COALESCE(sum(simpanan_wajib),0)+COALESCE(sum(wajib),0)+COALESCE(sum(sukarela),0)+COALESCE(sum(tapim),0)) simpanan FROM ms_cb_user_anggota a
 		// 	INNER JOIN t_cb_tagihan_simpanan s ON s.fk_anggota_id=a.id
@@ -72,7 +77,8 @@ class homeadmin extends MX_Controller
 		$data['piupinjaman'] = $totalpiu;
 
 		// $que2 = "SELECT sum(pinjaman) pinjaman FROM t_cb_pinjaman WHERE status = 0";
-		$data['pinjaman'] = $doublepinjaman;		
+		$data['pinjaman'] = $doublepinjaman;
+		$data['pinjamanlunas'] = $doublepinjamanlunas;
 
 		$data['saldo'] = $saldo;
 
