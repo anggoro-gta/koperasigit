@@ -44,7 +44,7 @@ class homeadmin extends MX_Controller
 		//TOTAL KESELURUHAN SIMPANAN
 		$totalall = $totaltagihansimpanan + $totaluserpokokwajib;
 
-		//get PIUTANG PINJAMAN
+		//get PIUTANG PINJAMAN Penerimaan dari tagihan
 		$quepiupokok = "SELECT SUM(pokok) pokok FROM t_cb_tagihan_pinjaman";
 		$quepiutapim = "SELECT SUM(tapim) tapim FROM t_cb_tagihan_pinjaman";
 		$quepiubunga = "SELECT SUM(bunga) bunga FROM t_cb_tagihan_pinjaman";
@@ -54,6 +54,11 @@ class homeadmin extends MX_Controller
 		$doublepiubunga = doubleval($this->db->query($quepiubunga)->row()->bunga);
 
 		$totalpiu = $doublepiupokok + $doublepiutapim + $doublepiubunga;
+
+		//get perkiraan tagihan yang belum terbayar
+		$quetagihan = "SELECT SUM(( pokok + tapim + bunga )*( tenor - jml_angsuran )) AS total FROM t_cb_pinjaman WHERE `status` = 0";
+
+		$doubletagihan = doubleval($this->db->query($quetagihan)->row()->total);
 
 		//total pinjaman aktif
 		$quepinjaman = "SELECT sum(pinjaman) pinjaman FROM t_cb_pinjaman WHERE status = 0";
@@ -66,7 +71,7 @@ class homeadmin extends MX_Controller
 		$doublepinjamanlunas = doubleval($this->db->query($quepinjamanlunas)->row()->pinjaman);
 
 		//TOTAL SALDO
-		$saldo = $totalall + $totalpiu - $doublepinjaman - $doublepinjamanlunas;
+		$saldo = $totalall + $totalpiu + $doubletagihan - $doublepinjaman - $doublepinjamanlunas;
 
 		// $que1 = "SELECT (COALESCE(sum(simpanan_pokok),0)+COALESCE(sum(simpanan_wajib),0)+COALESCE(sum(wajib),0)+COALESCE(sum(sukarela),0)+COALESCE(sum(tapim),0)) simpanan FROM ms_cb_user_anggota a
 		// 	INNER JOIN t_cb_tagihan_simpanan s ON s.fk_anggota_id=a.id
@@ -75,6 +80,7 @@ class homeadmin extends MX_Controller
 
 		$data['simpanan'] = $totalall;
 		$data['piupinjaman'] = $totalpiu;
+		$data['tagihan'] = $doubletagihan;
 
 		// $que2 = "SELECT sum(pinjaman) pinjaman FROM t_cb_pinjaman WHERE status = 0";
 		$data['pinjaman'] = $doublepinjaman;

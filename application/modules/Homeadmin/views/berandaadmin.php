@@ -31,8 +31,8 @@
       <div class="tile-stats" style="background-color: green;color: white">
         <div class="icon"><i class="fa fa-money" style="color: white"></i></div>
         <div class="count"><?= number_format($piupinjaman) ?></div>
-        <h3 style="color: white">PIUTANG PINJAMAN</h3>
-        <p>Jumlah Piutang Pinjaman</p>
+        <h3 style="color: white">PENERIMAAN ANGSURAN</h3>
+        <p>Jumlah Penerimaan Angsuran</p>
       </div>
     </div>
     <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12" id='pinjaman'>
@@ -43,6 +43,17 @@
         <p>Jumlah Pinjaman Lunas</p>
       </div>
     </div>    
+  </div>
+
+  <div class="row top_tiles" style="margin: 10px 0;">
+    <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12" id='simpanan'>
+      <div class="tile-stats" style="background-color: green;color: white">
+        <div class="icon"><i class="fa fa-money" style="color: white"></i></div>
+        <div class="count"><?= number_format($tagihan) ?></div>
+        <h3 style="color: white">PIUTANG PINJAMAN</h3>
+        <p>Jumlah Piutang Belum Terbayar</p>
+      </div>
+    </div>     
   </div>
   
   <br />
