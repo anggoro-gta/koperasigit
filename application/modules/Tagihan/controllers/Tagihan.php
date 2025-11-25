@@ -57,10 +57,12 @@ class Tagihan extends CI_Controller
 		// 	$this->datatables->where("p.tgl <=", $this->help->ReverseTgl($tgl_sampai));
 		// }
 
-		$this->datatables->select("t.*,nama_skpd,CONCAT(bulan, ' ', tahun) AS periode");
+		$this->datatables->select("t.id,t.kategori,t.status_posting,s.nama_skpd,CONCAT(t.bulan, ' ',t.tahun) AS periode");
 		$this->datatables->from("t_cb_tagihan t");
-		$this->datatables->join("ms_cb_skpd skpd", "t.fk_skpd_id=skpd.id");
-		$this->db->order_by("cast(tahun * 100 + bulan as char) desc");
+		$this->datatables->join("ms_cb_skpd s", "t.fk_skpd_id=s.id");
+				
+		$this->db->order_by("t.status_posting asc");
+		$this->db->order_by("cast(t.tahun * 100 + t.bulan as char) desc");
 		// $this->datatables->add_column('action', '<div class="btn-group">' . anchor(site_url('MscbAnggota/update/$1'), '<i title="detail" class="glyphicon glyphicon-share-alt icon-white"></i>', 'class="btn btn-xs btn-success"') . '</div>', 'id');
 
 		echo $this->datatables->generate();

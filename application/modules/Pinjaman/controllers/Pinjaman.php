@@ -59,7 +59,7 @@ class Pinjaman extends CI_Controller
 		$this->datatables->from("t_cb_pinjaman pj");
 		$this->datatables->join('ms_cb_user_anggota us', 'pj.fk_anggota_id = us.id', 'inner');
 		$this->datatables->join('ms_cb_kategori_pinjam ka', 'pj.fk_kategori_id = ka.id', 'inner');
-		$this->datatables->add_column('action', '<div class="btn-group">' . anchor(site_url('MscbAnggota/update/$1'), '<i title="detail" class="glyphicon glyphicon-share-alt icon-white"></i>', 'class="btn btn-xs btn-success"') . '</div>', 'id');
+		// $this->datatables->add_column('action', '<div class="btn-group">' . anchor(site_url('MscbAnggota/update/$1'), '<i title="detail" class="glyphicon glyphicon-share-alt icon-white"></i>', 'class="btn btn-xs btn-success"') . '</div>', 'id');
 
 		echo $this->datatables->generate();
 	}

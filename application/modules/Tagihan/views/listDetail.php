@@ -45,7 +45,14 @@
 </div>
 <script type="text/javascript">
     level = "<?= $this->session->fk_level_id ?>";
+
+    statuslunas = "lunas";
+    statusblmlunas = "belum lunas"
+
     $("#fk_id_skpd").select2();
+    $('.tanggal').datepicker({
+        autoclose: true,
+    });    
     $(document).ready(function() {
         var t = $("#example2").dataTable({
             initComplete: function() {
@@ -88,51 +95,55 @@
             columns: [{
                     "data": "id",
                     "orderable": false,
-                    "className": "text-center"
+                    "className": "text-center",                    
                 },
                 {
                     "data": "nama_skpd",
                     "orderable": false,
+                    "className": "text-left",
+                    "searchable": true,
                 },
                 {
                     "data": "periode",
                     "orderable": false,
+                    "className": "text-center",
+                    "searchable": false,
                 },
                 {
                     "data": "kategori",
                     "orderable": false,
-                    "className": "text-center"
+                    "className": "text-center",
+                    "searchable": false,
                 },
                 {
                     "data": "status_posting",
                     "orderable": false,
                     "className": "text-center",
+                    "searchable": true,                    
                     render: function(data, type, row) {
                         status = row.status_posting == 1 ? 'Sudah Posting' : 'Belum Posting';
                         return status
-                    }
+                    },
                 },
                 {
                     "data": "id",
+                    "orderable": false,                    
+                    "className": "text-center",
                     render: function(data, type, row) {
                         btnDelete = ''
                         <?php if (in_array($this->session->userdata('fk_cb_level_id'), [1, 2])) : ?>
-                            btnDelete = `
-                        <a class="btn btn-xs btn-danger" onclick="return confirm('Apakah Anda akan menghapus data?');"  href="<?= base_url() ?>/Tagihan/delete_${row.kategori}/${row.id}"><i class="fa fa-trash" title="delete"></i>`
+                            btnDelete = `<a class="btn btn-xs btn-danger" onclick="return confirm('Apakah Anda akan menghapus data?');"  href="<?= base_url() ?>/Tagihan/delete_${row.kategori}/${row.id}"><i class="fa fa-trash" title="delete"></i>`
                             if (row.status_posting == '1') {
                                 btnDelete = '';
                             }
                         <?php endif; ?>
                         aksi = `<div class="btn-group text-center"><a class="btn btn-xs btn-success" href="<?= base_url() ?>/Tagihan/detail_${row.kategori}/${row.id}"><i class="fa fa-eye" title="Detail"></i></a>${btnDelete}</a></div>`
                         return aksi;
-                    },
-                    "orderable": false,
-                    "searchable": false,
-                    "className": "text-center"
+                    },                    
                 },
             ],
-            order: [
-                [0, 'asc']
+            order: [                
+                [0, 'asc'],                
             ],
             rowCallback: function(row, data, iDisplayIndex) {
                 var info = this.fnPagingInfo();
