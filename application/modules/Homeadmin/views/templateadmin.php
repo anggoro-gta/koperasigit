@@ -153,6 +153,19 @@
                       <li class="<?php if (isset($lapPelunasan)) {
                                     echo 'active';
                                   } ?>"><a href="<?php echo base_url('Laporan/pelunasan') ?>">Lap Pelunasan</a></li>
+                      <li class="<?php if (isset($lapSimpbln)) {
+                                    echo 'active';
+                                  } ?>"><a href="<?php echo base_url('Laporan/simpnbln') ?>">Lap Simpanan Bulanan</a></li>
+                      <li class="<?php if (isset($lapSimpthn)) {
+                                    echo 'active';
+                                  } ?>"><a href="<?php echo base_url('Laporan/simpnthn') ?>">Lap Simpanan Tahunan</a></li>
+                      <li class="<?php if (isset($lapPentagbln)) {
+                                    echo 'active';
+                                  } ?>"><a href="<?php echo base_url('Laporan/pentagbln') ?>">Lap Pentag Bulanan</a></li>
+                      <li class="<?php if (isset($lapPentagthn)) {
+                                    echo 'active';
+                                  } ?>"><a href="<?php echo base_url('Laporan/pentagthn') ?>">Lap Pentag Tahunan</a></li>
+
                     </ul>
                   </li>
                 <?php } ?>
