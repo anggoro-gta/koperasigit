@@ -39,29 +39,37 @@ class homeadmin extends MX_Controller
 		$doubleuserpokok = doubleval($getrowqueuserpokok);
 		$doubleuserwajib = doubleval($getrowqueuserwajib);
 
-		$totaluserpokokwajib = $doubleuserpokok + $doubleuserwajib;
+		//ambil data tapim
+		$quetotaltapim = "SELECT SUM(tapim) tapim FROM t_cb_tagihan_pinjaman";
+		$getrowtotaltapim = $this->db->query($quetotaltapim)->row()->tapim;
+		$doubletotaltapim = doubleval($getrowtotaltapim);
+
+		$totaluserpokokwajib = $doubleuserpokok + $doubleuserwajib;;
 
 		//TOTAL KESELURUHAN SIMPANAN
-		$totalall = $totaltagihansimpanan + $totaluserpokokwajib;
+		$totalall = $totaltagihansimpanan + $totaluserpokokwajib + $doubletotaltapim;
 
 		//get PIUTANG PINJAMAN Penerimaan dari tagihan
 		$quepiupokok = "SELECT SUM(pokok) pokok FROM t_cb_tagihan_pinjaman";
-		$quepiutapim = "SELECT SUM(tapim) tapim FROM t_cb_tagihan_pinjaman";
 		$quepiubunga = "SELECT SUM(bunga) bunga FROM t_cb_tagihan_pinjaman";
 
 		$doublepiupokok = doubleval($this->db->query($quepiupokok)->row()->pokok);
-		$doublepiutapim = doubleval($this->db->query($quepiutapim)->row()->tapim);
 		$doublepiubunga = doubleval($this->db->query($quepiubunga)->row()->bunga);
 
-		$totalpiu = $doublepiupokok + $doublepiutapim + $doublepiubunga;
+		$totalpiu = $doublepiupokok + $doublepiubunga;
 
 		//get perkiraan tagihan yang belum terbayar
 		$quetagihan = "SELECT SUM(( pokok + tapim + bunga )*( tenor - jml_angsuran )) AS total FROM t_cb_pinjaman WHERE `status` = 0";
 
 		$doubletagihan = doubleval($this->db->query($quetagihan)->row()->total);
 
-		//total pinjaman aktif
-		$quepinjaman = "SELECT sum(pinjaman) pinjaman FROM t_cb_pinjaman WHERE status = 0";
+		//mencari total piutang pinjaman
+		$quetotalpinjaman = "SELECT SUM(pinjaman) pinjaman FROM t_cb_pinjaman";
+		$doubletotalpinjaman = doubleval($this->db->query($quetotalpinjaman)->row()->pinjaman);
+		$doublepiutangpinj = $doubletotalpinjaman - $totalpiu; //piutang pinjaman = realisasi pinjaman - penerimaan angsuran
+
+		//total pinjaman keseluruhan
+		$quepinjaman = "SELECT sum(pinjaman) pinjaman FROM t_cb_pinjaman";
 
 		$doublepinjaman = doubleval($this->db->query($quepinjaman)->row()->pinjaman);
 
@@ -69,6 +77,10 @@ class homeadmin extends MX_Controller
 		$quepinjamanlunas = "SELECT sum(pinjaman) pinjaman FROM t_cb_pinjaman WHERE status = 1";
 
 		$doublepinjamanlunas = doubleval($this->db->query($quepinjamanlunas)->row()->pinjaman);
+
+		//total bunga keseluruhan
+		$quehitungbungaall = "SELECT SUM(bunga) bunga FROM t_cb_tagihan_pinjaman";
+		$doublebungaall = doubleval($this->db->query($quehitungbungaall)->row()->bunga);
 
 		//TOTAL SALDO
 		$saldo = $totalall + $totalpiu + $doubletagihan - $doublepinjaman - $doublepinjamanlunas;
@@ -80,11 +92,11 @@ class homeadmin extends MX_Controller
 
 		$data['simpanan'] = $totalall;
 		$data['piupinjaman'] = $totalpiu;
-		$data['tagihan'] = $doubletagihan;
+		$data['tagihan'] = $doublepiutangpinj;
 
 		// $que2 = "SELECT sum(pinjaman) pinjaman FROM t_cb_pinjaman WHERE status = 0";
 		$data['pinjaman'] = $doublepinjaman;
-		$data['pinjamanlunas'] = $doublepinjamanlunas;
+		$data['bungalall'] = $doublebungaall;
 
 		$data['saldo'] = $saldo;
 

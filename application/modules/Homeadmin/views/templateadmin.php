@@ -14,7 +14,8 @@
   <!-- Bootstrap -->
   <link href="<?php echo base_url('gentelella/') ?>vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Font Awesome -->
-  <link href="<?php echo base_url('gentelella/') ?>vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  <!-- <link href="<?php echo base_url('gentelella/') ?>vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet"> -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
   <!-- iCheck -->
   <link href="<?php echo base_url('gentelella/') ?>vendors/iCheck/skins/flat/green.css" rel="stylesheet">
   <!-- bootstrap-progressbar -->
@@ -322,8 +323,9 @@
                 </li> -->
             </ul>
           </nav>
-        </div>
-      </div>
+        </div>        
+      </div>      
+
       <!-- /top navigation -->
 
       <!-- page content -->

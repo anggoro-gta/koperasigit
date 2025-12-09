@@ -1,57 +1,57 @@
 <div class="">
   <div class="row top_tiles" style="margin: 10px 0;">
     <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12" id='simpanan'>
-      <div class="tile-stats" style="background-color: green;color: white">
-        <div class="icon"><i class="fa fa-money" style="color: white"></i></div>
+      <div class="tile-stats" style="background-color: gray;color: white">
+        <div class="icon"><i class="fa-solid fa-wallet" style="color: white"></i></div>
         <div class="count"><?= number_format($simpanan) ?></div>
         <h3 style="color: white">SIMPANAN</h3>
-        <p>Jumlah Simpanan</p>
+        <p>pokok, wajib, tapim, sukarela</p>
       </div>
     </div>
     <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12" id='pinjaman'>
-      <div class="tile-stats" style="background-color: red;color: white">
-        <div class="icon"><i class="fa fa-money" style="color: white"></i></div>
+      <div class="tile-stats" style="background-color: gray;color: white">
+        <div class="icon"><i class="fa-solid fa-wallet" style="color: white"></i></div>
         <div class="count"><?= number_format($pinjaman) ?></div>
-        <h3 style="color: white">PINJAMAN</h3>
-        <p>Jumlah Pinjaman Aktif</p>
+        <h3 style="color: white">REALISASI PINJAMAN</h3>
+        <p>kredit uang, barang, isidentil</p>
       </div>
     </div>
-    <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12" id='simulasi'>
+    <!-- <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12" id='simulasi'>
       <div class="tile-stats" style="background-color: orange;color: white">
-        <div class="icon"><i class="fa fa-money" style="color: white"></i></div>
+        <div class="icon"><i class="fa-solid fa-wallet" style="color: white"></i></div>
         <div class="count"><?= number_format($saldo) ?></div>
         <h3 style="color: white">Saldo</h3>
         <p>Sisa Saldo</p>
       </div>
-    </div>
+    </div> -->
   </div>
 
   <div class="row top_tiles" style="margin: 10px 0;">
     <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12" id='simpanan'>
-      <div class="tile-stats" style="background-color: green;color: white">
-        <div class="icon"><i class="fa fa-money" style="color: white"></i></div>
+      <div class="tile-stats" style="background-color: gray;color: white">
+        <div class="icon"><i class="fa-solid fa-wallet" style="color: white"></i></div>
         <div class="count"><?= number_format($piupinjaman) ?></div>
         <h3 style="color: white">PENERIMAAN ANGSURAN</h3>
-        <p>Jumlah Penerimaan Angsuran</p>
+        <p>pokok pinjaman, bunga</p>
       </div>
     </div>
     <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12" id='pinjaman'>
-      <div class="tile-stats" style="background-color: red;color: white">
-        <div class="icon"><i class="fa fa-money" style="color: white"></i></div>
-        <div class="count"><?= number_format($pinjamanlunas) ?></div>
-        <h3 style="color: white">LUNAS</h3>
-        <p>Jumlah Pinjaman Lunas</p>
+      <div class="tile-stats" style="background-color: gray;color: white">
+        <div class="icon"><i class="fa-solid fa-wallet" style="color: white"></i></div>
+        <div class="count"><?= number_format($bungalall) ?></div>
+        <h3 style="color: white">PENERIMAAN BUNGA</h3>
+        <p>bunga reguler, kompen, pelunasan</p>
       </div>
     </div>
   </div>
 
   <div class="row top_tiles" style="margin: 10px 0;">
     <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12" id='simpanan'>
-      <div class="tile-stats" style="background-color: green;color: white">
-        <div class="icon"><i class="fa fa-money" style="color: white"></i></div>
+      <div class="tile-stats" style="background-color: gray;color: white">
+        <div class="icon"><i class="fa-solid fa-wallet" style="color: white"></i></div>
         <div class="count"><?= number_format($tagihan) ?></div>
-        <h3 style="color: white">PIUTANG PINJAMAN</h3>
-        <p>Jumlah Piutang Belum Terbayar</p>
+        <h3 style="color: white">PIUTANG</h3>
+        <p>realisasi pinjaman - penerimaan angsuran</p>
       </div>
     </div>
   </div>
@@ -80,7 +80,10 @@
       </div>
     </div>
   </div>
-
+  <div class="pull-right">
+    © Copyright 2025 KPRI Canda Bhirawa
+  </div>
+  <div class="clearfix"></div>
 </div>
 
 <!-- script khusus admin -->
