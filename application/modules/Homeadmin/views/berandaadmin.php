@@ -5,7 +5,7 @@
         <div class="icon"><i class="fa-solid fa-wallet" style="color: white"></i></div>
         <div class="count"><?= number_format($simpanan) ?></div>
         <h3 style="color: white">SIMPANAN</h3>
-        <p>pokok, wajib, tapim, sukarela</p>
+        <p>POKOK, WAJIB, TAPIM, SUKARELA</p>
       </div>
     </div>
     <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12" id='pinjaman'>
@@ -13,7 +13,7 @@
         <div class="icon"><i class="fa-solid fa-wallet" style="color: white"></i></div>
         <div class="count"><?= number_format($pinjaman) ?></div>
         <h3 style="color: white">REALISASI PINJAMAN</h3>
-        <p>kredit uang, barang, isidentil</p>
+        <p>KREDIT UANG, BARANG, ISIDENTIL</p>
       </div>
     </div>
     <!-- <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12" id='simulasi'>
@@ -32,7 +32,7 @@
         <div class="icon"><i class="fa-solid fa-wallet" style="color: white"></i></div>
         <div class="count"><?= number_format($piupinjaman) ?></div>
         <h3 style="color: white">PENERIMAAN ANGSURAN</h3>
-        <p>pokok pinjaman, bunga</p>
+        <p>POKOK PINJAMAN, BUNGA</p>
       </div>
     </div>
     <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12" id='pinjaman'>
@@ -40,7 +40,7 @@
         <div class="icon"><i class="fa-solid fa-wallet" style="color: white"></i></div>
         <div class="count"><?= number_format($bungalall) ?></div>
         <h3 style="color: white">PENERIMAAN BUNGA</h3>
-        <p>bunga reguler, kompen, pelunasan</p>
+        <p>BUNGA REGULER, KOMPEN, PELUNASAN</p>
       </div>
     </div>
   </div>
@@ -51,7 +51,7 @@
         <div class="icon"><i class="fa-solid fa-wallet" style="color: white"></i></div>
         <div class="count"><?= number_format($tagihan) ?></div>
         <h3 style="color: white">PIUTANG</h3>
-        <p>realisasi pinjaman - penerimaan angsuran</p>
+        <p>REALISASI PINJAMAN - PENERIMAAN ANGSURAN</p>
       </div>
     </div>
   </div>
