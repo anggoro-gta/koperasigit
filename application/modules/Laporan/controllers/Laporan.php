@@ -352,6 +352,10 @@ class Laporan extends CI_Controller
 			$quesukarela = "SELECT SUM(ts.sukarela) AS sukarela FROM t_cb_tagihan_simpanan ts INNER JOIN t_cb_tagihan t ON ts.fk_tagihan_id = t.id WHERE t.tahun = $periode AND t.fk_skpd_id = " . $dataallskpd[$i]['id'];
 			$doublesukarela = doubleval($this->db->query($quesukarela)->row()->sukarela);
 			$arraysimpthn[$i]['sukarela'] = $doublesukarela;
+
+			$quetapim = "SELECT SUM(tp.tapim) AS tapim FROM t_cb_tagihan_pinjaman tp INNER JOIN t_cb_tagihan t ON tp.fk_tagihan_id = t.id WHERE t.tahun = $periode AND t.fk_skpd_id = " . $dataallskpd[$i]['id'];
+			$doubletapim = doubleval($this->db->query($quetapim)->row()->tapim);
+			$arraysimpthn[$i]['tapim'] = $doubletapim;
 		}
 		$data['hasil'] = $arraysimpthn;
 
@@ -361,17 +365,74 @@ class Laporan extends CI_Controller
 		$quetotalsukarela = "SELECT SUM(ts.sukarela) AS sukarela FROM t_cb_tagihan_simpanan ts INNER JOIN t_cb_tagihan t ON ts.fk_tagihan_id = t.id WHERE t.tahun = $periode";
 		$doubletotalsukarela = doubleval($this->db->query($quetotalsukarela)->row()->sukarela);
 
-		$totalsemuasimp = $doubletotalwajib + $doubletotalsukarela;
+		$quetotaltapim = "SELECT SUM(tp.tapim) AS tapim FROM t_cb_tagihan_pinjaman tp INNER JOIN t_cb_tagihan t ON tp.fk_tagihan_id = t.id WHERE t.tahun = $periode";
+		$doubletotaltapim = doubleval($this->db->query($quetotaltapim)->row()->tapim);
+
+		$totalsemuasimp = $doubletotalwajib + $doubletotalsukarela + $doubletotaltapim;
 
 		$data['totalwajib']	= $doubletotalwajib;
 		$data['totalsukarela'] = $doubletotalsukarela;
 		$data['totalsemuasimp'] = $totalsemuasimp;
+		$data['totaltapim'] = $doubletotaltapim;
 
 		$data['periode'] = $periode;
 
 		$data['tittle'] = 'Laporan Simpanan_' . $periode;
 		$html = $this->load->view('Laporan/simpthn_pdf', $data, true);
 		$title = 'Laporan Simpanan_' . $periode;
+		if ($type == 'pdf') {
+			$this->pdf($title, $html, $this->help->folio_P(), false);
+		} else {
+			$this->excel($title, $html);
+		}
+	}
+
+	public function simpnpkk()
+	{
+		$data['judul'] = 'Laporan Simpanan Pokok';
+		$data['lapSimppkk'] = 'active';
+		$data['action'] = base_url() . 'Laporan/cetak_simpnpkk';
+		$this->template->load('Homeadmin/templateadmin', 'Laporan/simppkk_form', $data);
+	}
+
+	public function cetak_simpnpkk()
+	{
+		$type = $this->input->post('type');
+
+		$quegetallskpd = "select * from ms_cb_skpd";
+		$dataallskpd = $this->db->query($quegetallskpd)->result_array();
+		$countallskpd = count($dataallskpd);
+
+		$arraysimppkk = [];
+
+		for ($i = 0; $i < $countallskpd; $i++) {
+			$arraysimppkk[$i]['nama_opd'] = $dataallskpd[$i]['nama_skpd'];
+
+			$quepokok = "SELECT SUM(simpanan_pokok) AS pokok FROM ms_cb_user_anggota WHERE fk_id_skpd = " . $dataallskpd[$i]['id'];
+			$doublepokok = doubleval($this->db->query($quepokok)->row()->pokok);
+			$arraysimppkk[$i]['pokok'] = $doublepokok;
+
+			$quewajib = "SELECT SUM(simpanan_wajib) AS wajib FROM ms_cb_user_anggota WHERE fk_id_skpd = " . $dataallskpd[$i]['id'];
+			$doublewajib = doubleval($this->db->query($quewajib)->row()->wajib);
+			$arraysimppkk[$i]['wajib'] = $doublewajib;
+		}
+		$data['hasil'] = $arraysimppkk;
+
+		$quetotalpokok = "SELECT SUM(simpanan_pokok) AS pokok FROM ms_cb_user_anggota";
+		$doubletotalpokok = doubleval($this->db->query($quetotalpokok)->row()->pokok);
+
+		$quetotalwajib = "SELECT SUM(simpanan_wajib) AS wajib FROM ms_cb_user_anggota";
+		$doubletotalwajib = doubleval($this->db->query($quetotalwajib)->row()->wajib);
+
+		$totalsemua = $doubletotalpokok + $doubletotalwajib;
+
+		$data['totalpokok']	= $doubletotalpokok;
+		$data['totalwajib'] = $doubletotalwajib;
+		$data['totalsemua'] = $totalsemua;
+
+		$data['tittle'] = 'Laporan Simpanan Pokok';
+		$html = $this->load->view('Laporan/simppkk_pdf', $data, true);
+		$title = 'Laporan Simpanan Pokok';
 		if ($type == 'pdf') {
 			$this->pdf($title, $html, $this->help->folio_P(), false);
 		} else {
@@ -462,7 +523,7 @@ class Laporan extends CI_Controller
 			$doublebunga = doubleval($this->db->query($quebunga)->row()->bunga);
 			$arraysimpthn[$i]['bunga'] = $doublebunga;
 		}
-		
+
 		$quesumpokok = "SELECT SUM( tp.pokok ) AS pokok FROM t_cb_tagihan_pinjaman tp INNER JOIN t_cb_tagihan t ON tp.fk_tagihan_id = t.id WHERE t.tahun = $periode";
 		$quesumtapim = "SELECT SUM( tp.tapim ) AS tapim FROM t_cb_tagihan_pinjaman tp INNER JOIN t_cb_tagihan t ON tp.fk_tagihan_id = t.id WHERE t.tahun = $periode";
 		$quesumbunga = "SELECT SUM( tp.bunga ) AS bunga FROM t_cb_tagihan_pinjaman tp INNER JOIN t_cb_tagihan t ON tp.fk_tagihan_id = t.id WHERE t.tahun = $periode";

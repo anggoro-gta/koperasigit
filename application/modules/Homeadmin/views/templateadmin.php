@@ -160,6 +160,9 @@
                       <li class="<?php if (isset($lapSimpthn)) {
                                     echo 'active';
                                   } ?>"><a href="<?php echo base_url('Laporan/simpnthn') ?>">Lap Simpanan Tahunan</a></li>
+                      <li class="<?php if (isset($lapSimppkk)) {
+                                    echo 'active';
+                                  } ?>"><a href="<?php echo base_url('Laporan/simpnpkk') ?>">Lap Simpanan Pokok</a></li>
                       <li class="<?php if (isset($lapPentagbln)) {
                                     echo 'active';
                                   } ?>"><a href="<?php echo base_url('Laporan/pentagbln') ?>">Lap Pentag Bulanan</a></li>
@@ -323,8 +326,8 @@
                 </li> -->
             </ul>
           </nav>
-        </div>        
-      </div>      
+        </div>
+      </div>
 
       <!-- /top navigation -->
 
