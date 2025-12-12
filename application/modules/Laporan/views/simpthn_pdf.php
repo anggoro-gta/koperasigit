@@ -43,8 +43,7 @@
             </tr>
             <tr>
                 <td colspan="2" align="center"><b>Total Wajib + Sukarela + Tapim</b></td>
-                <td colspan="3" align="right"><b><?= number_format($totalsemuasimp, 0, ',', '.') ?></b></td>
-                <td colspan="3" align="right"><b><?= number_format($totalsemuasimp, 0, ',', '.') ?></b></td>
+                <td colspan="3" align="right"><b><?= number_format($totalsemuasimp, 0, ',', '.') ?></b></td>                
         </table>
     </div>
 </body>
