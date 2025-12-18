@@ -85,12 +85,16 @@ class homeadmin extends MX_Controller
 		//TOTAL SALDO
 		$saldo = $totalall + $totalpiu + $doubletagihan - $doublepinjaman - $doublepinjamanlunas;
 
+		//GET DATA USER AKTIF
+		$quetotaluseraktif = "SELECT COUNT(id) AS jmlhuseraktif FROM ms_cb_user_anggota WHERE status_keaktifan = 'Aktif' AND fk_id_skpd NOT IN (124,129,130,131,132)";
+
 		// $que1 = "SELECT (COALESCE(sum(simpanan_pokok),0)+COALESCE(sum(simpanan_wajib),0)+COALESCE(sum(wajib),0)+COALESCE(sum(sukarela),0)+COALESCE(sum(tapim),0)) simpanan FROM ms_cb_user_anggota a
 		// 	INNER JOIN t_cb_tagihan_simpanan s ON s.fk_anggota_id=a.id
 		// 	INNER JOIN t_cb_tagihan_pinjaman p ON p.fk_anggota_id=a.id";
 		// $data['simpanan'] = $this->db->query($que1)->row()->simpanan;
 
 		$data['simpanan'] = $totalall;
+		$data['jmlhuseraktif'] = $this->db->query($quetotaluseraktif)->row()->jmlhuseraktif;
 		$data['piupinjaman'] = $totalpiu;
 		$data['tagihan'] = $doublepiutangpinj;
 
