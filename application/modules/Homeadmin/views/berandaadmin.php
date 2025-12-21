@@ -21,8 +21,8 @@
       <div class="tile-stats" style="background-color: #748CAB;color: white">
         <div class="icon"><i class="fa-solid fa-user" style="color: white"></i></div>
         <div class="count"><?= number_format($jmlhuseraktif) ?></div>
-        <h3 style="color: white">USER</h3>
-        <p>USER AKTIF</p>
+        <h3 style="color: white">ANGGOTA AKTIF</h3>
+        <p></p>
       </div>
     </div>
   </div>
