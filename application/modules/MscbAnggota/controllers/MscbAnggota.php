@@ -87,6 +87,7 @@ class MscbAnggota extends CI_Controller
 			'button' => 'Simpan',
 			'id' => set_value('id'),
 			'nama' => set_value('nama'),
+			'tgl'=> set_value('tgl'),
 			'alamat' => set_value('alamat'),
 			'nik' => set_value('nik'),
 			'nip' => set_value('nip'),
@@ -119,6 +120,7 @@ class MscbAnggota extends CI_Controller
 			'button' => 'Update',
 			'id' => set_value('id', $kat->id),
 			'nama' => set_value('nama', $kat->nama),
+			'tgl'=> set_value('tgl', $this->help->ReverseTgl($kat->tanggal_mulai_aktif)),
 			'alamat' => set_value('alamat', $kat->alamat),
 			'nik' => set_value('nik', $kat->nik),
 			'nip' => set_value('nip', $kat->nip),
@@ -182,8 +184,10 @@ class MscbAnggota extends CI_Controller
 			if ($getsimpwajib == "") {
 				// $data['id'] = $finalidnew;
 				$data['username'] = $finalidnew;
-				$data['password'] = md5('admin');
+				$data['nomor_anggota'] = $finalidnew;
+				$data['password'] = md5('kedirikab');
 				$data['nama'] = $this->input->post('nama');
+				$data['tanggal_mulai_aktif'] = $this->help->ReverseTgl($this->input->post('tgl'));
 				$data['alamat'] = $this->input->post('alamat');
 				$data['nik'] = $this->input->post('nik');
 				$data['nip'] = $this->input->post('nip');
@@ -201,8 +205,10 @@ class MscbAnggota extends CI_Controller
 			} else {
 				// $data['id'] = $finalidnew;
 				$data['username'] = $finalidnew;
-				$data['password'] = md5('admin');
+				$data['nomor_anggota'] = $finalidnew;
+				$data['password'] = md5('kedirikab');
 				$data['nama'] = $this->input->post('nama');
+				$data['tanggal_mulai_aktif'] = $this->help->ReverseTgl($this->input->post('tgl'));
 				$data['alamat'] = $this->input->post('alamat');
 				$data['nik'] = $this->input->post('nik');
 				$data['nip'] = $this->input->post('nip');
@@ -225,6 +231,7 @@ class MscbAnggota extends CI_Controller
 			if ($getsimpwajib == "") {
 				$data['id'] = $id;
 				$data['nama'] = $this->input->post('nama');
+				$data['tanggal_mulai_aktif'] = $this->help->ReverseTgl($this->input->post('tgl'));
 				$data['alamat'] = $this->input->post('alamat');
 				$data['nik'] = $this->input->post('nik');
 				$data['nip'] = $this->input->post('nip');
@@ -242,6 +249,7 @@ class MscbAnggota extends CI_Controller
 			} else {
 				$data['id'] = $id;
 				$data['nama'] = $this->input->post('nama');
+				$data['tanggal_mulai_aktif'] = $this->help->ReverseTgl($this->input->post('tgl'));
 				$data['alamat'] = $this->input->post('alamat');
 				$data['nik'] = $this->input->post('nik');
 				$data['nip'] = $this->input->post('nip');
