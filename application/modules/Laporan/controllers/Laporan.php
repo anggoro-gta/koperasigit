@@ -345,9 +345,15 @@ class Laporan extends CI_Controller
 		for ($i = 0; $i < $countallskpd; $i++) {
 			$arraysimpthn[$i]['nama_opd'] = $dataallskpd[$i]['nama_skpd'];
 
+			$quepokok = "SELECT SUM(simpanan_pokok) AS pokok FROM ms_cb_user_anggota WHERE YEAR(tanggal_mulai_aktif) = $periode AND fk_id_skpd = " . $dataallskpd[$i]['id'];
+			$doublepokok = doubleval($this->db->query($quepokok)->row()->pokok);
+			$arraysimpthn[$i]['pokok'] = $doublepokok;
+
 			$quewajib = "SELECT SUM(ts.wajib) AS wajib FROM t_cb_tagihan_simpanan ts INNER JOIN t_cb_tagihan t ON ts.fk_tagihan_id = t.id WHERE t.tahun = $periode AND t.fk_skpd_id = " . $dataallskpd[$i]['id'];
 			$doublewajib = doubleval($this->db->query($quewajib)->row()->wajib);
-			$arraysimpthn[$i]['wajib'] = $doublewajib;
+			$quewajibuserreg = "SELECT SUM(simpanan_wajib) AS wajibuserreg FROM ms_cb_user_anggota WHERE YEAR(tanggal_mulai_aktif) = $periode AND fk_id_skpd = " . $dataallskpd[$i]['id'];
+			$doublewajibuserreg = doubleval($this->db->query($quewajibuserreg)->row()->wajibuserreg);
+			$arraysimpthn[$i]['wajib'] = $doublewajib + $doublewajibuserreg;
 
 			$quesukarela = "SELECT SUM(ts.sukarela) AS sukarela FROM t_cb_tagihan_simpanan ts INNER JOIN t_cb_tagihan t ON ts.fk_tagihan_id = t.id WHERE t.tahun = $periode AND t.fk_skpd_id = " . $dataallskpd[$i]['id'];
 			$doublesukarela = doubleval($this->db->query($quesukarela)->row()->sukarela);
@@ -359,8 +365,13 @@ class Laporan extends CI_Controller
 		}
 		$data['hasil'] = $arraysimpthn;
 
+		$quetotalpokok = "SELECT SUM(simpanan_pokok) AS pokok FROM ms_cb_user_anggota WHERE YEAR(tanggal_mulai_aktif) = $periode";
+		$doubletotalpokok = doubleval($this->db->query($quetotalpokok)->row()->pokok);
+
 		$quetotalwajib = "SELECT SUM(ts.wajib) AS wajib FROM t_cb_tagihan_simpanan ts INNER JOIN t_cb_tagihan t ON ts.fk_tagihan_id = t.id WHERE t.tahun = $periode";
 		$doubletotalwajib = doubleval($this->db->query($quetotalwajib)->row()->wajib);
+		$quetotalwajibuserreg = "SELECT SUM(simpanan_wajib) AS wajibuserreg FROM ms_cb_user_anggota WHERE YEAR(tanggal_mulai_aktif) = $periode";
+		$doubletotalwajibuserreg = doubleval($this->db->query($quetotalwajibuserreg)->row()->wajibuserreg);
 
 		$quetotalsukarela = "SELECT SUM(ts.sukarela) AS sukarela FROM t_cb_tagihan_simpanan ts INNER JOIN t_cb_tagihan t ON ts.fk_tagihan_id = t.id WHERE t.tahun = $periode";
 		$doubletotalsukarela = doubleval($this->db->query($quetotalsukarela)->row()->sukarela);
@@ -368,9 +379,10 @@ class Laporan extends CI_Controller
 		$quetotaltapim = "SELECT SUM(tp.tapim) AS tapim FROM t_cb_tagihan_pinjaman tp INNER JOIN t_cb_tagihan t ON tp.fk_tagihan_id = t.id WHERE t.tahun = $periode";
 		$doubletotaltapim = doubleval($this->db->query($quetotaltapim)->row()->tapim);
 
-		$totalsemuasimp = $doubletotalwajib + $doubletotalsukarela + $doubletotaltapim;
+		$totalsemuasimp = $doubletotalpokok + $quetotalwajibuserreg + $doubletotalwajib + $doubletotalsukarela + $doubletotaltapim;
 
-		$data['totalwajib']	= $doubletotalwajib;
+		$data['totalpokok']	= $doubletotalpokok;
+		$data['totalwajib']	= $doubletotalwajib + $doubletotalwajibuserreg;
 		$data['totalsukarela'] = $doubletotalsukarela;
 		$data['totalsemuasimp'] = $totalsemuasimp;
 		$data['totaltapim'] = $doubletotaltapim;
