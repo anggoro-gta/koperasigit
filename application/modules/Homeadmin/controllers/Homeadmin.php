@@ -129,4 +129,305 @@ class homeadmin extends MX_Controller
 
 		$this->template->load('Homeadmin/templateadmin', 'Homeadmin/berandaadmin', $data);
 	}
+
+	public function detail($jenis){
+		if($jenis=='simpanan'){
+			$data = [
+				'judul' => 'SIMPANAN'
+			];
+		}
+
+		$startYear = 2023;
+		$currentYear = (int) date('Y');
+
+		$years = range($currentYear, $startYear);
+
+		$data['jenis'] = $jenis;
+		$data['ref_tahun'] = $years;
+		
+		$this->template->load('Homeadmin/templateadmin', 'Homeadmin/detail', $data);
+	}
+
+	public function ajaxDetail()
+	{
+		$jenis = $this->input->get('jenis', true);
+		$tahun = $this->input->get('tahun', true);
+
+		$data = ['status' => false, 'message' => 'Jenis tidak dikenali'];
+
+		if ($jenis === 'simpanan') {
+
+			// normalisasi tahun
+			$isAll = ($tahun === 'all' || $tahun === 'semua' || $tahun === null || $tahun === '');
+			$tahunInt = $isAll ? null : (int) $tahun;
+
+			// SQL dengan COALESCE biar tidak NULL
+			$sql_pokok = "SELECT COALESCE(SUM(simpanan_pokok),0) AS nominal
+						FROM ms_cb_user_anggota
+						WHERE YEAR(tanggal_mulai_aktif) = ?";
+
+			$sql_wajib = "SELECT COALESCE(SUM(tcts.wajib),0) AS nominal
+						FROM t_cb_tagihan_simpanan tcts
+						JOIN t_cb_tagihan tct ON tcts.fk_tagihan_id = tct.id
+						WHERE tct.tahun = ?";
+
+			$sql_wajib_2 = "SELECT COALESCE(SUM(simpanan_wajib),0) AS nominal
+							FROM ms_cb_user_anggota
+							WHERE YEAR(tanggal_mulai_aktif) = ?";
+
+			$sql_tapim = "SELECT COALESCE(SUM(tctp.tapim),0) AS nominal
+						FROM t_cb_tagihan_pinjaman tctp
+						JOIN t_cb_tagihan tct ON tctp.fk_tagihan_id = tct.id
+						WHERE tct.tahun = ?";
+
+			$sql_sukarela = "SELECT COALESCE(SUM(tcts.sukarela),0) AS nominal
+							FROM t_cb_tagihan_simpanan tcts
+							JOIN t_cb_tagihan tct ON tcts.fk_tagihan_id = tct.id
+							WHERE tct.tahun = ?";
+
+			if ($isAll) {
+				$pokok    = (float) $this->db->query("SELECT COALESCE(SUM(simpanan_pokok),0) AS nominal FROM ms_cb_user_anggota")->row()->nominal;
+				$wajib    = (float) $this->db->query("SELECT COALESCE(SUM(tcts.wajib),0) AS nominal
+													FROM t_cb_tagihan_simpanan tcts
+													JOIN t_cb_tagihan tct ON tcts.fk_tagihan_id = tct.id")->row()->nominal;
+				$wajib_2  = (float) $this->db->query("SELECT COALESCE(SUM(simpanan_wajib),0) AS nominal FROM ms_cb_user_anggota")->row()->nominal;
+				$tapim    = (float) $this->db->query("SELECT COALESCE(SUM(tctp.tapim),0) AS nominal
+													FROM t_cb_tagihan_pinjaman tctp
+													JOIN t_cb_tagihan tct ON tctp.fk_tagihan_id = tct.id")->row()->nominal;
+				$sukarela = (float) $this->db->query("SELECT COALESCE(SUM(tcts.sukarela),0) AS nominal
+													FROM t_cb_tagihan_simpanan tcts
+													JOIN t_cb_tagihan tct ON tcts.fk_tagihan_id = tct.id")->row()->nominal;
+			} else {
+				$pokok    = (float) $this->db->query($sql_pokok,    [$tahunInt])->row()->nominal;
+				$wajib    = (float) $this->db->query($sql_wajib,    [$tahunInt])->row()->nominal;
+				$wajib_2  = (float) $this->db->query($sql_wajib_2,  [$tahunInt])->row()->nominal;
+				$tapim    = (float) $this->db->query($sql_tapim,    [$tahunInt])->row()->nominal;
+				$sukarela = (float) $this->db->query($sql_sukarela, [$tahunInt])->row()->nominal;
+			}
+
+			$wajibTotal = $wajib + $wajib_2;
+			$total = $pokok + $wajibTotal + $tapim + $sukarela;
+
+			$data = [
+				'status'   => true,
+				'pokok'    => $pokok ?? 0,
+				'wajib'    => $wajibTotal ?? 0,
+				'tapim'    => $tapim ?? 0,
+				'sukarela' => $sukarela ?? 0,
+				'total'    => $total ?? 0,
+			];
+		}
+
+		$this->output
+			->set_content_type('application/json')
+			->set_output(json_encode($data));
+	}
+
+	public function ajaxGrafik()
+	{
+		$jenis = $this->input->get('jenis', true);
+		$tahun = $this->input->get('tahun', true);
+
+		$data = ['status' => false, 'message' => 'Jenis tidak dikenali'];
+
+		if ($jenis !== 'simpanan') {
+			return $this->output
+				->set_content_type('application/json')
+				->set_output(json_encode($data));
+		}
+
+		$isAll = ($tahun === 'all' || $tahun === 'semua' || $tahun === null || $tahun === '');
+
+		$bulanNama = [1=>'Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+
+		// Master bulan 1..12
+		$monthTable = "
+			(SELECT 1 bulan UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+			UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8
+			UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12) m
+		";
+
+		// ✅ Normalisasi bulan tagihan:
+		// - kalau tct.bulan valid -> pakai
+		// - kalau tidak valid / NULL -> lempar ke 12 (Des) supaya tidak hilang dari grafik
+		// Catatan: kalau kamu punya kolom tanggal di t_cb_tagihan (mis. tct.tanggal_tagihan),
+		// kamu bisa ganti ELSE 12 jadi ELSE MONTH(tct.tanggal_tagihan)
+		$bulanTagihanExpr = "CASE WHEN tct.bulan BETWEEN 1 AND 12 THEN tct.bulan ELSE 12 END";
+
+		if ($isAll) {
+			// ================= ALL (tanpa filter tahun) =================
+			$sql = "
+				SELECT m.bulan,
+					COALESCE(p.pokok, 0)    AS pokok,
+					COALESCE(w.wajib, 0)    AS wajib,
+					COALESCE(t.tapim, 0)    AS tapim,
+					COALESCE(s.sukarela, 0) AS sukarela
+				FROM {$monthTable}
+
+				LEFT JOIN (
+					SELECT
+						CASE WHEN MONTH(tanggal_mulai_aktif) BETWEEN 1 AND 12 THEN MONTH(tanggal_mulai_aktif) ELSE 12 END AS bulan,
+						SUM(COALESCE(simpanan_pokok,0)) AS pokok
+					FROM ms_cb_user_anggota
+					GROUP BY bulan
+				) p ON p.bulan = m.bulan
+
+				LEFT JOIN (
+					SELECT bulan, SUM(nominal) AS wajib
+					FROM (
+						-- wajib tagihan (tanpa filter tahun)
+						SELECT
+							{$bulanTagihanExpr} AS bulan,
+							SUM(COALESCE(tcts.wajib,0)) AS nominal
+						FROM t_cb_tagihan_simpanan tcts
+						LEFT JOIN t_cb_tagihan tct ON tcts.fk_tagihan_id = tct.id
+						GROUP BY bulan
+
+						UNION ALL
+
+						-- wajib anggota (tanpa filter tahun)
+						SELECT
+							CASE WHEN MONTH(tanggal_mulai_aktif) BETWEEN 1 AND 12 THEN MONTH(tanggal_mulai_aktif) ELSE 12 END AS bulan,
+							SUM(COALESCE(simpanan_wajib,0)) AS nominal
+						FROM ms_cb_user_anggota
+						GROUP BY bulan
+					) x
+					GROUP BY bulan
+				) w ON w.bulan = m.bulan
+
+				LEFT JOIN (
+					SELECT
+						{$bulanTagihanExpr} AS bulan,
+						SUM(COALESCE(tctp.tapim,0)) AS tapim
+					FROM t_cb_tagihan_pinjaman tctp
+					LEFT JOIN t_cb_tagihan tct ON tctp.fk_tagihan_id = tct.id
+					GROUP BY bulan
+				) t ON t.bulan = m.bulan
+
+				LEFT JOIN (
+					SELECT
+						{$bulanTagihanExpr} AS bulan,
+						SUM(COALESCE(tcts.sukarela,0)) AS sukarela
+					FROM t_cb_tagihan_simpanan tcts
+					LEFT JOIN t_cb_tagihan tct ON tcts.fk_tagihan_id = tct.id
+					GROUP BY bulan
+				) s ON s.bulan = m.bulan
+
+				ORDER BY m.bulan
+			";
+
+			$rows = $this->db->query($sql)->result_array();
+			$tahunOut = 'all';
+
+		} else {
+			// ================= 1 TAHUN =================
+			$tahunInt = (int)$tahun;
+
+			$sql = "
+				SELECT m.bulan,
+					COALESCE(p.pokok, 0)    AS pokok,
+					COALESCE(w.wajib, 0)    AS wajib,
+					COALESCE(t.tapim, 0)    AS tapim,
+					COALESCE(s.sukarela, 0) AS sukarela
+				FROM {$monthTable}
+
+				LEFT JOIN (
+					SELECT
+						CASE WHEN MONTH(tanggal_mulai_aktif) BETWEEN 1 AND 12 THEN MONTH(tanggal_mulai_aktif) ELSE 12 END AS bulan,
+						SUM(COALESCE(simpanan_pokok,0)) AS pokok
+					FROM ms_cb_user_anggota
+					WHERE YEAR(tanggal_mulai_aktif) = ?
+					GROUP BY bulan
+				) p ON p.bulan = m.bulan
+
+				LEFT JOIN (
+					SELECT bulan, SUM(nominal) AS wajib
+					FROM (
+						SELECT
+							{$bulanTagihanExpr} AS bulan,
+							SUM(COALESCE(tcts.wajib,0)) AS nominal
+						FROM t_cb_tagihan_simpanan tcts
+						LEFT JOIN t_cb_tagihan tct ON tcts.fk_tagihan_id = tct.id
+						WHERE tct.tahun = ?
+						GROUP BY bulan
+
+						UNION ALL
+
+						SELECT
+							CASE WHEN MONTH(tanggal_mulai_aktif) BETWEEN 1 AND 12 THEN MONTH(tanggal_mulai_aktif) ELSE 12 END AS bulan,
+							SUM(COALESCE(simpanan_wajib,0)) AS nominal
+						FROM ms_cb_user_anggota
+						WHERE YEAR(tanggal_mulai_aktif) = ?
+						GROUP BY bulan
+					) x
+					GROUP BY bulan
+				) w ON w.bulan = m.bulan
+
+				LEFT JOIN (
+					SELECT
+						{$bulanTagihanExpr} AS bulan,
+						SUM(COALESCE(tctp.tapim,0)) AS tapim
+					FROM t_cb_tagihan_pinjaman tctp
+					LEFT JOIN t_cb_tagihan tct ON tctp.fk_tagihan_id = tct.id
+					WHERE tct.tahun = ?
+					GROUP BY bulan
+				) t ON t.bulan = m.bulan
+
+				LEFT JOIN (
+					SELECT
+						{$bulanTagihanExpr} AS bulan,
+						SUM(COALESCE(tcts.sukarela,0)) AS sukarela
+					FROM t_cb_tagihan_simpanan tcts
+					LEFT JOIN t_cb_tagihan tct ON tcts.fk_tagihan_id = tct.id
+					WHERE tct.tahun = ?
+					GROUP BY bulan
+				) s ON s.bulan = m.bulan
+
+				ORDER BY m.bulan
+			";
+
+			$rows = $this->db->query($sql, [$tahunInt, $tahunInt, $tahunInt, $tahunInt, $tahunInt])->result_array();
+			$tahunOut = $tahunInt;
+		}
+
+		// Build output series
+		$labels = [];
+		$pokok = [];
+		$wajib = [];
+		$tapim = [];
+		$sukarela = [];
+
+		foreach ($rows as $r) {
+			$b = (int)$r['bulan'];
+			$labels[]   = $bulanNama[$b] ?? (string)$b;
+			$pokok[]    = (float)$r['pokok'];
+			$wajib[]    = (float)$r['wajib'];
+			$tapim[]    = (float)$r['tapim'];
+			$sukarela[] = (float)$r['sukarela'];
+		}
+
+		// ✅ total grafik (buat pembanding dengan ajaxDetail)
+		$grandTotal = array_sum($pokok) + array_sum($wajib) + array_sum($tapim) + array_sum($sukarela);
+
+		$data = [
+			'status' => true,
+			'tahun'  => $tahunOut,
+			'labels' => $labels,
+			'series' => [
+				'pokok'    => $pokok,
+				'wajib'    => $wajib,
+				'tapim'    => $tapim,
+				'sukarela' => $sukarela,
+			],
+			'total' => $grandTotal, // <- pembanding
+		];
+
+		return $this->output
+			->set_content_type('application/json')
+			->set_output(json_encode($data));
+	}
+
+
+
+
 }
