@@ -205,7 +205,7 @@ icons.play();
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.simpanan').forEach(function(el) {
         el.addEventListener('click', function() {
-            window.location.href = '<?= base_url("homeadmin/detail/simpanan"); ?>';
+            window.location.href = '<?= base_url("Homeadmin/detail/simpanan"); ?>';
         });
     });
 });
