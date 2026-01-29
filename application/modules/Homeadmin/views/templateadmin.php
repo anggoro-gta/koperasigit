@@ -3,32 +3,38 @@
 <html lang="en">
 
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <!-- Meta, title, CSS, favicons, etc. -->
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/png" href="<?php echo base_url() . 'assets_login/' ?>images/logo-cb.png" />
-  <title>KPRI. CANDA BHIRAWA</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="<?php echo base_url() . 'assets_login/' ?>images/logo-cb.png" />
+    <title>KPRI. CANDA BHIRAWA</title>
 
-  <!-- Bootstrap -->
-  <link href="<?php echo base_url('gentelella/') ?>vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Font Awesome -->
-  <!-- <link href="<?php echo base_url('gentelella/') ?>vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet"> -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-  <!-- iCheck -->
-  <link href="<?php echo base_url('gentelella/') ?>vendors/iCheck/skins/flat/green.css" rel="stylesheet">
-  <!-- bootstrap-progressbar -->
-  <link href="<?php echo base_url('gentelella/') ?>vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
-  <!-- jVectorMap -->
-  <link href="<?php echo base_url('gentelella/production/') ?>css/maps/jquery-jvectormap-2.0.3.css" rel="stylesheet" />
+    <!-- Bootstrap -->
+    <link href="<?php echo base_url('gentelella/') ?>vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <!-- <link href="<?php echo base_url('gentelella/') ?>vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <!-- iCheck -->
+    <link href="<?php echo base_url('gentelella/') ?>vendors/iCheck/skins/flat/green.css" rel="stylesheet">
+    <!-- bootstrap-progressbar -->
+    <link
+        href="<?php echo base_url('gentelella/') ?>vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css"
+        rel="stylesheet">
+    <!-- jVectorMap -->
+    <link href="<?php echo base_url('gentelella/production/') ?>css/maps/jquery-jvectormap-2.0.3.css"
+        rel="stylesheet" />
 
-  <!-- Custom Theme Style -->
-  <link href="<?php echo base_url('gentelella/') ?>build/css/custom.min.css" rel="stylesheet">
-  <!-- Select2 -->
-  <link href="<?php echo base_url('gentelella/') ?>vendors/select2/dist/css/select2.min.css" rel="stylesheet"><!-- Date Picker -->
-  <link rel="stylesheet" href="<?php echo base_url() ?>assets/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
-  <link href="<?php echo base_url() . 'gentelella/' ?>plugins/datatables/dataTables.bootstrap.css" rel="stylesheet" type="text/css" />
+    <!-- Custom Theme Style -->
+    <link href="<?php echo base_url('gentelella/') ?>build/css/custom.min.css" rel="stylesheet">
+    <!-- Select2 -->
+    <link href="<?php echo base_url('gentelella/') ?>vendors/select2/dist/css/select2.min.css" rel="stylesheet">
+    <!-- Date Picker -->
+    <link rel="stylesheet"
+        href="<?php echo base_url() ?>assets/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+    <link href="<?php echo base_url() . 'gentelella/' ?>plugins/datatables/dataTables.bootstrap.css" rel="stylesheet"
+        type="text/css" />
 
 </head>
 
@@ -37,7 +43,8 @@
 <script src="<?php echo base_url() . 'gentelella/' ?>plugins/moneymask/autoNumeric.js" type="text/javascript"></script>
 
 <script src="<?php echo base_url() . 'gentelella/vendors/datatables.net/js/jquery.dataTables.min.js' ?>"></script>
-<script src="<?php echo base_url() . 'gentelella/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js' ?>"></script><!-- datepicker -->
+<script src="<?php echo base_url() . 'gentelella/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js' ?>"></script>
+<!-- datepicker -->
 <script src="<?php echo base_url() ?>assets/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
 <!-- <script src="<?php echo base_url() ?>assets/ckeditor_basic/ckeditor.js"></script> -->
 <script src="<?php echo base_url() ?>assets/ckeditor/ckeditor.js"></script>
@@ -46,73 +53,76 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <script type="text/javascript">
-  // $(document).ready(function(){
+// $(document).ready(function(){
 
 
-  // });
+// });
 </script>
 <?php $level = $this->session->fk_level_id; ?>
 
 <body class="nav-md">
-  <div class="container body">
-    <div class="main_container">
-      <div class="col-md-3 left_col">
-        <div class="left_col scroll-view">
-          <div class="navbar nav_title" style="border: 0;">
-            <a class="site_title"><i class="fa fa-book"></i> <span>KPRI. CB</span></a>
-          </div>
-          <div class="clearfix"></div>
+    <div class="container body">
+        <div class="main_container">
+            <div class="col-md-3 left_col">
+                <div class="left_col scroll-view">
+                    <div class="navbar nav_title" style="border: 0;">
+                        <a class="site_title"><i class="fa fa-book"></i> <span>KPRI. CB</span></a>
+                    </div>
+                    <div class="clearfix"></div>
 
-          <!-- menu profile quick info -->
-          <div class="profile">
-            <div class="profile_pic">
-              <img src="<?php echo base_url() . 'assets_login/' ?>images/logo-cb.png" alt="..." class="img-circle profile_img">
-            </div>
-            <div class="profile_info">
-              <span>Selamat Datang,</span>
-              <h2><?php echo $_SESSION['nama_lengkap']; ?> <?= !empty($this->session->nama_cabang) ? '<br>(' . $this->session->nama_cabang . ')' : '' ?></h2>
-            </div>
-          </div>
-          <!-- /menu profile quick info -->
+                    <!-- menu profile quick info -->
+                    <div class="profile">
+                        <div class="profile_pic">
+                            <img src="<?php echo base_url() . 'assets_login/' ?>images/logo-cb.png" alt="..."
+                                class="img-circle profile_img">
+                        </div>
+                        <div class="profile_info">
+                            <span>Selamat Datang,</span>
+                            <h2><?php echo $_SESSION['nama_lengkap']; ?>
+                                <?= !empty($this->session->nama_cabang) ? '<br>(' . $this->session->nama_cabang . ')' : '' ?>
+                            </h2>
+                        </div>
+                    </div>
+                    <!-- /menu profile quick info -->
 
-          <br />
+                    <br />
 
-          <!-- sidebar menu -->
-          <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
-            <div class="menu_section">
-              <h3>&nbsp;</h3>
-              <ul class="nav side-menu">
-                <li class="<?php if (isset($beranda)) {
+                    <!-- sidebar menu -->
+                    <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+                        <div class="menu_section">
+                            <h3>&nbsp;</h3>
+                            <ul class="nav side-menu">
+                                <li class="<?php if (isset($beranda)) {
                               echo 'active';
                             } ?>"><a href="<?php echo base_url('Homeadmin') ?>"><i class="fa fa-home"></i> Beranda</a>
-                </li>
-                <?php if ($level == 1) { ?>
-                  <li><a><i class="fa fa-book"></i> Master <span class="fa fa-chevron-down"></span></a>
-                    <ul class="nav child_menu">
-                      <li class="<?php if (isset($MscbSkpd)) {
+                                </li>
+                                <?php if ($level == 1) { ?>
+                                <li><a><i class="fa fa-book"></i> Master <span class="fa fa-chevron-down"></span></a>
+                                    <ul class="nav child_menu">
+                                        <li class="<?php if (isset($MscbSkpd)) {
                                     echo 'active';
                                   } ?>"><a href="<?php echo base_url('MscbSkpd') ?>">SKPD</a></li>
-                      <li class="<?php if (isset($MscbAnggota)) {
+                                        <li class="<?php if (isset($MscbAnggota)) {
                                     echo 'active';
                                   } ?>"><a href="<?php echo base_url('MscbAnggota') ?>">Anggota</a></li>
-                      <li class="<?php if (isset($MscbUsersistem)) {
+                                        <li class="<?php if (isset($MscbUsersistem)) {
                                     echo 'active';
                                   } ?>"><a href="<?php echo base_url('MscbUsersistem') ?>">User</a></li>
-                    </ul>
-                  </li>
-                <?php } else { ?>
-                  <li><a><i class="fa fa-book"></i> Master <span class="fa fa-chevron-down"></span></a>
-                    <ul class="nav child_menu">
-                      <li class="<?php if (isset($MsPelanggan)) {
+                                    </ul>
+                                </li>
+                                <?php } else { ?>
+                                <li><a><i class="fa fa-book"></i> Master <span class="fa fa-chevron-down"></span></a>
+                                    <ul class="nav child_menu">
+                                        <li class="<?php if (isset($MsPelanggan)) {
                                     echo 'active';
                                   } ?>"><a href="<?php echo base_url('MsPelanggan') ?>">Pelanggan</a></li>
-                      <li class="<?php if (isset($MsTerapis)) {
+                                        <li class="<?php if (isset($MsTerapis)) {
                                     echo 'active';
                                   } ?>"><a href="<?php echo base_url('MsTerapis') ?>">Terapis</a></li>
-                    </ul>
-                  </li>
-                <?php } ?>
-                <!-- <li><a><i class="fa fa-edit"></i> Entri Data <span class="fa fa-chevron-down"></span></a>
+                                    </ul>
+                                </li>
+                                <?php } ?>
+                                <!-- <li><a><i class="fa fa-edit"></i> Entri Data <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       <li class="<?php if (isset($Pos)) {
                                     echo 'active';
@@ -120,62 +130,74 @@
                     </ul>
                   </li> -->
 
-                <?php if ($level == 1) { ?>
-                  <li><a><i class="fa fa-edit"></i> Transaksi <span class="fa fa-chevron-down"></span></a>
-                    <ul class="nav child_menu">
-                      <li class="<?php if (isset($Pinjaman)) {
+                                <?php if ($level == 1) { ?>
+                                <li><a><i class="fa fa-edit"></i> Transaksi <span class="fa fa-chevron-down"></span></a>
+                                    <ul class="nav child_menu">
+                                        <li class="<?php if (isset($Pinjaman)) {
                                     echo 'active';
                                   } ?>"><a href="<?php echo base_url('Pinjaman') ?>">Pinjaman</a></li>
-                      <li class="<?php if (isset($Tagihan)) {
+                                        <li class="<?php if (isset($Tagihan)) {
                                     echo 'active';
                                   } ?>"><a href="<?php echo base_url('Tagihan') ?>">Tagihan</a></li>
-                    </ul>
-                  </li>
-                <?php } ?>
+                                    </ul>
+                                </li>
+                                <li class="<?php if (isset($Penarikan)) { echo 'active'; } ?>"><a
+                                        href="<?php echo base_url('Penarikan') ?>"><i
+                                            class="fa fa-file-invoice-dollar"></i>
+                                        Penarikan</a>
+                                </li>
+                                <?php } ?>
 
-                <?php if ($level == 1) { ?>
-                  <li><a><i class="fa fa-bar-chart"></i> Laporan <span class="fa fa-chevron-down"></span></a>
-                    <ul class="nav child_menu">
-                      <li class="<?php if (isset($lapTransaksi)) {
+                                <?php if ($level == 1) { ?>
+                                <li><a><i class="fa fa-bar-chart"></i> Laporan <span
+                                            class="fa fa-chevron-down"></span></a>
+                                    <ul class="nav child_menu">
+                                        <li class="<?php if (isset($lapTransaksi)) {
                                     echo 'active';
                                   } ?>"><a href="<?php echo base_url('Laporan/tunggakan') ?>">Lap Tunggakan</a></li>
-                      <li class="<?php if (isset($lapPinjaman)) {
+                                        <li class="<?php if (isset($lapPinjaman)) {
                                     echo 'active';
                                   } ?>"><a href="<?php echo base_url('Laporan/pinjaman') ?>">Lap Pinjaman</a></li>
-                      <li class="<?php if (isset($lapSimpanan)) {
+                                        <li class="<?php if (isset($lapSimpanan)) {
                                     echo 'active';
                                   } ?>"><a href="<?php echo base_url('Laporan/simpanan') ?>">Lap Simpanan</a></li>
-                      <li class="<?php if (isset($lapUpdateAnggota)) {
+                                        <li class="<?php if (isset($lapUpdateAnggota)) {
                                     echo 'active';
-                                  } ?>"><a href="<?php echo base_url('Laporan/updateanggota') ?>">Lap Update Anggota</a></li>
-                      <li class="<?php if (isset($lapKompensasi)) {
+                                  } ?>"><a href="<?php echo base_url('Laporan/updateanggota') ?>">Lap Update
+                                                Anggota</a></li>
+                                        <li class="<?php if (isset($lapKompensasi)) {
                                     echo 'active';
                                   } ?>"><a href="<?php echo base_url('Laporan/kompensasi') ?>">Lap Kompensasi</a></li>
-                      <li class="<?php if (isset($lapPelunasan)) {
+                                        <li class="<?php if (isset($lapPelunasan)) {
                                     echo 'active';
                                   } ?>"><a href="<?php echo base_url('Laporan/pelunasan') ?>">Lap Pelunasan</a></li>
-                      <li class="<?php if (isset($lapSimpbln)) {
+                                        <li class="<?php if (isset($lapSimpbln)) {
                                     echo 'active';
-                                  } ?>"><a href="<?php echo base_url('Laporan/simpnbln') ?>">Lap Simpanan Bulanan</a></li>
-                      <li class="<?php if (isset($lapSimpthn)) {
+                                  } ?>"><a href="<?php echo base_url('Laporan/simpnbln') ?>">Lap Simpanan Bulanan</a>
+                                        </li>
+                                        <li class="<?php if (isset($lapSimpthn)) {
                                     echo 'active';
-                                  } ?>"><a href="<?php echo base_url('Laporan/simpnthn') ?>">Lap Simpanan Tahunan</a></li>
-                      <li class="<?php if (isset($lapSimppkk)) {
+                                  } ?>"><a href="<?php echo base_url('Laporan/simpnthn') ?>">Lap Simpanan Tahunan</a>
+                                        </li>
+                                        <li class="<?php if (isset($lapSimppkk)) {
                                     echo 'active';
-                                  } ?>"><a href="<?php echo base_url('Laporan/simpnpkk') ?>">Lap Simpanan Pokok</a></li>
-                      <li class="<?php if (isset($lapPentagbln)) {
+                                  } ?>"><a href="<?php echo base_url('Laporan/simpnpkk') ?>">Lap Simpanan Pokok</a>
+                                        </li>
+                                        <li class="<?php if (isset($lapPentagbln)) {
                                     echo 'active';
-                                  } ?>"><a href="<?php echo base_url('Laporan/pentagbln') ?>">Lap Pentag Bulanan</a></li>
-                      <li class="<?php if (isset($lapPentagthn)) {
+                                  } ?>"><a href="<?php echo base_url('Laporan/pentagbln') ?>">Lap Pentag Bulanan</a>
+                                        </li>
+                                        <li class="<?php if (isset($lapPentagthn)) {
                                     echo 'active';
-                                  } ?>"><a href="<?php echo base_url('Laporan/pentagthn') ?>">Lap Pentag Tahunan</a></li>
+                                  } ?>"><a href="<?php echo base_url('Laporan/pentagthn') ?>">Lap Pentag Tahunan</a>
+                                        </li>
 
-                    </ul>
-                  </li>
-                <?php } ?>
-              </ul>
-            </div>
-            <!-- <div class="menu_section">
+                                    </ul>
+                                </li>
+                                <?php } ?>
+                            </ul>
+                        </div>
+                        <!-- <div class="menu_section">
                 <h3>Live On</h3>
                 <ul class="nav side-menu">
                   <li><a><i class="fa fa-bug"></i> Additional Pages <span class="fa fa-chevron-down"></span></a>
@@ -218,11 +240,11 @@
                 </ul>
               </div> -->
 
-          </div>
-          <!-- /sidebar menu -->
+                    </div>
+                    <!-- /sidebar menu -->
 
-          <!-- /menu footer buttons -->
-          <!--  <div class="sidebar-footer hidden-small">
+                    <!-- /menu footer buttons -->
+                    <!--  <div class="sidebar-footer hidden-small">
               <a data-toggle="tooltip" data-placement="top" title="Settings">
                 <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
               </a>
@@ -236,31 +258,35 @@
                 <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
               </a>
             </div> -->
-          <!-- /menu footer buttons -->
-        </div>
-      </div>
-
-      <!-- top navigation -->
-      <div class="top_nav">
-        <div class="nav_menu">
-          <nav class="" role="navigation">
-            <div class="nav toggle">
-              <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+                    <!-- /menu footer buttons -->
+                </div>
             </div>
 
-            <ul class="nav navbar-nav navbar-right">
-              <li class="">
-                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                  <img src="<?php echo base_url('gentelella/') ?>production/images/avatar5.png" alt=""><?php echo $_SESSION['nama_lengkap']; ?>
-                  <span class=" fa fa-angle-down"></span>
-                </a>
-                <ul class="dropdown-menu dropdown-usermenu pull-right">
-                  <li><a href="<?php echo base_url('MscbUsersistem/ubahPswd') ?>"> Ubah Password</a></li>
-                  <li><a href="<?php echo base_url('Loginadmin/logout') ?>"><i class="fa fa-sign-out pull-right"></i> Keluar</a></li>
-                </ul>
-              </li>
+            <!-- top navigation -->
+            <div class="top_nav">
+                <div class="nav_menu">
+                    <nav class="" role="navigation">
+                        <div class="nav toggle">
+                            <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+                        </div>
 
-              <!-- <li role="presentation" class="dropdown">
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="">
+                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
+                                    aria-expanded="false">
+                                    <img src="<?php echo base_url('gentelella/') ?>production/images/avatar5.png"
+                                        alt=""><?php echo $_SESSION['nama_lengkap']; ?>
+                                    <span class=" fa fa-angle-down"></span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-usermenu pull-right">
+                                    <li><a href="<?php echo base_url('MscbUsersistem/ubahPswd') ?>"> Ubah Password</a>
+                                    </li>
+                                    <li><a href="<?php echo base_url('Loginadmin/logout') ?>"><i
+                                                class="fa fa-sign-out pull-right"></i> Keluar</a></li>
+                                </ul>
+                            </li>
+
+                            <!-- <li role="presentation" class="dropdown">
                   <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
                     <i class="fa fa-envelope-o"></i>
                     <span class="badge bg-green">6</span>
@@ -324,85 +350,87 @@
                     </li>
                   </ul>
                 </li> -->
-            </ul>
-          </nav>
-        </div>
-      </div>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
 
-      <!-- /top navigation -->
+            <!-- /top navigation -->
 
-      <!-- page content -->
-      <div class="right_col" role="main">
-        <?php echo $contents; ?>
-      </div>
-      <button onclick="topFunction()" id="myBtn" title="Go to top"><i class="glyphicon glyphicon-chevron-up"></i></button>
-      <br>
-      <!-- /page content -->
+            <!-- page content -->
+            <div class="right_col" role="main">
+                <?php echo $contents; ?>
+            </div>
+            <button onclick="topFunction()" id="myBtn" title="Go to top"><i
+                    class="glyphicon glyphicon-chevron-up"></i></button>
+            <br>
+            <!-- /page content -->
 
-      <!-- footer content -->
-      <!-- <footer>
+            <!-- footer content -->
+            <!-- <footer>
           <div class="pull-right">
             Gentelella - Bootstrap Admin Template by <a href="https://colorlib.com">Colorlib</a>
           </div>
           <div class="clearfix"></div>
         </footer> -->
-      <!-- /footer content -->
+            <!-- /footer content -->
+        </div>
     </div>
-  </div>
 
-  <!-- Bootstrap -->
-  <script src="<?php echo base_url('gentelella/') ?>vendors/bootstrap/dist/js/bootstrap.min.js"></script>
-  <!-- FastClick -->
-  <script src="<?php echo base_url('gentelella/') ?>vendors/fastclick/lib/fastclick.js"></script>
-  <!-- NProgress -->
-  <script src="<?php echo base_url('gentelella/') ?>vendors/nprogress/nprogress.js"></script>
-  <!-- Chart.js -->
-  <script src="<?php echo base_url('gentelella/') ?>vendors/Chart.js/dist/Chart.min.js"></script>
-  <!-- jQuery Sparklines -->
-  <script src="<?php echo base_url('gentelella/') ?>vendors/jquery-sparkline/dist/jquery.sparkline.min.js"></script>
-  <!-- morris.js -->
-  <script src="<?php echo base_url('gentelella/') ?>vendors/raphael/raphael.min.js"></script>
-  <script src="<?php echo base_url('gentelella/') ?>vendors/morris.js/morris.min.js"></script>
-  <!-- gauge.js -->
-  <script src="<?php echo base_url('gentelella/') ?>vendors/bernii/gauge.js/dist/gauge.min.js"></script>
-  <!-- bootstrap-progressbar -->
-  <script src="<?php echo base_url('gentelella/') ?>vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
-  <!-- iCheck -->
-  <script src="<?php echo base_url('gentelella/') ?>vendors/iCheck/icheck.min.js"></script>
-  <!-- Skycons -->
-  <script src="<?php echo base_url('gentelella/') ?>vendors/skycons/skycons.js"></script>
-  <!-- Flot -->
-  <script src="<?php echo base_url('gentelella/') ?>vendors/Flot/jquery.flot.js"></script>
-  <script src="<?php echo base_url('gentelella/') ?>vendors/Flot/jquery.flot.pie.js"></script>
-  <script src="<?php echo base_url('gentelella/') ?>vendors/Flot/jquery.flot.time.js"></script>
-  <script src="<?php echo base_url('gentelella/') ?>vendors/Flot/jquery.flot.stack.js"></script>
-  <script src="<?php echo base_url('gentelella/') ?>vendors/Flot/jquery.flot.resize.js"></script>
-  <!-- Flot plugins -->
-  <script src="<?php echo base_url('gentelella/') ?>production/js/flot/jquery.flot.orderBars.js"></script>
-  <script src="<?php echo base_url('gentelella/') ?>production/js/flot/date.js"></script>
-  <script src="<?php echo base_url('gentelella/') ?>production/js/flot/jquery.flot.spline.js"></script>
-  <script src="<?php echo base_url('gentelella/') ?>production/js/flot/curvedLines.js"></script>
-  <!-- jVectorMap -->
-  <script src="<?php echo base_url('gentelella/') ?>production/js/maps/jquery-jvectormap-2.0.3.min.js"></script>
-  <!-- bootstrap-daterangepicker -->
-  <!-- <script src="<?php echo base_url('gentelella/') ?>production/js/moment/moment.min.js"></script> -->
-  <!-- <script src="<?php echo base_url('gentelella/') ?>production/js/datepicker/daterangepicker.js"></script> -->
+    <!-- Bootstrap -->
+    <script src="<?php echo base_url('gentelella/') ?>vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- FastClick -->
+    <script src="<?php echo base_url('gentelella/') ?>vendors/fastclick/lib/fastclick.js"></script>
+    <!-- NProgress -->
+    <script src="<?php echo base_url('gentelella/') ?>vendors/nprogress/nprogress.js"></script>
+    <!-- Chart.js -->
+    <script src="<?php echo base_url('gentelella/') ?>vendors/Chart.js/dist/Chart.min.js"></script>
+    <!-- jQuery Sparklines -->
+    <script src="<?php echo base_url('gentelella/') ?>vendors/jquery-sparkline/dist/jquery.sparkline.min.js"></script>
+    <!-- morris.js -->
+    <script src="<?php echo base_url('gentelella/') ?>vendors/raphael/raphael.min.js"></script>
+    <script src="<?php echo base_url('gentelella/') ?>vendors/morris.js/morris.min.js"></script>
+    <!-- gauge.js -->
+    <script src="<?php echo base_url('gentelella/') ?>vendors/bernii/gauge.js/dist/gauge.min.js"></script>
+    <!-- bootstrap-progressbar -->
+    <script src="<?php echo base_url('gentelella/') ?>vendors/bootstrap-progressbar/bootstrap-progressbar.min.js">
+    </script>
+    <!-- iCheck -->
+    <script src="<?php echo base_url('gentelella/') ?>vendors/iCheck/icheck.min.js"></script>
+    <!-- Skycons -->
+    <script src="<?php echo base_url('gentelella/') ?>vendors/skycons/skycons.js"></script>
+    <!-- Flot -->
+    <script src="<?php echo base_url('gentelella/') ?>vendors/Flot/jquery.flot.js"></script>
+    <script src="<?php echo base_url('gentelella/') ?>vendors/Flot/jquery.flot.pie.js"></script>
+    <script src="<?php echo base_url('gentelella/') ?>vendors/Flot/jquery.flot.time.js"></script>
+    <script src="<?php echo base_url('gentelella/') ?>vendors/Flot/jquery.flot.stack.js"></script>
+    <script src="<?php echo base_url('gentelella/') ?>vendors/Flot/jquery.flot.resize.js"></script>
+    <!-- Flot plugins -->
+    <script src="<?php echo base_url('gentelella/') ?>production/js/flot/jquery.flot.orderBars.js"></script>
+    <script src="<?php echo base_url('gentelella/') ?>production/js/flot/date.js"></script>
+    <script src="<?php echo base_url('gentelella/') ?>production/js/flot/jquery.flot.spline.js"></script>
+    <script src="<?php echo base_url('gentelella/') ?>production/js/flot/curvedLines.js"></script>
+    <!-- jVectorMap -->
+    <script src="<?php echo base_url('gentelella/') ?>production/js/maps/jquery-jvectormap-2.0.3.min.js"></script>
+    <!-- bootstrap-daterangepicker -->
+    <!-- <script src="<?php echo base_url('gentelella/') ?>production/js/moment/moment.min.js"></script> -->
+    <!-- <script src="<?php echo base_url('gentelella/') ?>production/js/datepicker/daterangepicker.js"></script> -->
 
-  <!-- Select2 -->
-  <script src="<?php echo base_url('gentelella/') ?>vendors/select2/dist/js/select2.full.min.js"></script>
+    <!-- Select2 -->
+    <script src="<?php echo base_url('gentelella/') ?>vendors/select2/dist/js/select2.full.min.js"></script>
 
-  <!-- Custom Theme Scripts -->
-  <script src="<?php echo base_url('gentelella/') ?>build/js/custom.min.js"></script>
+    <!-- Custom Theme Scripts -->
+    <script src="<?php echo base_url('gentelella/') ?>build/js/custom.min.js"></script>
 
-  <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
 
 </body>
 <style>
-  .nominal {
+.nominal {
     text-align: right;
-  }
+}
 
-  .judul {
+.judul {
     height: 40px;
     border: 1px solid #CCC;
     width: 100%;
@@ -414,17 +442,17 @@
     padding: 6px;
     font-weight: bold;
     font-family: sans-serif;
-  }
+}
 
-  .required .control-label:after {
+.required .control-label:after {
     color: #d00;
     content: "*";
     position: absolute;
     margin-left: 5px;
     /*top:7px;*/
-  }
+}
 
-  .dataTables_processing {
+.dataTables_processing {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -435,9 +463,9 @@
     text-align: center;
     font-size: 1.2em;
     color: grey;
-  }
+}
 
-  #myBtn {
+#myBtn {
     display: none;
     /* Hidden by default */
     position: fixed;
@@ -462,38 +490,38 @@
     /* Some padding */
     border-radius: 100px;
     /* Rounded corners */
-  }
+}
 
-  #myBtn:hover {
+#myBtn:hover {
     background-color: #555;
     /* Add a dark-grey background on hover */
-  }
+}
 
-  html {
+html {
     position: relative;
     min-height: 100%;
-  }
+}
 
-  body {
+body {
     margin: 0 0 100px;
-  }
+}
 
-  footer {
+footer {
     position: absolute;
     left: 0;
     bottom: 0;
     height: 3%;
     width: 100%;
     background-color: #ede5da;
-  }
+}
 
-  /*tes dropdown*/
-  /* CSS used here will be applied after bootstrap.css */
-  .dropdown-submenu {
+/*tes dropdown*/
+/* CSS used here will be applied after bootstrap.css */
+.dropdown-submenu {
     position: relative;
-  }
+}
 
-  .dropdown-submenu>.dropdown-menu {
+.dropdown-submenu>.dropdown-menu {
     top: 0;
     left: 100%;
     margin-top: -6px;
@@ -501,13 +529,13 @@
     -webkit-border-radius: 0 6px 6px 6px;
     -moz-border-radius: 0 6px 6px;
     border-radius: 0 6px 6px 6px;
-  }
+}
 
-  .dropdown-submenu:hover>.dropdown-menu {
+.dropdown-submenu:hover>.dropdown-menu {
     display: block;
-  }
+}
 
-  .dropdown-submenu>a:after {
+.dropdown-submenu>a:after {
     display: block;
     content: " ";
     float: right;
@@ -519,138 +547,138 @@
     border-left-color: #ccc;
     margin-top: 5px;
     margin-right: -10px;
-  }
+}
 
-  .dropdown-submenu:hover>a:after {
+.dropdown-submenu:hover>a:after {
     border-left-color: #fff;
-  }
+}
 
-  .dropdown-submenu.pull-left {
+.dropdown-submenu.pull-left {
     float: relative;
-  }
+}
 
-  .dropdown-submenu.pull-left>.dropdown-menu {
+.dropdown-submenu.pull-left>.dropdown-menu {
     left: -80%;
     margin-left: 10px;
     -webkit-border-radius: 6px 0 6px 6px;
     -moz-border-radius: 6px 0 6px 6px;
     border-radius: 6px 0 6px 6px;
-  }
+}
 </style>
 
 <script type="text/javascript">
-  window.onscroll = function() {
+window.onscroll = function() {
     scrollFunction()
-  };
+};
 
-  function scrollFunction() {
+function scrollFunction() {
     if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-      document.getElementById("myBtn").style.display = "block";
+        document.getElementById("myBtn").style.display = "block";
     } else {
-      document.getElementById("myBtn").style.display = "none";
+        document.getElementById("myBtn").style.display = "none";
     }
-  }
-  // When the user clicks on the button, scroll to the top of the document
-  function topFunction() {
+}
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
     document.body.scrollTop = 0; // For Chrome, Safari and Opera
     document.documentElement.scrollTop = 0; // For IE and Firefox
-  }
+}
 
-  $.fn.dataTableExt.oApi.fnPagingInfo = function(oSettings) {
+$.fn.dataTableExt.oApi.fnPagingInfo = function(oSettings) {
     return {
-      "iStart": oSettings._iDisplayStart,
-      "iEnd": oSettings.fnDisplayEnd(),
-      "iLength": oSettings._iDisplayLength,
-      "iTotal": oSettings.fnRecordsTotal(),
-      "iFilteredTotal": oSettings.fnRecordsDisplay(),
-      "iPage": Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength),
-      "iTotalPages": Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength)
+        "iStart": oSettings._iDisplayStart,
+        "iEnd": oSettings.fnDisplayEnd(),
+        "iLength": oSettings._iDisplayLength,
+        "iTotal": oSettings.fnRecordsTotal(),
+        "iFilteredTotal": oSettings.fnRecordsDisplay(),
+        "iPage": Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength),
+        "iTotalPages": Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength)
     };
-  };
-  //$('.chosen').chosen({ allow_single_deselect: true });
-  function numberWithCommas(x) {
+};
+//$('.chosen').chosen({ allow_single_deselect: true });
+function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  }
+}
 
-  function convertToRupiah(angka) {
+function convertToRupiah(angka) {
     var rupiah = '';
     var angkarev = angka.toString().split('').reverse().join('');
     for (var i = 0; i < angkarev.length; i++)
-      if (i % 3 == 0) rupiah += angkarev.substr(i, 3) + '.';
+        if (i % 3 == 0) rupiah += angkarev.substr(i, 3) + '.';
     return rupiah.split('', rupiah.length - 1).reverse().join('');
-  }
+}
 
-  $("select").select2({
+$("select").select2({
     placeholder: ".:Pilih:.",
     allowClear: true
-  });
+});
 
-  $(".tahun").datepicker({
+$(".tahun").datepicker({
     format: 'yyyy',
     viewMode: "years",
     minViewMode: "years",
     todayHighlight: 'true',
     autoclose: true,
-  });
-  $('.tanggal').datepicker({
+});
+$('.tanggal').datepicker({
     autoclose: true,
-  });
+});
 
-  $(".blnThn").datepicker({
+$(".blnThn").datepicker({
     format: 'mm-yyyy',
     viewMode: "months",
     minViewMode: "months",
     todayHighlight: 'true',
     autoclose: true,
-  });
+});
 
-  $(".angka").keypress(function(data) {
+$(".angka").keypress(function(data) {
     if (data.which != 8 && data.which != 0 && (data.which < 48 || data.which > 57)) {
-      return false;
+        return false;
     }
-  });
+});
 
-  $(".nominal").autoNumeric("init", {
+$(".nominal").autoNumeric("init", {
     vMax: 9999999999999,
     vMin: -9999999999999
-  });
-  $(".dec").autoNumeric("init", {
+});
+$(".dec").autoNumeric("init", {
     vMax: 9999999999999,
     vMin: -9999999999999,
     mDec: 2
-  });
-  $(".user_input").keyup(function() {
+});
+$(".user_input").keyup(function() {
     $(this).val($(this).val().toUpperCase());
-  });
-  $.currToDouble = function(curr) {
+});
+$.currToDouble = function(curr) {
     if (!curr) return 0;
     return Number(curr.replace(/[^0-9\.]+/g, ""));
-  }
-  $.doubleToCurr = function(input, sign) {
+}
+$.doubleToCurr = function(input, sign) {
     if (sign == undefined) sign = "bracket";
     var number = input;
     if (input.toString().substring(0, 1) == "-") {
-      number = parseFloat(input.toString().substring(1) * 1);
-      if (sign == "bracket") {
-        return "(" + (number.toFixed(2).replace(/./g, function(c, i, a) {
-          return i && c !== "." && !((a.length - i) % 3) ? "," + c : c;
-        })) + ")";
-      } else if (sign == "minus") {
-        return "-" + (number.toFixed(2).replace(/./g, function(c, i, a) {
-          return i && c !== "." && !((a.length - i) % 3) ? "," + c : c;
-        }));
-      }
+        number = parseFloat(input.toString().substring(1) * 1);
+        if (sign == "bracket") {
+            return "(" + (number.toFixed(2).replace(/./g, function(c, i, a) {
+                return i && c !== "." && !((a.length - i) % 3) ? "," + c : c;
+            })) + ")";
+        } else if (sign == "minus") {
+            return "-" + (number.toFixed(2).replace(/./g, function(c, i, a) {
+                return i && c !== "." && !((a.length - i) % 3) ? "," + c : c;
+            }));
+        }
     }
     return (number.toFixed(2).replace(/./g, function(c, i, a) {
-      return i && c !== "." && !((a.length - i) % 3) ? "," + c : c;
+        return i && c !== "." && !((a.length - i) % 3) ? "," + c : c;
     }));
-  }
+}
 
-  //entry huruf besar
-  $(".upper").keyup(function(e) {
+//entry huruf besar
+$(".upper").keyup(function(e) {
     var isi = $(e.target).val();
     $(e.target).val(isi.toUpperCase());
-  });
+});
 </script>
 
 </html>
