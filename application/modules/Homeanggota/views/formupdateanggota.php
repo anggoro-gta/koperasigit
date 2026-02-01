@@ -49,6 +49,14 @@
                                 <input type="text" name="nama" required class="form-control col-md-7 col-xs-12" value="<?= $nama ?>" minlength="5">
                             </div>
                         </div>
+
+                        <div class="form-group required">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Tanggal Lahir</label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input type="text" name="tgl_lahir" required class="form-control col-md-7 col-xs-12 tanggal" value="<?= $tgl_lahir ?>">
+                            </div>
+                        </div>
+
                         <div class="form-group required">
                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">NIK</label>
                             <div class="col-md-6 col-sm-6 col-xs-12">
