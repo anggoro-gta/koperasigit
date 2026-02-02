@@ -53,10 +53,10 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <script type="text/javascript">
-// $(document).ready(function(){
+    // $(document).ready(function(){
 
 
-// });
+    // });
 </script>
 <?php $level = $this->session->fk_level_id; ?>
 
@@ -93,107 +93,99 @@
                             <h3>&nbsp;</h3>
                             <ul class="nav side-menu">
                                 <li class="<?php if (isset($beranda)) {
-                              echo 'active';
-                            } ?>"><a href="<?php echo base_url('Homeadmin') ?>"><i class="fa fa-home"></i> Beranda</a>
+                                                echo 'active';
+                                            } ?>"><a href="<?php echo base_url('Homeadmin') ?>"><i class="fa fa-home"></i> Beranda</a>
                                 </li>
                                 <?php if ($level == 1) { ?>
-                                <li><a><i class="fa fa-book"></i> Master <span class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu">
-                                        <li class="<?php if (isset($MscbSkpd)) {
-                                    echo 'active';
-                                  } ?>"><a href="<?php echo base_url('MscbSkpd') ?>">SKPD</a></li>
-                                        <li class="<?php if (isset($MscbAnggota)) {
-                                    echo 'active';
-                                  } ?>"><a href="<?php echo base_url('MscbAnggota') ?>">Anggota</a></li>
-                                        <li class="<?php if (isset($MscbUsersistem)) {
-                                    echo 'active';
-                                  } ?>"><a href="<?php echo base_url('MscbUsersistem') ?>">User</a></li>
-                                    </ul>
-                                </li>
-                                <?php } else { ?>
-                                <li><a><i class="fa fa-book"></i> Master <span class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu">
-                                        <li class="<?php if (isset($MsPelanggan)) {
-                                    echo 'active';
-                                  } ?>"><a href="<?php echo base_url('MsPelanggan') ?>">Pelanggan</a></li>
-                                        <li class="<?php if (isset($MsTerapis)) {
-                                    echo 'active';
-                                  } ?>"><a href="<?php echo base_url('MsTerapis') ?>">Terapis</a></li>
-                                    </ul>
-                                </li>
+                                    <li><a><i class="fa fa-book"></i> Master <span class="fa fa-chevron-down"></span></a>
+                                        <ul class="nav child_menu">
+                                            <li class="<?php if (isset($MscbSkpd)) {
+                                                            echo 'active';
+                                                        } ?>"><a href="<?php echo base_url('MscbSkpd') ?>">SKPD</a></li>
+                                            <li class="<?php if (isset($MscbAnggota)) {
+                                                            echo 'active';
+                                                        } ?>"><a href="<?php echo base_url('MscbAnggota') ?>">Anggota</a></li>
+                                            <li class="<?php if (isset($MscbUsersistem)) {
+                                                            echo 'active';
+                                                        } ?>"><a href="<?php echo base_url('MscbUsersistem') ?>">User</a></li>
+                                        </ul>
+                                    </li>
+                                <?php } else { ?>                                    
                                 <?php } ?>
                                 <!-- <li><a><i class="fa fa-edit"></i> Entri Data <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       <li class="<?php if (isset($Pos)) {
-                                    echo 'active';
-                                  } ?>"><a href="<?php echo base_url('Pos') ?>">Point Of Sale</a></li>
+                                        echo 'active';
+                                    } ?>"><a href="<?php echo base_url('Pos') ?>">Point Of Sale</a></li>
                     </ul>
                   </li> -->
 
                                 <?php if ($level == 1) { ?>
-                                <li><a><i class="fa fa-edit"></i> Transaksi <span class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu">
-                                        <li class="<?php if (isset($Pinjaman)) {
-                                    echo 'active';
-                                  } ?>"><a href="<?php echo base_url('Pinjaman') ?>">Pinjaman</a></li>
-                                        <li class="<?php if (isset($Tagihan)) {
-                                    echo 'active';
-                                  } ?>"><a href="<?php echo base_url('Tagihan') ?>">Tagihan</a></li>
-                                    </ul>
-                                </li>
-                                <li class="<?php if (isset($Penarikan)) { echo 'active'; } ?>"><a
-                                        href="<?php echo base_url('Penarikan') ?>"><i
-                                            class="fa fa-file-invoice-dollar"></i>
-                                        Penarikan</a>
-                                </li>
+                                    <li><a><i class="fa fa-edit"></i> Transaksi <span class="fa fa-chevron-down"></span></a>
+                                        <ul class="nav child_menu">
+                                            <li class="<?php if (isset($Pinjaman)) {
+                                                            echo 'active';
+                                                        } ?>"><a href="<?php echo base_url('Pinjaman') ?>">Pinjaman</a></li>
+                                            <li class="<?php if (isset($Tagihan)) {
+                                                            echo 'active';
+                                                        } ?>"><a href="<?php echo base_url('Tagihan') ?>">Tagihan</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="<?php if (isset($Penarikan)) {
+                                                    echo 'active';
+                                                } ?>"><a
+                                            href="<?php echo base_url('Penarikan') ?>"><i
+                                                class="fa fa-file-invoice-dollar"></i>
+                                            Penarikan</a>
+                                    </li>
                                 <?php } ?>
 
                                 <?php if ($level == 1) { ?>
-                                <li><a><i class="fa fa-bar-chart"></i> Laporan <span
-                                            class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu">
-                                        <li class="<?php if (isset($lapTransaksi)) {
-                                    echo 'active';
-                                  } ?>"><a href="<?php echo base_url('Laporan/tunggakan') ?>">Lap Tunggakan</a></li>
-                                        <li class="<?php if (isset($lapPinjaman)) {
-                                    echo 'active';
-                                  } ?>"><a href="<?php echo base_url('Laporan/pinjaman') ?>">Lap Pinjaman</a></li>
-                                        <li class="<?php if (isset($lapSimpanan)) {
-                                    echo 'active';
-                                  } ?>"><a href="<?php echo base_url('Laporan/simpanan') ?>">Lap Simpanan</a></li>
-                                        <li class="<?php if (isset($lapUpdateAnggota)) {
-                                    echo 'active';
-                                  } ?>"><a href="<?php echo base_url('Laporan/updateanggota') ?>">Lap Update
-                                                Anggota</a></li>
-                                        <li class="<?php if (isset($lapKompensasi)) {
-                                    echo 'active';
-                                  } ?>"><a href="<?php echo base_url('Laporan/kompensasi') ?>">Lap Kompensasi</a></li>
-                                        <li class="<?php if (isset($lapPelunasan)) {
-                                    echo 'active';
-                                  } ?>"><a href="<?php echo base_url('Laporan/pelunasan') ?>">Lap Pelunasan</a></li>
-                                        <li class="<?php if (isset($lapSimpbln)) {
-                                    echo 'active';
-                                  } ?>"><a href="<?php echo base_url('Laporan/simpnbln') ?>">Lap Simpanan Bulanan</a>
-                                        </li>
-                                        <li class="<?php if (isset($lapSimpthn)) {
-                                    echo 'active';
-                                  } ?>"><a href="<?php echo base_url('Laporan/simpnthn') ?>">Lap Simpanan Tahunan</a>
-                                        </li>
-                                        <li class="<?php if (isset($lapSimppkk)) {
-                                    echo 'active';
-                                  } ?>"><a href="<?php echo base_url('Laporan/simpnpkk') ?>">Lap Simpanan Pokok</a>
-                                        </li>
-                                        <li class="<?php if (isset($lapPentagbln)) {
-                                    echo 'active';
-                                  } ?>"><a href="<?php echo base_url('Laporan/pentagbln') ?>">Lap Pentag Bulanan</a>
-                                        </li>
-                                        <li class="<?php if (isset($lapPentagthn)) {
-                                    echo 'active';
-                                  } ?>"><a href="<?php echo base_url('Laporan/pentagthn') ?>">Lap Pentag Tahunan</a>
-                                        </li>
+                                    <li><a><i class="fa fa-bar-chart"></i> Laporan <span
+                                                class="fa fa-chevron-down"></span></a>
+                                        <ul class="nav child_menu">
+                                            <li class="<?php if (isset($lapTransaksi)) {
+                                                            echo 'active';
+                                                        } ?>"><a href="<?php echo base_url('Laporan/tunggakan') ?>">Lap Tunggakan</a></li>
+                                            <li class="<?php if (isset($lapPinjaman)) {
+                                                            echo 'active';
+                                                        } ?>"><a href="<?php echo base_url('Laporan/pinjaman') ?>">Lap Pinjaman</a></li>
+                                            <li class="<?php if (isset($lapSimpanan)) {
+                                                            echo 'active';
+                                                        } ?>"><a href="<?php echo base_url('Laporan/simpanan') ?>">Lap Simpanan</a></li>
+                                            <li class="<?php if (isset($lapUpdateAnggota)) {
+                                                            echo 'active';
+                                                        } ?>"><a href="<?php echo base_url('Laporan/updateanggota') ?>">Lap Update
+                                                    Anggota</a></li>
+                                            <li class="<?php if (isset($lapKompensasi)) {
+                                                            echo 'active';
+                                                        } ?>"><a href="<?php echo base_url('Laporan/kompensasi') ?>">Lap Kompensasi</a></li>
+                                            <li class="<?php if (isset($lapPelunasan)) {
+                                                            echo 'active';
+                                                        } ?>"><a href="<?php echo base_url('Laporan/pelunasan') ?>">Lap Pelunasan</a></li>
+                                            <li class="<?php if (isset($lapSimpbln)) {
+                                                            echo 'active';
+                                                        } ?>"><a href="<?php echo base_url('Laporan/simpnbln') ?>">Lap Simpanan Bulanan</a>
+                                            </li>
+                                            <li class="<?php if (isset($lapSimpthn)) {
+                                                            echo 'active';
+                                                        } ?>"><a href="<?php echo base_url('Laporan/simpnthn') ?>">Lap Simpanan Tahunan</a>
+                                            </li>
+                                            <li class="<?php if (isset($lapSimppkk)) {
+                                                            echo 'active';
+                                                        } ?>"><a href="<?php echo base_url('Laporan/simpnpkk') ?>">Lap Simpanan Pokok</a>
+                                            </li>
+                                            <li class="<?php if (isset($lapPentagbln)) {
+                                                            echo 'active';
+                                                        } ?>"><a href="<?php echo base_url('Laporan/pentagbln') ?>">Lap Pentag Bulanan</a>
+                                            </li>
+                                            <li class="<?php if (isset($lapPentagthn)) {
+                                                            echo 'active';
+                                                        } ?>"><a href="<?php echo base_url('Laporan/pentagthn') ?>">Lap Pentag Tahunan</a>
+                                            </li>
 
-                                    </ul>
-                                </li>
+                                        </ul>
+                                    </li>
                                 <?php } ?>
                             </ul>
                         </div>
@@ -426,259 +418,259 @@
 
 </body>
 <style>
-.nominal {
-    text-align: right;
-}
+    .nominal {
+        text-align: right;
+    }
 
-.judul {
-    height: 40px;
-    border: 1px solid #CCC;
-    width: 100%;
-    text-align: center;
-    border-radius: 5px;
-    font-size: 14pt;
-    color: #395fa5;
-    background-color: #9bc9f9;
-    padding: 6px;
-    font-weight: bold;
-    font-family: sans-serif;
-}
+    .judul {
+        height: 40px;
+        border: 1px solid #CCC;
+        width: 100%;
+        text-align: center;
+        border-radius: 5px;
+        font-size: 14pt;
+        color: #395fa5;
+        background-color: #9bc9f9;
+        padding: 6px;
+        font-weight: bold;
+        font-family: sans-serif;
+    }
 
-.required .control-label:after {
-    color: #d00;
-    content: "*";
-    position: absolute;
-    margin-left: 5px;
-    /*top:7px;*/
-}
+    .required .control-label:after {
+        color: #d00;
+        content: "*";
+        position: absolute;
+        margin-left: 5px;
+        /*top:7px;*/
+    }
 
-.dataTables_processing {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100%;
-    margin-left: -50%;
-    margin-top: -25px;
-    padding-top: 20px;
-    text-align: center;
-    font-size: 1.2em;
-    color: grey;
-}
+    .dataTables_processing {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100%;
+        margin-left: -50%;
+        margin-top: -25px;
+        padding-top: 20px;
+        text-align: center;
+        font-size: 1.2em;
+        color: grey;
+    }
 
-#myBtn {
-    display: none;
-    /* Hidden by default */
-    position: fixed;
-    /* Fixed/sticky position */
-    bottom: 20px;
-    /* Place the button at the bottom of the page */
-    right: 15px;
-    /* Place the button 30px from the right */
-    z-index: 99;
-    /* Make sure it does not overlap */
-    border: none;
-    /* Remove borders */
-    outline: none;
-    /* Remove outline */
-    background-color: #fecfbb;
-    /* Set a background color */
-    color: white;
-    /* Text color */
-    cursor: pointer;
-    /* Add a mouse pointer on hover */
-    padding: 12px;
-    /* Some padding */
-    border-radius: 100px;
-    /* Rounded corners */
-}
+    #myBtn {
+        display: none;
+        /* Hidden by default */
+        position: fixed;
+        /* Fixed/sticky position */
+        bottom: 20px;
+        /* Place the button at the bottom of the page */
+        right: 15px;
+        /* Place the button 30px from the right */
+        z-index: 99;
+        /* Make sure it does not overlap */
+        border: none;
+        /* Remove borders */
+        outline: none;
+        /* Remove outline */
+        background-color: #fecfbb;
+        /* Set a background color */
+        color: white;
+        /* Text color */
+        cursor: pointer;
+        /* Add a mouse pointer on hover */
+        padding: 12px;
+        /* Some padding */
+        border-radius: 100px;
+        /* Rounded corners */
+    }
 
-#myBtn:hover {
-    background-color: #555;
-    /* Add a dark-grey background on hover */
-}
+    #myBtn:hover {
+        background-color: #555;
+        /* Add a dark-grey background on hover */
+    }
 
-html {
-    position: relative;
-    min-height: 100%;
-}
+    html {
+        position: relative;
+        min-height: 100%;
+    }
 
-body {
-    margin: 0 0 100px;
-}
+    body {
+        margin: 0 0 100px;
+    }
 
-footer {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    height: 3%;
-    width: 100%;
-    background-color: #ede5da;
-}
+    footer {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 3%;
+        width: 100%;
+        background-color: #ede5da;
+    }
 
-/*tes dropdown*/
-/* CSS used here will be applied after bootstrap.css */
-.dropdown-submenu {
-    position: relative;
-}
+    /*tes dropdown*/
+    /* CSS used here will be applied after bootstrap.css */
+    .dropdown-submenu {
+        position: relative;
+    }
 
-.dropdown-submenu>.dropdown-menu {
-    top: 0;
-    left: 100%;
-    margin-top: -6px;
-    margin-left: -1px;
-    -webkit-border-radius: 0 6px 6px 6px;
-    -moz-border-radius: 0 6px 6px;
-    border-radius: 0 6px 6px 6px;
-}
+    .dropdown-submenu>.dropdown-menu {
+        top: 0;
+        left: 100%;
+        margin-top: -6px;
+        margin-left: -1px;
+        -webkit-border-radius: 0 6px 6px 6px;
+        -moz-border-radius: 0 6px 6px;
+        border-radius: 0 6px 6px 6px;
+    }
 
-.dropdown-submenu:hover>.dropdown-menu {
-    display: block;
-}
+    .dropdown-submenu:hover>.dropdown-menu {
+        display: block;
+    }
 
-.dropdown-submenu>a:after {
-    display: block;
-    content: " ";
-    float: right;
-    width: 0;
-    height: 0;
-    border-color: transparent;
-    border-style: solid;
-    border-width: 5px 0 5px 5px;
-    border-left-color: #ccc;
-    margin-top: 5px;
-    margin-right: -10px;
-}
+    .dropdown-submenu>a:after {
+        display: block;
+        content: " ";
+        float: right;
+        width: 0;
+        height: 0;
+        border-color: transparent;
+        border-style: solid;
+        border-width: 5px 0 5px 5px;
+        border-left-color: #ccc;
+        margin-top: 5px;
+        margin-right: -10px;
+    }
 
-.dropdown-submenu:hover>a:after {
-    border-left-color: #fff;
-}
+    .dropdown-submenu:hover>a:after {
+        border-left-color: #fff;
+    }
 
-.dropdown-submenu.pull-left {
-    float: relative;
-}
+    .dropdown-submenu.pull-left {
+        float: relative;
+    }
 
-.dropdown-submenu.pull-left>.dropdown-menu {
-    left: -80%;
-    margin-left: 10px;
-    -webkit-border-radius: 6px 0 6px 6px;
-    -moz-border-radius: 6px 0 6px 6px;
-    border-radius: 6px 0 6px 6px;
-}
+    .dropdown-submenu.pull-left>.dropdown-menu {
+        left: -80%;
+        margin-left: 10px;
+        -webkit-border-radius: 6px 0 6px 6px;
+        -moz-border-radius: 6px 0 6px 6px;
+        border-radius: 6px 0 6px 6px;
+    }
 </style>
 
 <script type="text/javascript">
-window.onscroll = function() {
-    scrollFunction()
-};
-
-function scrollFunction() {
-    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-        document.getElementById("myBtn").style.display = "block";
-    } else {
-        document.getElementById("myBtn").style.display = "none";
-    }
-}
-// When the user clicks on the button, scroll to the top of the document
-function topFunction() {
-    document.body.scrollTop = 0; // For Chrome, Safari and Opera
-    document.documentElement.scrollTop = 0; // For IE and Firefox
-}
-
-$.fn.dataTableExt.oApi.fnPagingInfo = function(oSettings) {
-    return {
-        "iStart": oSettings._iDisplayStart,
-        "iEnd": oSettings.fnDisplayEnd(),
-        "iLength": oSettings._iDisplayLength,
-        "iTotal": oSettings.fnRecordsTotal(),
-        "iFilteredTotal": oSettings.fnRecordsDisplay(),
-        "iPage": Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength),
-        "iTotalPages": Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength)
+    window.onscroll = function() {
+        scrollFunction()
     };
-};
-//$('.chosen').chosen({ allow_single_deselect: true });
-function numberWithCommas(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
 
-function convertToRupiah(angka) {
-    var rupiah = '';
-    var angkarev = angka.toString().split('').reverse().join('');
-    for (var i = 0; i < angkarev.length; i++)
-        if (i % 3 == 0) rupiah += angkarev.substr(i, 3) + '.';
-    return rupiah.split('', rupiah.length - 1).reverse().join('');
-}
-
-$("select").select2({
-    placeholder: ".:Pilih:.",
-    allowClear: true
-});
-
-$(".tahun").datepicker({
-    format: 'yyyy',
-    viewMode: "years",
-    minViewMode: "years",
-    todayHighlight: 'true',
-    autoclose: true,
-});
-$('.tanggal').datepicker({
-    autoclose: true,
-});
-
-$(".blnThn").datepicker({
-    format: 'mm-yyyy',
-    viewMode: "months",
-    minViewMode: "months",
-    todayHighlight: 'true',
-    autoclose: true,
-});
-
-$(".angka").keypress(function(data) {
-    if (data.which != 8 && data.which != 0 && (data.which < 48 || data.which > 57)) {
-        return false;
-    }
-});
-
-$(".nominal").autoNumeric("init", {
-    vMax: 9999999999999,
-    vMin: -9999999999999
-});
-$(".dec").autoNumeric("init", {
-    vMax: 9999999999999,
-    vMin: -9999999999999,
-    mDec: 2
-});
-$(".user_input").keyup(function() {
-    $(this).val($(this).val().toUpperCase());
-});
-$.currToDouble = function(curr) {
-    if (!curr) return 0;
-    return Number(curr.replace(/[^0-9\.]+/g, ""));
-}
-$.doubleToCurr = function(input, sign) {
-    if (sign == undefined) sign = "bracket";
-    var number = input;
-    if (input.toString().substring(0, 1) == "-") {
-        number = parseFloat(input.toString().substring(1) * 1);
-        if (sign == "bracket") {
-            return "(" + (number.toFixed(2).replace(/./g, function(c, i, a) {
-                return i && c !== "." && !((a.length - i) % 3) ? "," + c : c;
-            })) + ")";
-        } else if (sign == "minus") {
-            return "-" + (number.toFixed(2).replace(/./g, function(c, i, a) {
-                return i && c !== "." && !((a.length - i) % 3) ? "," + c : c;
-            }));
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("myBtn").style.display = "block";
+        } else {
+            document.getElementById("myBtn").style.display = "none";
         }
     }
-    return (number.toFixed(2).replace(/./g, function(c, i, a) {
-        return i && c !== "." && !((a.length - i) % 3) ? "," + c : c;
-    }));
-}
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Chrome, Safari and Opera
+        document.documentElement.scrollTop = 0; // For IE and Firefox
+    }
 
-//entry huruf besar
-$(".upper").keyup(function(e) {
-    var isi = $(e.target).val();
-    $(e.target).val(isi.toUpperCase());
-});
+    $.fn.dataTableExt.oApi.fnPagingInfo = function(oSettings) {
+        return {
+            "iStart": oSettings._iDisplayStart,
+            "iEnd": oSettings.fnDisplayEnd(),
+            "iLength": oSettings._iDisplayLength,
+            "iTotal": oSettings.fnRecordsTotal(),
+            "iFilteredTotal": oSettings.fnRecordsDisplay(),
+            "iPage": Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength),
+            "iTotalPages": Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength)
+        };
+    };
+    //$('.chosen').chosen({ allow_single_deselect: true });
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    function convertToRupiah(angka) {
+        var rupiah = '';
+        var angkarev = angka.toString().split('').reverse().join('');
+        for (var i = 0; i < angkarev.length; i++)
+            if (i % 3 == 0) rupiah += angkarev.substr(i, 3) + '.';
+        return rupiah.split('', rupiah.length - 1).reverse().join('');
+    }
+
+    $("select").select2({
+        placeholder: ".:Pilih:.",
+        allowClear: true
+    });
+
+    $(".tahun").datepicker({
+        format: 'yyyy',
+        viewMode: "years",
+        minViewMode: "years",
+        todayHighlight: 'true',
+        autoclose: true,
+    });
+    $('.tanggal').datepicker({
+        autoclose: true,
+    });
+
+    $(".blnThn").datepicker({
+        format: 'mm-yyyy',
+        viewMode: "months",
+        minViewMode: "months",
+        todayHighlight: 'true',
+        autoclose: true,
+    });
+
+    $(".angka").keypress(function(data) {
+        if (data.which != 8 && data.which != 0 && (data.which < 48 || data.which > 57)) {
+            return false;
+        }
+    });
+
+    $(".nominal").autoNumeric("init", {
+        vMax: 9999999999999,
+        vMin: -9999999999999
+    });
+    $(".dec").autoNumeric("init", {
+        vMax: 9999999999999,
+        vMin: -9999999999999,
+        mDec: 2
+    });
+    $(".user_input").keyup(function() {
+        $(this).val($(this).val().toUpperCase());
+    });
+    $.currToDouble = function(curr) {
+        if (!curr) return 0;
+        return Number(curr.replace(/[^0-9\.]+/g, ""));
+    }
+    $.doubleToCurr = function(input, sign) {
+        if (sign == undefined) sign = "bracket";
+        var number = input;
+        if (input.toString().substring(0, 1) == "-") {
+            number = parseFloat(input.toString().substring(1) * 1);
+            if (sign == "bracket") {
+                return "(" + (number.toFixed(2).replace(/./g, function(c, i, a) {
+                    return i && c !== "." && !((a.length - i) % 3) ? "," + c : c;
+                })) + ")";
+            } else if (sign == "minus") {
+                return "-" + (number.toFixed(2).replace(/./g, function(c, i, a) {
+                    return i && c !== "." && !((a.length - i) % 3) ? "," + c : c;
+                }));
+            }
+        }
+        return (number.toFixed(2).replace(/./g, function(c, i, a) {
+            return i && c !== "." && !((a.length - i) % 3) ? "," + c : c;
+        }));
+    }
+
+    //entry huruf besar
+    $(".upper").keyup(function(e) {
+        var isi = $(e.target).val();
+        $(e.target).val(isi.toUpperCase());
+    });
 </script>
 
 </html>
