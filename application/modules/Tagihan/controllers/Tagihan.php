@@ -120,7 +120,8 @@ class Tagihan extends CI_Controller
 			join t_cb_pinjaman tcp on tcp.id =tctp.fk_pinjaman_id
 			join ms_cb_kategori_pinjam mckp on mckp.id = tcp.fk_kategori_id
 		where
-			fk_tagihan_id = ?",  [$id])->result();
+			fk_tagihan_id = ?
+			ORDER BY tcp.fk_kategori_id asc",  [$id])->result();
 			$readonly = true;
 			$status_posting = $this->db->query("select * from t_cb_tagihan where id = ? ", [$id])->row()->status_posting;
 		} else {
@@ -148,7 +149,8 @@ class Tagihan extends CI_Controller
 				tcp.fk_anggota_id = mcua.id
 			join ms_cb_kategori_pinjam mckp on
 				tcp.fk_kategori_id = mckp.id
-				where status=0 and mcua.fk_id_skpd = ? ",  [$fk_skpd_id])->result();
+				where status=0 and mcua.fk_id_skpd = ? 
+				ORDER BY tcp.fk_kategori_id asc",  [$fk_skpd_id])->result();
 			$status_posting = 0;
 		}
 		$data = [
