@@ -554,11 +554,14 @@ class Tagihan extends CI_Controller
 	public function detail_individu($id)
 	{
 		$this->MHome->ceklogin();
+		$fk_anggota_id = "";
 		$skpd = $this->db->query("select * from ms_cb_skpd")->result_array();
 		$tagihan = $this->db->query("select * from t_cb_tagihan where id = ? ", [$id])->row();
-		$fk_anggota_id = $this->db->query("select * from t_cb_tagihan_pinjaman where fk_tagihan_id = ? ", [$id])->row()->fk_anggota_id;
-		if ($fk_anggota_id == null) {
-			$fk_anggota_id = $this->db->query("select * from t_cb_tagihan_pinjaman where fk_tagihan_id = ? ", [$id])->row()->fk_anggota_id;
+		$fk_anggota_id_dumm = $this->db->query("select * from t_cb_tagihan_pinjaman where fk_tagihan_id = ? ", [$id])->row();		
+		if ($fk_anggota_id_dumm == NULL) {
+			$fk_anggota_id = $this->db->query("select * from t_cb_tagihan_simpanan where fk_tagihan_id = ? ", [$id])->row()->fk_anggota_id;
+		} else {
+			$fk_anggota_id = $fk_anggota_id_dumm->fk_anggota_id;
 		}
 		$label_posting =  $tagihan->status_posting == 1 ? 'Batal Posting' : 'Posting';
 		$data = array(
