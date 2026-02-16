@@ -145,6 +145,8 @@ class MscbAnggota extends CI_Controller
 	{
 		$this->MHome->ceklogin();
 		$id = $this->input->post('id');
+		$temp_nip_gabung = $this->input->post('nip');
+		$nip_gabung = str_replace(" ", "", $temp_nip_gabung);
 
 		$data['user_act'] = $this->session->id;
 		$data['time_act'] = date('Y-m-d H:i:s');
@@ -191,6 +193,7 @@ class MscbAnggota extends CI_Controller
 				$data['alamat'] = $this->input->post('alamat');
 				$data['nik'] = $this->input->post('nik');
 				$data['nip'] = $this->input->post('nip');
+				$data['nip_gabung'] = $nip_gabung;
 				$data['nomor_hp'] = $this->input->post('nomor_hp');
 				$data['jenis_kelamin'] = $this->input->post('jenis_kelamin');
 				$data['fk_id_status_pekerjaan'] = $this->input->post('fk_id_status_pekerjaan');
@@ -212,6 +215,7 @@ class MscbAnggota extends CI_Controller
 				$data['alamat'] = $this->input->post('alamat');
 				$data['nik'] = $this->input->post('nik');
 				$data['nip'] = $this->input->post('nip');
+				$data['nip_gabung'] = $nip_gabung;
 				$data['nomor_hp'] = $this->input->post('nomor_hp');
 				$data['jenis_kelamin'] = $this->input->post('jenis_kelamin');
 				$data['fk_id_status_pekerjaan'] = $this->input->post('fk_id_status_pekerjaan');
