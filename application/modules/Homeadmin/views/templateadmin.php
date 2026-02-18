@@ -110,7 +110,7 @@
                                                         } ?>"><a href="<?php echo base_url('MscbUsersistem') ?>">User</a></li>
                                         </ul>
                                     </li>
-                                <?php } else { ?>                                    
+                                <?php } else { ?>
                                 <?php } ?>
                                 <!-- <li><a><i class="fa fa-edit"></i> Entri Data <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
@@ -184,6 +184,20 @@
                                                         } ?>"><a href="<?php echo base_url('Laporan/pentagthn') ?>">Lap Pentag Tahunan</a>
                                             </li>
 
+                                        </ul>
+                                    </li>
+                                <?php } ?>
+
+                                <?php if ($level == 1) { ?>
+                                    <li><a><i class="fa fa-edit"></i> SHU <span
+                                                class="fa fa-chevron-down"></span></a>
+                                        <ul class="nav child_menu">
+                                            <li class="<?php if (isset($variabelnya)) {
+                                                            echo 'active';
+                                                        } ?>"><a href="<?php echo base_url('methodnya') ?>">Total</a></li>
+                                            <li class="<?php if (isset($variabelnya)) {
+                                                            echo 'active';
+                                                        } ?>"><a href="<?php echo base_url('methodnya') ?>">per OPD</a></li>
                                         </ul>
                                     </li>
                                 <?php } ?>
