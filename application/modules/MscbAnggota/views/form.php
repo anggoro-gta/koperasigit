@@ -71,7 +71,7 @@
             <div class="form-group">
               <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">NIP</label>
               <div class="col-md-6 col-sm-6 col-xs-12">
-                <input type="text" name="nip" class="form-control col-md-7 col-xs-12 upper" value="<?= $nip ?>">
+                <input type="text" name="nip" id="nip" class="form-control col-md-7 col-xs-12 upper" value="<?= $nip ?>">
               </div>
             </div>
             <div class="form-group">
@@ -156,3 +156,19 @@
   </div>
 </div>
 </div>
+
+<script type="text/javascript">
+  $("#nip").change(function() {
+    nip_val = $('#nip').val();
+    const char16 = nip_val.at(16);
+    if (char16 == undefined) {
+      console.log('Karakter ke-16 tidak ada');
+    } else {
+      if (char16 == '1') {
+        $('#jenis_kelamin').val('Laki-laki').change();
+      } else if (char16 == '2') {
+        $('#jenis_kelamin').val('Perempuan').change();
+      }
+    }
+  });
+</script>
