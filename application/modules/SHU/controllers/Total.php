@@ -9,7 +9,6 @@ class Total extends CI_Controller
 		parent::__construct();
 		$this->load->library('datatables');
 		$this->load->model('MHome');
-		$this->load->model('MMscbUseranggota');
 		$this->load->model('MSHU');
 	}
 

@@ -214,7 +214,7 @@
                                         </li>
                                         <li class="<?php if (isset($variabelnya)) {
                                                             echo 'active';
-                                                        } ?>"><a href="<?php echo base_url('methodnya') ?>">per OPD</a>
+                                                        } ?>"><a href="<?php echo base_url('SHU/Opd') ?>">per OPD</a>
                                         </li>
                                     </ul>
                                 </li>

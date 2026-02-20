@@ -83,4 +83,29 @@ class MSHU extends CI_Model
             return false;
         }
     }
+
+    public function upsert_opd_detail_batch($data)
+    {   
+        if (empty($data)) return true;
+
+        $table = 't_cb_temp_shu_opd_detail';
+
+        $values = [];
+        foreach ($data as $row) {
+            $values[] = '(' .
+                $this->db->escape($row['fk_shu_opd_id']) . ',' .
+                $this->db->escape($row['fk_anggota_id']) . ',' .
+                $this->db->escape($row['nominal']) .
+            ')';
+        }
+
+        $sql = "INSERT INTO {$table} (fk_shu_opd_id, fk_anggota_id, nominal)
+                VALUES " . implode(',', $values) . "
+                ON DUPLICATE KEY UPDATE
+                    nominal = VALUES(nominal)";
+
+        return $this->db->query($sql);
+    }
+
+
 }
