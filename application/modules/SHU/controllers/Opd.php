@@ -209,6 +209,35 @@ class Opd extends CI_Controller
 		// print_r($data['arrUserAnggota']);die();
 		$this->template->load('Homeadmin/templateadmin', 'SHU/opd/form', $data);
 	}
+
+	function delete($id)
+	{
+		$this->db->trans_start();
+		// simpanan
+		
+		$parent = $this->db->query("select * from t_cb_temp_shu_opd where id = ? ", [$id])->row();
+		if($parent){
+
+			$fk_shu_opd_id = $parent->id;
+
+			$this->db->where('fk_shu_opd_id', $id);
+			$this->db->delete('t_cb_temp_shu_opd_detail');
+			
+			$this->db->where('id', $id);
+			$this->db->delete('t_cb_temp_shu_opd');
+
+			$this->db->trans_complete();
+			if ($this->db->trans_status() === TRUE) {
+				$this->session->set_flashdata('success', 'Data Berhasil dihapus.');
+			} else {
+				$this->session->set_flashdata('error', 'Data Gagal dihapus.');
+			}
+		}else{
+			$this->session->set_flashdata('error', 'Data tidak ditemukan.');
+		}
+		
+		redirect('SHU/Opd');
+	}
 	
 	function posting($id)
 	{
