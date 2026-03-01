@@ -9,10 +9,10 @@
     <div class="responsive">
         <table width="100%" style="font-family:tahoma; font-size: 12pt; padding-top: -20px">
             <tr>
-                <td colspan="5" align="center"><b>LAPORAN SIMPANAN</b></td>
+                <td colspan="6" align="center"><b>LAPORAN SIMPANAN</b></td>
             </tr>
             <tr>
-                <td colspan="5" align="center"><b>Tahun <?= $periode ?></b></td>
+                <td colspan="6" align="center"><b>Tahun <?= $periode ?></b></td>
             </tr>
         </table>
         <br>
@@ -46,7 +46,7 @@
             </tr>
             <tr>
                 <td colspan="2" align="center"><b>Total Pokok +Wajib + Sukarela + Tapim</b></td>
-                <td colspan="4" align="right"><b><?= number_format($totalsemuasimp, 0, ',', '.') ?></b></td>                
+                <td colspan="4" align="right"><b><?= number_format($totalsemuasimp, 0, ',', '.') ?></b></td>
         </table>
     </div>
 </body>
