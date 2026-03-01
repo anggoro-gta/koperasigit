@@ -331,6 +331,7 @@ class Laporan extends CI_Controller
 		$this->template->load('Homeadmin/templateadmin', 'Laporan/simpthn_form', $data);
 	}
 
+
 	public function cetak_simpnthn()
 	{
 		$type = $this->input->post('type');
@@ -379,7 +380,7 @@ class Laporan extends CI_Controller
 		$quetotaltapim = "SELECT SUM(tp.tapim) AS tapim FROM t_cb_tagihan_pinjaman tp INNER JOIN t_cb_tagihan t ON tp.fk_tagihan_id = t.id WHERE t.tahun = $periode";
 		$doubletotaltapim = doubleval($this->db->query($quetotaltapim)->row()->tapim);
 
-		$totalsemuasimp = $doubletotalpokok + $quetotalwajibuserreg + $doubletotalwajib + $doubletotalsukarela + $doubletotaltapim;
+		$totalsemuasimp = $doubletotalpokok + $doubletotalwajibuserreg + $doubletotalwajib + $doubletotalsukarela + $doubletotaltapim;
 
 		$data['totalpokok']	= $doubletotalpokok;
 		$data['totalwajib']	= $doubletotalwajib + $doubletotalwajibuserreg;
