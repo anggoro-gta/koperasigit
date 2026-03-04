@@ -185,6 +185,11 @@
                                                         } ?>"><a href="<?php echo base_url('Laporan/simpnthn') ?>">Lap
                                                 Simpanan Tahunan</a>
                                         </li>
+                                        <li class="<?php if (isset($methodnya)) {
+                                                            echo 'active';
+                                                        } ?>"><a href="<?php echo base_url('Laporan/methodnya') ?>">Lap
+                                                Simp thn per OPD</a>
+                                        </li>
                                         <li class="<?php if (isset($lapSimppkk)) {
                                                             echo 'active';
                                                         } ?>"><a href="<?php echo base_url('Laporan/simpnpkk') ?>">Lap

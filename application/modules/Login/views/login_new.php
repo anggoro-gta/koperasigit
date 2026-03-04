@@ -65,7 +65,7 @@
                     </div>
 
                 </form>
-                <p align="center" class="col-md-12" style="color: white"> KPRI. CANDA BHIRAWA &copy;2024</p>
+                <p align="center" class="col-md-12" style="color: white"> KPRI. CANDA BHIRAWA &copy;2026</p>
             </div>
         </div>
     </div>
