@@ -566,6 +566,183 @@ class Laporan extends CI_Controller
 		}
 	}
 
+	public function simpnthnopd()
+	{
+		// $data['type'] = 'tunggakan';
+		$data['judul'] = 'Laporan Simpanan Tahunan Per OPD';
+		$data['lapSimpThnOpd'] = 'active';
+		$data['action'] = base_url() . 'Laporan/cetak_simpnthnopd';
+		$data['arrSKPD'] = $this->db->query("select * from ms_cb_skpd")->result_array();
+		$this->template->load('Homeadmin/templateadmin', 'Laporan/simpthnopd_form', $data);
+	}
+
+	public function cetak_simpnthnopd()
+	{
+		$type = $this->input->post('type');
+		$tahun = $this->input->post('tahun');
+		$fk_skpd_id = $this->input->post('fk_skpd_id');
+
+		$data['skpd'] = $this->db->query("select nama_skpd from ms_cb_skpd where id = ? ", [$fk_skpd_id])->row()->nama_skpd;
+
+		$start_date = $tahun . '-01-01';
+		$end_date = $tahun . '-12-31';
+
+		$q_wajib = "SELECT a.id, a.nama,
+			SUM(CASE WHEN w.bulan = 1  THEN w.total_wajib ELSE 0 END) AS jan,
+			SUM(CASE WHEN w.bulan = 2  THEN w.total_wajib ELSE 0 END) AS feb,
+			SUM(CASE WHEN w.bulan = 3  THEN w.total_wajib ELSE 0 END) AS mar,
+			SUM(CASE WHEN w.bulan = 4  THEN w.total_wajib ELSE 0 END) AS apr,
+			SUM(CASE WHEN w.bulan = 5  THEN w.total_wajib ELSE 0 END) AS mei,
+			SUM(CASE WHEN w.bulan = 6  THEN w.total_wajib ELSE 0 END) AS jun,
+			SUM(CASE WHEN w.bulan = 7  THEN w.total_wajib ELSE 0 END) AS jul,
+			SUM(CASE WHEN w.bulan = 8  THEN w.total_wajib ELSE 0 END) AS agu,
+			SUM(CASE WHEN w.bulan = 9  THEN w.total_wajib ELSE 0 END) AS sep,
+			SUM(CASE WHEN w.bulan = 10 THEN w.total_wajib ELSE 0 END) AS okt,
+			SUM(CASE WHEN w.bulan = 11 THEN w.total_wajib ELSE 0 END) AS nov,
+			SUM(CASE WHEN w.bulan = 12 THEN w.total_wajib ELSE 0 END) AS des
+			FROM ms_cb_user_anggota a
+			LEFT JOIN (
+				SELECT anggota_id, bulan, SUM(wajib) AS total_wajib
+				FROM (
+					-- sumber 1: tagihan simpanan
+					SELECT tcts.fk_anggota_id AS anggota_id, CAST(tct.bulan AS UNSIGNED) AS bulan, SUM(tcts.wajib) AS wajib
+					FROM t_cb_tagihan_simpanan tcts JOIN t_cb_tagihan tct ON tcts.fk_tagihan_id = tct.id WHERE tct.tahun = '$tahun' GROUP BY tcts.fk_anggota_id, CAST(tct.bulan AS UNSIGNED)
+					UNION ALL
+					-- sumber 2: ms_cb_user_anggota (masuk ke bulan dari tanggal_mulai_aktif)
+					SELECT mcua.id AS anggota_id, MONTH(mcua.tanggal_mulai_aktif) AS bulan, SUM(mcua.simpanan_wajib) AS wajib FROM ms_cb_user_anggota mcua WHERE mcua.tanggal_mulai_aktif >= '$start_date' AND mcua.tanggal_mulai_aktif <= '$end_date' GROUP BY mcua.id, MONTH(mcua.tanggal_mulai_aktif)
+				) u GROUP BY anggota_id, bulan
+			) w ON w.anggota_id = a.id WHERE a.fk_id_skpd = '$fk_skpd_id' GROUP BY a.id, a.nama ORDER BY a.nama";
+
+		$q_pokok = "SELECT a.id, a.nama,
+			SUM(CASE WHEN w.bulan = 1  THEN w.total_pokok ELSE 0 END) AS jan,
+			SUM(CASE WHEN w.bulan = 2  THEN w.total_pokok ELSE 0 END) AS feb,
+			SUM(CASE WHEN w.bulan = 3  THEN w.total_pokok ELSE 0 END) AS mar,
+			SUM(CASE WHEN w.bulan = 4  THEN w.total_pokok ELSE 0 END) AS apr,
+			SUM(CASE WHEN w.bulan = 5  THEN w.total_pokok ELSE 0 END) AS mei,
+			SUM(CASE WHEN w.bulan = 6  THEN w.total_pokok ELSE 0 END) AS jun,
+			SUM(CASE WHEN w.bulan = 7  THEN w.total_pokok ELSE 0 END) AS jul,
+			SUM(CASE WHEN w.bulan = 8  THEN w.total_pokok ELSE 0 END) AS agu,
+			SUM(CASE WHEN w.bulan = 9  THEN w.total_pokok ELSE 0 END) AS sep,
+			SUM(CASE WHEN w.bulan = 10 THEN w.total_pokok ELSE 0 END) AS okt,
+			SUM(CASE WHEN w.bulan = 11 THEN w.total_pokok ELSE 0 END) AS nov,
+			SUM(CASE WHEN w.bulan = 12 THEN w.total_pokok ELSE 0 END) AS des
+			FROM ms_cb_user_anggota a
+			LEFT JOIN (
+				SELECT anggota_id, bulan, SUM(pokok) AS total_pokok
+				FROM (
+					SELECT mcua.id AS anggota_id, MONTH(mcua.tanggal_mulai_aktif) AS bulan, SUM(mcua.simpanan_pokok) AS pokok
+					FROM ms_cb_user_anggota mcua WHERE mcua.tanggal_mulai_aktif >= '$start_date' AND mcua.tanggal_mulai_aktif <= '$end_date' GROUP BY mcua.id, MONTH(mcua.tanggal_mulai_aktif)
+				) u GROUP BY anggota_id, bulan
+			) w ON w.anggota_id = a.id WHERE a.fk_id_skpd = '$fk_skpd_id' GROUP BY a.id, a.nama ORDER BY a.nama";
+			
+		$q_tapim = "SELECT a.id, a.nama,
+			SUM(CASE WHEN w.bulan = 1  THEN w.total_tapim ELSE 0 END) AS jan,
+			SUM(CASE WHEN w.bulan = 2  THEN w.total_tapim ELSE 0 END) AS feb,
+			SUM(CASE WHEN w.bulan = 3  THEN w.total_tapim ELSE 0 END) AS mar,
+			SUM(CASE WHEN w.bulan = 4  THEN w.total_tapim ELSE 0 END) AS apr,
+			SUM(CASE WHEN w.bulan = 5  THEN w.total_tapim ELSE 0 END) AS mei,
+			SUM(CASE WHEN w.bulan = 6  THEN w.total_tapim ELSE 0 END) AS jun,
+			SUM(CASE WHEN w.bulan = 7  THEN w.total_tapim ELSE 0 END) AS jul,
+			SUM(CASE WHEN w.bulan = 8  THEN w.total_tapim ELSE 0 END) AS agu,
+			SUM(CASE WHEN w.bulan = 9  THEN w.total_tapim ELSE 0 END) AS sep,
+			SUM(CASE WHEN w.bulan = 10 THEN w.total_tapim ELSE 0 END) AS okt,
+			SUM(CASE WHEN w.bulan = 11 THEN w.total_tapim ELSE 0 END) AS nov,
+			SUM(CASE WHEN w.bulan = 12 THEN w.total_tapim ELSE 0 END) AS des
+			FROM ms_cb_user_anggota a
+			LEFT JOIN (
+				SELECT anggota_id, bulan, SUM(tapim) AS total_tapim
+				FROM (
+					SELECT
+					tctp.fk_anggota_id AS anggota_id,
+					tct.bulan,
+					SUM(tctp.tapim) AS tapim
+					FROM t_cb_tagihan_pinjaman tctp
+					JOIN t_cb_tagihan tct ON tctp.fk_tagihan_id = tct.id
+					WHERE tct.tahun = '$tahun'
+					GROUP BY tctp.fk_anggota_id, tct.bulan
+				) u GROUP BY anggota_id, bulan
+			) w ON w.anggota_id = a.id WHERE a.fk_id_skpd = '$fk_skpd_id' GROUP BY a.id, a.nama ORDER BY a.nama";
+			
+		$q_sukarela = "SELECT a.id, a.nama,
+			SUM(CASE WHEN w.bulan = 1  THEN w.total_sukarela ELSE 0 END) AS jan,
+			SUM(CASE WHEN w.bulan = 2  THEN w.total_sukarela ELSE 0 END) AS feb,
+			SUM(CASE WHEN w.bulan = 3  THEN w.total_sukarela ELSE 0 END) AS mar,
+			SUM(CASE WHEN w.bulan = 4  THEN w.total_sukarela ELSE 0 END) AS apr,
+			SUM(CASE WHEN w.bulan = 5  THEN w.total_sukarela ELSE 0 END) AS mei,
+			SUM(CASE WHEN w.bulan = 6  THEN w.total_sukarela ELSE 0 END) AS jun,
+			SUM(CASE WHEN w.bulan = 7  THEN w.total_sukarela ELSE 0 END) AS jul,
+			SUM(CASE WHEN w.bulan = 8  THEN w.total_sukarela ELSE 0 END) AS agu,
+			SUM(CASE WHEN w.bulan = 9  THEN w.total_sukarela ELSE 0 END) AS sep,
+			SUM(CASE WHEN w.bulan = 10 THEN w.total_sukarela ELSE 0 END) AS okt,
+			SUM(CASE WHEN w.bulan = 11 THEN w.total_sukarela ELSE 0 END) AS nov,
+			SUM(CASE WHEN w.bulan = 12 THEN w.total_sukarela ELSE 0 END) AS des
+			FROM ms_cb_user_anggota a
+			LEFT JOIN (
+				SELECT anggota_id, bulan, SUM(sukarela) AS total_sukarela
+				FROM (
+					SELECT
+					tcts.fk_anggota_id AS anggota_id,
+					tct.bulan,
+					SUM(tcts.sukarela) AS sukarela
+					FROM t_cb_tagihan_simpanan tcts
+					JOIN t_cb_tagihan tct ON tcts.fk_tagihan_id = tct.id
+					WHERE tct.tahun = '$tahun'
+					GROUP BY tcts.fk_anggota_id, tct.bulan
+				) u GROUP BY anggota_id, bulan
+			) w ON w.anggota_id = a.id WHERE a.fk_id_skpd = '$fk_skpd_id' GROUP BY a.id, a.nama ORDER BY a.nama";
+
+		$wajib = $this->db->query($q_wajib)->result_array();
+		$pokok = $this->db->query($q_pokok)->result_array();
+		$tapim = $this->db->query($q_tapim)->result_array();
+		$sukarela = $this->db->query($q_sukarela)->result_array();
+
+		// helper index by id
+		$indexById = function(array $rows) {
+			$out = [];
+			foreach ($rows as $r) {
+				$out[$r['id']] = $r; // r berisi: id, nama, jan..des
+			}
+			return $out;
+		};
+
+		$wajibById    = $indexById($wajib);
+		$pokokById    = $indexById($pokok);
+		$tapimById    = $indexById($tapim);
+		$sukarelaById = $indexById($sukarela);
+
+		// ambil master anggota (agar semua nama tampil meski nilainya 0)
+		$anggota = $this->db->select('id,nama')
+			->from('ms_cb_user_anggota')
+			->where('fk_id_skpd', $fk_skpd_id)
+			->order_by('nama', 'ASC')
+			->get()->result_array();
+
+		$rows = [];
+		foreach ($anggota as $a) {
+			$id = $a['id'];
+			$rows[] = [
+				'id'       => $id,
+				'nama'     => $a['nama'],
+				'wajib'    => $wajibById[$id]    ?? [],
+				'pokok'    => $pokokById[$id]    ?? [],
+				'tapim'    => $tapimById[$id]    ?? [],
+				'sukarela' => $sukarelaById[$id] ?? [],
+			];
+		}
+
+		$data['rows'] = $rows;
+
+		$data['tahun'] = $tahun;
+		$data['tittle'] = 'Laporan Simpanan Tahunan Per OPD_' . $data['skpd'] . '_' . $tahun;
+		$html = $this->load->view('Laporan/simpthnopd_pdf', $data, true);
+		$title = 'Laporan Simpanan Tahunan Per OPD_' . $data['skpd'] . '_' . $tahun;
+		if ($type == 'pdf') {
+			$this->pdf($title, $html, $this->help->folio_L(), false);
+		} else {
+			$this->excel($title, $html);
+		}
+	}
+
 	protected function pdf($title, $html, $page, $batas = false)
 	{
 		// echo $html;

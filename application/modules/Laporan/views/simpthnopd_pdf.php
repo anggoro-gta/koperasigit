@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+<style>
+table {
+    border-collapse: collapse;
+}
+
+th,
+td {
+    white-space: nowrap;
+    /* PENTING: jangan turun baris */
+    word-break: keep-all;
+    /* jangan pecah kata/angka */
+    overflow: hidden;
+    /* opsional */
+    text-overflow: clip;
+    /* opsional */
+    padding: 2px 3px;
+    /* kecilkan padding biar muat */
+    vertical-align: middle;
+}
+
+.angka {
+    text-align: right;
+}
+
+/* kalau mau font lebih kecil khusus tabel */
+.tbl-report {
+    font-size: 7pt;
+}
+
+/* silakan 6pt kalau masih kepotong */
+</style>
+
+<head>
+    <title><?= $tittle ?></title>
+</head>
+
+<body>
+    <div class="responsive">
+        <table width="100%" style="font-family:tahoma; font-size: 12pt; padding-top: -20px">
+            <tr>
+                <td colspan="50" align="center"><b>LAPORAN SIMPANAN TAHUN <?= $tahun ?></b></td>
+            </tr>
+            <tr>
+                <td colspan="50" align="center"><b> <?= $skpd ?></b></td>
+            </tr>
+        </table>
+        <br>
+        <?php
+            $months = [
+                'jan' => 'Januari', 'feb' => 'Februari', 'mar' => 'Maret', 'apr' => 'April',
+                'mei' => 'Mei', 'jun' => 'Juni', 'jul' => 'Juli', 'agu' => 'Agustus',
+                'sep' => 'September', 'okt' => 'Oktober', 'nov' => 'November', 'des' => 'Desember',
+            ];
+
+            $fmt = function($v) {
+                return number_format((float)$v, 0, ',', '.'); // bisa Anda ubah
+            };
+        ?>
+        <table width="100%" class="bordersolid tbl-report" border="1" cellspacing="0">
+            <thead>
+                <tr>
+                    <th style="text-align: center;" width="3%" rowspan="2">No</th>
+                    <th rowspan="2">Nama</th>
+                    <?php foreach($months as $mKey => $mName): ?>
+                    <th colspan="4" style="text-align: center;"><?= $mName ?></th>
+                    <?php endforeach; ?>
+                </tr>
+
+                <tr class="text-center">
+                    <?php foreach($months as $mKey => $mName): ?>
+                    <th>wajib</th>
+                    <th>pokok</th>
+                    <th>tapim</th>
+                    <th>sukarela</th>
+                    <?php endforeach; ?>
+                </tr>
+            </thead>
+            <tbody>
+                <?php $no=1; foreach($rows as $r): ?>
+                <tr>
+                    <td class="text-center"><?= $no++ ?></td>
+                    <td><?= htmlspecialchars($r['nama']) ?></td>
+
+                    <?php foreach($months as $mKey => $mName): ?>
+                    <td class="angka" style="text-align: right;"><?= $fmt($r['wajib'][$mKey]    ?? 0) ?></td>
+                    <td class="angka" style="text-align: right;"><?= $fmt($r['pokok'][$mKey]    ?? 0) ?></td>
+                    <td class="angka" style="text-align: right;"><?= $fmt($r['tapim'][$mKey]    ?? 0) ?></td>
+                    <td class="angka" style="text-align: right;"><?= $fmt($r['sukarela'][$mKey] ?? 0) ?></td>
+                    <?php endforeach; ?>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</body>
+<style type="text/css">
+.bordersolid {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+</style>
