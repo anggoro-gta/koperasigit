@@ -69,7 +69,7 @@
                                     $result_bunga = ($var_bunga_number * (($var_tenor_number - $var_angsuran_ke_number) + 1));
                                     ?>
                                     <td><input type="text" name="label_tapim" id="label_tapim" class="form-control nominal" value="<?= $result_tapim ?>"></td>
-                                    <td><input type="text" name="label_bunga" id="label_bunga" class="form-control nominal" value="<?= $result_bunga ?>"></td>
+                                    <td><input type="text" name="label_bunga" id="label_bunga" class="form-control nominal" value="<?= $result_bunga/2 ?>"></td>
                                 <?php } else { ?>
                                     <td id="label_tapim"><?= number_format($pinjaman->tapim) ?></td>
                                     <td id="label_bunga"><?= number_format($pinjaman->bunga) ?></td>
