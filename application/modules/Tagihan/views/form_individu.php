@@ -168,15 +168,18 @@
       alert('ke harus lebih dari ' + min_angsuran)
       $('#angsuran_ke').val(min_angsuran)
       hitung(1)
+      hitung_pelunasan(1)
       return false;
     }
     if (parseInt(angsuran_ke) > (max_angsuran)) {
       alert('ke harus kurang dari ' + max_angsuran)
       $('#angsuran_ke').val(min_angsuran)
       hitung(1)
+      hitung_pelunasan(1)
       return false;
     }
     hitung(angsuran_ke - min_angsuran + 1)
+    hitung_pelunasan(angsuran_ke - min_angsuran + 1)
 
   });
 
@@ -216,12 +219,12 @@
 
     $('#label_pokok').html(numberWithCommas(x * const_pokok));
     $('#label_tapim').html(numberWithCommas(x * const_tapim));
-    $('#label_bunga').html(numberWithCommas(x * const_bunga));
-    $('#label_jml_tagihan').html(numberWithCommas(const_pokok_count_number + const_tapim_count_number + const_bunga_count_number));
-    $('#pokok').val(x * const_pokok);
+    $('#label_bunga').html(numberWithCommas(const_bunga_count_number));
+    $('#label_jml_tagihan').html(numberWithCommas(const_pokok_count_number + const_tapim_count_number + (const_bunga_count_number)));
+    $('#pokok').val(const_pokok_count_number);
     $('#tapim').val(const_tapim_count_number);
     $('#bunga').val(const_bunga_count_number);
-    $('#jml_tagihan').val(const_pokok_count_number + const_tapim_count_number + const_bunga_count_number);
+    $('#jml_tagihan').val(const_pokok_count_number + const_tapim_count_number + (const_bunga_count_number));
   }
 
   function hitung(x) {
@@ -229,15 +232,16 @@
       const_tapim = $('#const_tapim').val(),
       const_bunga = $('#const_bunga').val(),
       const_jml_tagihan = $('#const_jml_tagihan').val()
+    const total_tagihan = (x * const_pokok) + (x * const_tapim) + (1 * const_bunga);
     console.table(const_pokok, x, x * const_pokok);
     $('#label_pokok').html(numberWithCommas(x * const_pokok))
     $('#label_tapim').html(numberWithCommas(x * const_tapim))
-    $('#label_bunga').html(numberWithCommas(x * const_bunga))
-    $('#label_jml_tagihan').html(numberWithCommas(x * const_jml_tagihan))
+    $('#label_bunga').html(numberWithCommas(1 * const_bunga))
+    $('#label_jml_tagihan').html(numberWithCommas(total_tagihan))
     $('#pokok').val(x * const_pokok)
     $('#tapim').val(x * const_tapim)
-    $('#bunga').val(x * const_bunga)
-    $('#jml_tagihan').val(x * const_jml_tagihan)
+    $('#bunga').val(1 * const_bunga)
+    $('#jml_tagihan').val(total_tagihan)
   }
 
   $(document).ready(function() {
