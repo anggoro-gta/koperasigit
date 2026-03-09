@@ -70,10 +70,10 @@ td {
 
                 <tr class="text-center">
                     <?php foreach($months as $mKey => $mName): ?>
-                    <th>wajib</th>
-                    <th>pokok</th>
-                    <th>tapim</th>
-                    <th>sukarela</th>
+                    <th>W</th>
+                    <th>P</th>
+                    <th>T</th>
+                    <th>S</th>
                     <?php endforeach; ?>
                 </tr>
             </thead>
