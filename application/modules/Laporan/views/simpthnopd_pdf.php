@@ -61,7 +61,7 @@ td {
         <table width="100%" class="bordersolid tbl-report" border="1" cellspacing="0">
             <thead>
                 <tr>
-                    <th style="text-align: center;" width="3%" rowspan="2">No</th>
+                    <th style="text-align: center;" rowspan="2">No</th>
                     <th rowspan="2">Nama</th>
                     <?php foreach($months as $mKey => $mName): ?>
                     <th colspan="4" style="text-align: center;"><?= $mName ?></th>
