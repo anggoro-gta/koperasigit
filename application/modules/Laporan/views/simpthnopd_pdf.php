@@ -70,8 +70,8 @@ td {
 
                 <tr class="text-center">
                     <?php foreach($months as $mKey => $mName): ?>
-                    <th>W</th>
                     <th>P</th>
+                    <th>W</th>
                     <th>T</th>
                     <th>S</th>
                     <?php endforeach; ?>
@@ -84,8 +84,8 @@ td {
                     <td><?= htmlspecialchars($r['nama']) ?></td>
 
                     <?php foreach($months as $mKey => $mName): ?>
-                    <td class="angka" style="text-align: right;"><?= $fmt($r['wajib'][$mKey]    ?? 0) ?></td>
                     <td class="angka" style="text-align: right;"><?= $fmt($r['pokok'][$mKey]    ?? 0) ?></td>
+                    <td class="angka" style="text-align: right;"><?= $fmt($r['wajib'][$mKey]    ?? 0) ?></td>
                     <td class="angka" style="text-align: right;"><?= $fmt($r['tapim'][$mKey]    ?? 0) ?></td>
                     <td class="angka" style="text-align: right;"><?= $fmt($r['sukarela'][$mKey] ?? 0) ?></td>
                     <?php endforeach; ?>
