@@ -28,6 +28,7 @@ class Penarikan extends CI_Controller
 	{
 		$this->MHome->ceklogin();
 		$data['act_add'] = base_url() . 'Penarikan/create';
+		$data['act_add_sukarela'] = base_url() . 'Penarikan/create_sukarela';
 		$data['skpd'] = $this->input->post('skpd');
 		$data['arrSkpd'] = $this->MMscbSkpd->get();
 
@@ -45,63 +46,11 @@ class Penarikan extends CI_Controller
 			$this->datatables->where('us.fk_id_skpd', $skpd);
 		}
 
-		$this->datatables->select("tcp.id,us.nama,us.fk_id_skpd,DATE_FORMAT(tcp.tgl_penarikan,'%d-%m-%Y')tgl,FORMAT(tcp.jumlah_penarikan,0) jumlah");
+		$this->datatables->select("tcp.id,us.nama,us.fk_id_skpd,DATE_FORMAT(tcp.tgl_penarikan,'%d-%m-%Y')tgl,FORMAT(tcp.jumlah_penarikan,0) jumlah, tcp.jenis_penarikan");
 		$this->datatables->from("t_cb_penarikan tcp");
 		$this->datatables->join('ms_cb_user_anggota us', 'tcp.fk_anggota_id = us.id', 'left');
 
 		echo $this->datatables->generate();
-	}
-
-	public function create()
-	{
-		$this->MHome->ceklogin();
-
-		$data = [
-			'action'          => site_url('Penarikan/ajax_save'),
-			'button'          => 'Simpan',
-			'id'              => 0,
-			'fk_anggota_id'   => '',
-			'tgl_penarikan'   => date('Y-m-d'),
-			'jumlah_penarikan'=> 0,
-			'act_back'        => site_url('Penarikan'),
-			'Penarikan'       => 'active',
-			'arrUserAnggota'  => $this->db->query("
-				SELECT a.id, a.nama, s.nama_skpd
-				FROM ms_cb_user_anggota a
-				INNER JOIN ms_cb_skpd s ON s.id = a.fk_id_skpd
-			")->result_array()
-		];
-
-		$this->template->load('Homeadmin/templateadmin', 'Penarikan/form', $data);
-	}
-
-	public function edit($id)
-	{
-		$this->MHome->ceklogin();
-
-		$row = $this->db->get_where('t_cb_penarikan', ['id' => (int)$id])->row_array();
-		if (!$row) {
-			redirect('Penarikan');
-			return;
-		}
-
-		$data = [
-			'action'          => site_url('Penarikan/ajax_save'),
-			'button'          => 'Update',
-			'id'              => (int)$row['id'],
-			'fk_anggota_id'   => (int)$row['fk_anggota_id'],
-			'tgl_penarikan'   => $row['tgl_penarikan'],
-			'jumlah_penarikan'=> (float)$row['jumlah_penarikan'],
-			'act_back'        => site_url('Penarikan'),
-			'Penarikan'       => 'active',
-			'arrUserAnggota'  => $this->db->query("
-				SELECT a.id, a.nama, s.nama_skpd
-				FROM ms_cb_user_anggota a
-				INNER JOIN ms_cb_skpd s ON s.id = a.fk_id_skpd
-			")->result_array()
-		];
-
-		$this->template->load('Homeadmin/templateadmin', 'Penarikan/form', $data);
 	}
 
 	public function ajax_detail()
@@ -219,14 +168,74 @@ class Penarikan extends CI_Controller
 		]);
 	}
 
+	public function create()
+	{
+		$this->MHome->ceklogin();
+
+		$data = [
+			'action'           => site_url('Penarikan/ajax_save'),
+			'button'           => 'Simpan',
+			'title' 		   => 'Non Sukarela',
+			'id'               => 0,
+			'fk_anggota_id'    => '',
+			'tgl_penarikan'    => date('Y-m-d'),
+			'jumlah_penarikan' => 0,
+			'status_anggota'   => '',
+			'keterangan'       => '',
+			'act_back'         => site_url('Penarikan'),
+			'Penarikan'        => 'active',
+			'arrUserAnggota'  => $this->db->query("
+				SELECT a.id, a.nama, s.nama_skpd
+				FROM ms_cb_user_anggota a
+				INNER JOIN ms_cb_skpd s ON s.id = a.fk_id_skpd
+			")->result_array()
+		];
+
+		$this->template->load('Homeadmin/templateadmin', 'Penarikan/form', $data);
+	}
+
+	public function edit($id)
+	{
+		$this->MHome->ceklogin();
+
+		$row = $this->db->get_where('t_cb_penarikan', ['id' => (int)$id])->row_array();
+		if (!$row) {
+			redirect('Penarikan');
+			return;
+		}
+
+		$data = [
+			'action'           => site_url('Penarikan/ajax_save'),
+			'button'           => 'Update',
+			'title' 		   => 'Non Sukarela',
+			'id'               => (int)$row['id'],
+			'fk_anggota_id'    => (int)$row['fk_anggota_id'],
+			'tgl_penarikan'    => $row['tgl_penarikan'],
+			'jumlah_penarikan' => (float)$row['jumlah_penarikan'],
+			'status_anggota'   => $row['status_anggota'],
+			'keterangan'       => $row['keterangan'],
+			'act_back'         => site_url('Penarikan'),
+			'Penarikan'        => 'active',
+			'arrUserAnggota'   => $this->db->query("
+				SELECT a.id, a.nama, s.nama_skpd
+				FROM ms_cb_user_anggota a
+				INNER JOIN ms_cb_skpd s ON s.id = a.fk_id_skpd
+			")->result_array()
+		];
+
+		$this->template->load('Homeadmin/templateadmin', 'Penarikan/form', $data);
+	}
+
 	public function ajax_save()
 	{
 		if (!$this->input->is_ajax_request()) show_404();
 
-		$id         = (int)$this->input->post('id');
-		$anggota_id = (int)$this->input->post('fk_anggota_id');
-		$tgl        = trim((string)$this->input->post('tanggal_penarikan'));
-		$nominal    = (float)$this->input->post('nominal_penarikan');
+		$id             = (int)$this->input->post('id');
+		$anggota_id     = (int)$this->input->post('fk_anggota_id');
+		$tgl            = trim((string)$this->input->post('tanggal_penarikan'));
+		$nominal        = (float)$this->input->post('nominal_penarikan');
+		$status_anggota = $this->input->post('status_anggota', true);
+		$keterangan     = $this->input->post('keterangan', true);
 
 		if ($anggota_id <= 0) {
 			echo json_encode(['ok'=>false,'message'=>'Anggota wajib dipilih']); return;
@@ -234,8 +243,11 @@ class Penarikan extends CI_Controller
 		if ($tgl === '') {
 			echo json_encode(['ok'=>false,'message'=>'Tanggal penarikan wajib diisi']); return;
 		}
-		if ($nominal <= 0) {
-			echo json_encode(['ok'=>false,'message'=>'Nominal penarikan harus > 0']); return;
+		if ($status_anggota === '') {
+			echo json_encode(['ok'=>false,'message'=>'Status anggota wajib dipilih']); return;
+		}
+		if ($nominal == 0) {
+			echo json_encode(['ok'=>false,'message'=>'Nominal penarikan tidak boleh nol']); return;
 		}
 
 		$user_id = (int)($this->session->id ?? 0); // sesuaikan key session
@@ -244,6 +256,123 @@ class Penarikan extends CI_Controller
 			'fk_anggota_id'    => $anggota_id,
 			'tgl_penarikan'    => $tgl,
 			'jumlah_penarikan' => $nominal,
+			'status_anggota'   => $status_anggota,
+			'keterangan'       => $keterangan,
+			'jenis_penarikan'  => 'non sukarela',
+			'tipe_angka'       => $nominal >= 0 ? 'plus' : 'minus',
+			'user_act'         => $user_id,
+			'time_act'         => date('Y-m-d H:i:s'),
+		];
+
+		$this->db->trans_begin();
+
+		if ($id > 0) {
+			$this->db->where('id', $id)->update('t_cb_penarikan', $data);
+		} else {
+			$this->db->insert('t_cb_penarikan', $data);
+			$id = $this->db->insert_id();
+		}
+
+		if ($this->db->trans_status() === false) {
+			$this->db->trans_rollback();
+			echo json_encode(['ok'=>false,'message'=>'Gagal menyimpan data']);
+			return;
+		}
+
+		$this->db->trans_commit();
+
+		echo json_encode([
+			'ok' => true,
+			'message' => ($this->input->post('id') ? 'Berhasil update' : 'Berhasil simpan'),
+			'redirect_url' => site_url('Penarikan')
+		]);
+	}
+
+	public function create_sukarela()
+	{
+		$this->MHome->ceklogin();
+
+		$data = [
+			'action'           => site_url('Penarikan/ajax_save_sukarela'),
+			'button'           => 'Simpan',
+			'title' 		   => 'Sukarela',
+			'id'               => 0,
+			'fk_anggota_id'    => '',
+			'tgl_penarikan'    => date('Y-m-d'),
+			'jumlah_penarikan' => 0,
+			'keterangan'       => '',
+			'act_back'         => site_url('Penarikan'),
+			'Penarikan'        => 'active',
+			'arrUserAnggota'  => $this->db->query("
+				SELECT a.id, a.nama, s.nama_skpd
+				FROM ms_cb_user_anggota a
+				INNER JOIN ms_cb_skpd s ON s.id = a.fk_id_skpd
+			")->result_array()
+		];
+
+		$this->template->load('Homeadmin/templateadmin', 'Penarikan/form_sukarela', $data);
+	}
+
+	public function edit_sukarela($id)
+	{
+		$this->MHome->ceklogin();
+
+		$row = $this->db->get_where('t_cb_penarikan', ['id' => (int)$id])->row_array();
+		if (!$row) {
+			redirect('Penarikan');
+			return;
+		}
+
+		$data = [
+			'action'           => site_url('Penarikan/ajax_save_sukarela'),
+			'button'           => 'Update',
+			'title' 		   => 'Sukarela',
+			'id'               => (int)$row['id'],
+			'fk_anggota_id'    => (int)$row['fk_anggota_id'],
+			'tgl_penarikan'    => $row['tgl_penarikan'],
+			'jumlah_penarikan' => (float)$row['jumlah_penarikan'],
+			'keterangan'       => $row['keterangan'],
+			'act_back'         => site_url('Penarikan'),
+			'Penarikan'        => 'active',
+			'arrUserAnggota'   => $this->db->query("
+				SELECT a.id, a.nama, s.nama_skpd
+				FROM ms_cb_user_anggota a
+				INNER JOIN ms_cb_skpd s ON s.id = a.fk_id_skpd
+			")->result_array()
+		];
+
+		$this->template->load('Homeadmin/templateadmin', 'Penarikan/form_sukarela', $data);
+	}
+
+	public function ajax_save_sukarela()
+	{
+		if (!$this->input->is_ajax_request()) show_404();
+
+		$id             = (int)$this->input->post('id');
+		$anggota_id     = (int)$this->input->post('fk_anggota_id');
+		$tgl            = trim((string)$this->input->post('tanggal_penarikan'));
+		$nominal        = (float)$this->input->post('nominal_penarikan');
+		$keterangan     = $this->input->post('keterangan', true);
+
+		if ($anggota_id <= 0) {
+			echo json_encode(['ok'=>false,'message'=>'Anggota wajib dipilih']); return;
+		}
+		if ($tgl === '') {
+			echo json_encode(['ok'=>false,'message'=>'Tanggal penarikan wajib diisi']); return;
+		}
+		if ($nominal == 0) {
+			echo json_encode(['ok'=>false,'message'=>'Nominal penarikan tidak boleh nol']); return;
+		}
+
+		$user_id = (int)($this->session->id ?? 0); // sesuaikan key session
+
+		$data = [
+			'fk_anggota_id'    => $anggota_id,
+			'tgl_penarikan'    => $tgl,
+			'jumlah_penarikan' => $nominal,
+			'keterangan'       => $keterangan,
+			'jenis_penarikan'  => 'sukarela',
+			'tipe_angka'       => $nominal >= 0 ? 'plus' : 'minus',
 			'user_act'         => $user_id,
 			'time_act'         => date('Y-m-d H:i:s'),
 		];

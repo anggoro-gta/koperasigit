@@ -205,79 +205,6 @@
                                     </div>
                                 </div>
 
-                                <!-- CARD: Related Resources -->
-                                <div class="bs3-card">
-                                    <div class="bs3-card-header">
-                                        <h4 class="bs3-card-title text-danger"><i class="fas fa-file-invoice"></i>
-                                            TANGGUNGAN
-                                        </h4>
-                                    </div>
-                                    <div class="bs3-card-body">
-                                        <div id="sec_uang" style="display:none;">
-                                            <span class="badge" style="margin-bottom:10px">PINJAMAN UANG</span>
-                                            <div class="table-responsive">
-                                                <table class="table table-striped table-hover">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>No</th>
-                                                            <th class="text-right">Pokok</th>
-                                                            <th class="text-right">Bunga</th>
-                                                            <th class="text-center">Sisa Angsuran</th>
-                                                            <th class="text-right">Total</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody id="tbody_uang"></tbody>
-                                                </table>
-                                                <hr>
-                                            </div>
-                                        </div>
-                                        <div id="sec_barang" style="display:none;">
-                                            <span class="badge" style="margin-bottom:10px">PINJAMAN BARANG</span>
-                                            <div class="table-responsive">
-                                                <table class="table table-striped table-hover">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>No</th>
-                                                            <th class="text-right">Pokok</th>
-                                                            <th class="text-right">Bunga</th>
-                                                            <th class="text-center">Sisa Angsuran</th>
-                                                            <th class="text-right">Total</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody id="tbody_barang"></tbody>
-                                                </table>
-                                                <hr>
-                                            </div>
-                                        </div>
-                                        <div id="sec_palen" style="display:none;">
-                                            <span class="badge" style="margin-bottom:10px">PINJAMAN BARANG</span>
-                                            <div class="table-responsive">
-                                                <table class="table table-striped table-hover">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>No</th>
-                                                            <th class="text-right">Pokok</th>
-                                                            <th class="text-right">Bunga</th>
-                                                            <th class="text-center">Sisa Angsuran</th>
-                                                            <th class="text-right">Total</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody id="tbody_palen"></tbody>
-                                                </table>
-                                                <hr>
-                                            </div>
-                                        </div>
-
-                                        <ul class="bs3-resource">
-                                            <li class="clearfix">
-                                                <strong>TOTAL TANGGUNGAN</strong>
-                                                <strong class="pull-right text-right" id="total_tanggungan"
-                                                    style="font-size:16px">Rp 0,00</strong>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-
                                 <div class="bs3-card">
                                     <div class="bs3-card-body">
                                         <ul class="bs3-resource">
@@ -302,24 +229,6 @@
 
                                                     <input type="hidden" id="nominal_penarikan" name="nominal_penarikan"
                                                         value="<?= (int)round($jumlah_penarikan) ?>">
-                                                </span>
-                                            </li>
-                                            <li class="clearfix">
-                                                <span>STATUS ANGGOTA</span>
-                                                <span class="pull-right">
-                                                    <select class="form-control form-control-sm" id="status_anggota"
-                                                        name="status_anggota" style="width:170px">
-                                                        <option value="">Pilih Status</option>
-                                                        <option value="keluar"
-                                                            <?= $status_anggota=='keluar' ? 'selected' : '' ?>>Keluar
-                                                        </option>
-                                                        <option value="pensiun"
-                                                            <?= $status_anggota=='pensiun' ? 'selected' : '' ?>>Pensiun
-                                                        </option>
-                                                        <option value="meninggal"
-                                                            <?= $status_anggota=='meninggal' ? 'selected' : '' ?>>
-                                                            Meninggal</option>
-                                                    </select>
                                                 </span>
                                             </li>
                                             <li class="clearfix">
@@ -419,10 +328,9 @@ function refreshSubmitState() {
     var anggota = $('#fk_anggota_id').val();
     var nominal = Number($('#nominal_penarikan').val() || 0);
     var tgl = ($('#tanggal_penarikan').val() || '').trim();
-    var status = ($('#status_anggota').val() || '').trim();
     var ket = ($('#keterangan').val() || '').trim();
 
-    var ok = anggota && Math.abs(nominal) > 0 && tgl !== '' && status !== '';
+    var ok = anggota && Math.abs(nominal) > 0 && tgl !== '';
     $('#btn_submit').prop('disabled', !ok);
 }
 
@@ -458,7 +366,7 @@ $(function() {
         this.select();
     });
 
-    $('#tanggal_penarikan, #status_anggota, #fk_anggota_id').on('change input',
+    $('#tanggal_penarikan, #fk_anggota_id').on('change input',
         refreshSubmitState);
 
     // load detail saat pilih anggota
@@ -513,7 +421,7 @@ $(function() {
                 }
 
                 $('#total_tanggungan').text(rupiah(res.total_tanggungan));
-                var jumlahAkhir = Number(res.jumlah_akhir || 0);
+                var jumlahAkhir = Number(res.simpanan.sukarela || 0);
 
                 $('#jumlah_akhir').text(rupiah(jumlahAkhir))
                     .removeClass('text-danger text-success')
@@ -526,7 +434,7 @@ $(function() {
                 // input boleh aktif jika jumlah akhir tidak nol
                 var can = Math.abs(jumlahAkhir) > 0 || isEdit;
 
-                $('#nominal_penarikan_view, #tanggal_penarikan, #status_anggota, #keterangan').prop(
+                $('#nominal_penarikan_view, #tanggal_penarikan, #keterangan').prop(
                     'disabled', !
                     can);
 
@@ -547,7 +455,6 @@ $(function() {
             $('#addon_nominal_penarikan').text('Rp');
             $('#nominal_info').text('');
             $('#keterangan').val('');
-            $('#status_anggota').val('').trigger('change');
             $view.data('sign', 1);
             $view.data('maks', 0);
         }
@@ -570,14 +477,13 @@ $(function() {
         $btn.prop('disabled', true).text('Menyimpan...');
 
         $.ajax({
-            url: "<?= site_url('Penarikan/ajax_save') ?>",
+            url: "<?= site_url('Penarikan/ajax_save_sukarela') ?>",
             type: "POST",
             dataType: "json",
             data: {
                 id: $('input[name="id"]').val(),
                 fk_anggota_id: $('#fk_anggota_id').val(),
                 tanggal_penarikan: $('#tanggal_penarikan').val(),
-                status_anggota: $('#status_anggota').val(),
                 keterangan: $('#keterangan').val(),
                 nominal_penarikan: $('#nominal_penarikan').val()
             },

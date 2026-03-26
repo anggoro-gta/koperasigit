@@ -6,9 +6,10 @@
                 <h2>List</h2>
                 <ul class="nav navbar-right panel_toolbox">
                     <div class="pull-right">
-                        <!-- <a href="#" id="upload_file" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-cloud-upload"></i> Upload</a> -->
+                        <a href="<?= $act_add_sukarela ?>" id="upload_file" class="btn btn-sm btn-primary"><i
+                                class="glyphicon glyphicon-plus"></i> Sukarela</a>
                         <a href="<?= $act_add ?>" class="btn btn-sm btn-success"><i
-                                class="glyphicon glyphicon-plus"></i> Tambah</a>
+                                class="glyphicon glyphicon-plus"></i> Non Sukarela</a>
                     </div>
                 </ul>
                 <div class="clearfix"></div>
@@ -30,6 +31,9 @@
                                     </th>
                                     <th>
                                         <center>JUMLAH PENARIKAN</center>
+                                    </th>
+                                    <th>
+                                        <center>JENIS PENARIKAN</center>
                                     </th>
                                     <th>AKSI</th>
                                 </tr>
@@ -113,15 +117,38 @@ $(document).ready(function() {
                 "searchable": false,
             },
             {
+                "data": "jenis_penarikan",
+                "orderable": false,
+                "className": "text-center",
+                "searchable": true,
+                "render": function(data, type, row, meta) {
+                    if (type === 'display') {
+                        if (data == 'sukarela') {
+                            return '<span class="text-primary"><b>Sukarela</b></span>';
+                        } else if (data == 'non sukarela') {
+                            return '<span class="text-success"><b>Non Sukarela</b></span>';
+                        }
+                    }
+                    return data;
+                }
+            },
+            {
                 "data": "id",
                 "orderable": false,
                 "className": "text-center",
                 render: function(data, type, row) {
                     aksi = '<div class="btn-group">';
-                    aksi +=
-                        '<a class="btn btn-xs btn-primary" href="<?= base_url() ?>Penarikan/edit/' +
-                        data +
-                        '"><i class="glyphicon glyphicon-edit icon-white" title="Edit"></i></a>';
+                    if (row.jenis_penarikan == 'sukarela') {
+                        aksi +=
+                            '<a class="btn btn-xs btn-primary" href="<?= base_url() ?>Penarikan/edit_sukarela/' +
+                            data +
+                            '"><i class="glyphicon glyphicon-edit icon-white" title="Edit"></i></a>';
+                    } else {
+                        aksi +=
+                            '<a class="btn btn-xs btn-primary" href="<?= base_url() ?>Penarikan/edit/' +
+                            data +
+                            '"><i class="glyphicon glyphicon-edit icon-white" title="Edit"></i></a>';
+                    }
                     aksi +=
                         '<button type="button" class="btn btn-xs btn-danger btn-del" data-id="' +
                         data + '">' +
