@@ -424,6 +424,7 @@ class Tagihan extends CI_Controller
 				nip,
 				pinjaman,
 				kategori ,
+				jml_angsuran,
 				jml_angsuran+1 as angsuran_ke,
 				pokok,
 				tapim,

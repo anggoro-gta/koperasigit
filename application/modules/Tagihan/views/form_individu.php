@@ -204,18 +204,22 @@ $(document).on('change', '#label_bunga', function() {
     let angsuran_ke = $('#angsuran_ke').val(),
         min_angsuran = $('#min_angsuran').val(),
         max_angsuran = $('#max_angsuran').val();
+    console.log("angsuran_ke = " + angsuran_ke);
+    console.log("min_angsuran = " + min_angsuran);
     hitung_pelunasan(angsuran_ke - min_angsuran + 1);
 });
 
 function hitung_pelunasan(x) {
     // console.log("hasil = " + x);
 
+    let jenis = $('#jenis').val();
     let const_pokok = toIntDefault0($('#const_pokok').val()),
         const_tapim_count = $('#label_tapim').text() || $('#label_tapim').val(),
         const_bunga_count = $('#label_bunga').text() || $('#label_bunga').val(),
         const_tapim = toIntDefault0($('#const_tapim').val()),
         const_bunga = toIntDefault0($('#const_bunga').val()),
-        const_jml_tagihan = toIntDefault0($('#const_jml_tagihan').val());
+        const_jml_tagihan = toIntDefault0($('#const_jml_tagihan').val()),
+        const_sisa_angsuran = toIntDefault0($('#sisa_angsuran').val());
 
     // console.log("const_bunga_count = " + const_bunga_count);
 
@@ -227,6 +231,20 @@ function hitung_pelunasan(x) {
     // console.log("numberWithCommas(const_bunga_count_number) = " + numberWithCommas(const_bunga_count_number));
 
     // console.log(const_pokok_count_number + const_tapim_count_number + const_bunga_count_number);
+
+    //jika jenis kompensasi atau pelunasan
+    if (jenis == '4' || jenis == '5') {
+        x = const_sisa_angsuran;
+        const_pokok_count_number = x * const_pokok;
+        const_tapim_count_number = x * const_tapim;
+
+        if (jenis == '4') {
+            const_bunga_count_number = 1 * const_bunga;
+        } else if (jenis == '5') {
+            const_bunga_count_number = (x * const_bunga) / 2;
+        }
+    }
+
 
     $('#label_pokok').html(numberWithCommas(x * const_pokok));
     $('#label_tapim').html(numberWithCommas(x * const_tapim));
@@ -263,8 +281,8 @@ function hitung(x) {
     let pokok = $('#label_pokok').val(),
         tapim = $('#label_tapim').val(),
         bunga = $('#label_bunga').val();
-    console.log("iki sing cons"+const_pokok+"-"+const_tapim+"-"+const_bunga);
-    console.log("iki sing label"+pokok+"-"+tapim+"-"+bunga);
+    console.log("iki sing cons" + const_pokok + "-" + const_tapim + "-" + const_bunga);
+    console.log("iki sing label" + pokok + "-" + tapim + "-" + bunga);
 }
 
 $(document).ready(function() {
