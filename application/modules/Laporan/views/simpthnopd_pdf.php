@@ -40,10 +40,10 @@ td {
     <div class="responsive">
         <table width="100%" style="font-family:tahoma; font-size: 12pt; padding-top: -20px">
             <tr>
-                <td colspan="50" align="center"><b>LAPORAN SIMPANAN TAHUN <?= $tahun ?></b></td>
+                <td colspan="51" align="center"><b>LAPORAN SIMPANAN TAHUN <?= $tahun ?></b></td>
             </tr>
             <tr>
-                <td colspan="50" align="center"><b> <?= $skpd ?></b></td>
+                <td colspan="51" align="center"><b> <?= $skpd ?></b></td>
             </tr>
         </table>
         <br>
@@ -66,6 +66,7 @@ td {
                     <?php foreach($months as $mKey => $mName): ?>
                     <th colspan="4" style="text-align: center;"><?= $mName ?></th>
                     <?php endforeach; ?>
+                    <th rowspan="2">Total</th>
                 </tr>
 
                 <tr class="text-center">
@@ -79,6 +80,9 @@ td {
             </thead>
             <tbody>
                 <?php $no=1; foreach($rows as $r): ?>
+                <?php
+                    $total = 0;    
+                ?>
                 <tr>
                     <td class="text-center"><?= $no++ ?></td>
                     <td><?= htmlspecialchars($r['nama']) ?></td>
@@ -88,7 +92,14 @@ td {
                     <td class="angka" style="text-align: right;"><?= $fmt($r['wajib'][$mKey]    ?? 0) ?></td>
                     <td class="angka" style="text-align: right;"><?= $fmt($r['tapim'][$mKey]    ?? 0) ?></td>
                     <td class="angka" style="text-align: right;"><?= $fmt($r['sukarela'][$mKey] ?? 0) ?></td>
+                    <?php
+                        $total += ($r['pokok'][$mKey]    ?? 0);
+                        $total += ($r['wajib'][$mKey]    ?? 0);
+                        $total += ($r['tapim'][$mKey]    ?? 0);
+                        $total += ($r['sukarela'][$mKey] ?? 0);
+                    ?>
                     <?php endforeach; ?>
+                    <td class="angka"><?= $fmt($total) ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
