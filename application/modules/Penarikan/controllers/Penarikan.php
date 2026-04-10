@@ -79,9 +79,9 @@ class Penarikan extends CI_Controller
 		)->row_array();
 
 		$q_tapim = $this->db->query(
-			"SELECT COALESCE(SUM(tcp.jml_angsuran * tcp.tapim),0) AS jumlah
-			FROM t_cb_pinjaman tcp
-			WHERE tcp.fk_anggota_id = ?",
+			"SELECT COALESCE(SUM(tctp.tapim),0) AS jumlah
+			FROM t_cb_tagihan_pinjaman tctp
+			WHERE tctp.fk_anggota_id = ?",
 			[$anggota_id]
 		)->row_array();
 
