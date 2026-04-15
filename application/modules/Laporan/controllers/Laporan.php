@@ -745,15 +745,48 @@ class Laporan extends CI_Controller
 
 	protected function pdf($title, $html, $page, $batas = false)
 	{
-		// echo $html;
-		if ($batas) {
-			$mpdf = new \Mpdf\Mpdf(['mode' => 'utf-8', 'format' => $page]);
-		} else {
-			$mpdf = new \Mpdf\Mpdf(['mode' => 'utf-8', 'format' => $page, 0, '', 8, 8, 8, 8, 8, 8]);
+		ini_set('pcre.backtrack_limit', '5000000');
+		ini_set('memory_limit', '1024M');
+		set_time_limit(300);
+
+		$config = [
+			'mode'   => 'utf-8',
+			'format' => $page,
+		];
+
+		if (!$batas) {
+			$config['margin_left']   = 8;
+			$config['margin_right']  = 8;
+			$config['margin_top']    = 8;
+			$config['margin_bottom'] = 8;
+			$config['margin_header'] = 8;
+			$config['margin_footer'] = 8;
 		}
-		$mpdf->AddPage();
-		// $mpdf->SetFooter('{PAGENO}/{nbpg}');
-		$mpdf->WriteHTML($html);
+
+		$mpdf = new \Mpdf\Mpdf($config);
+
+		$mpdf->simpleTables = true;
+		$mpdf->packTableData = true;
+
+		// Pisahkan CSS dari body HTML
+		preg_match_all('/<style\b[^>]*>(.*?)<\/style>/is', $html, $cssMatches);
+		$css  = !empty($cssMatches[1]) ? implode("\n", $cssMatches[1]) : '';
+		$body = preg_replace('/<style\b[^>]*>.*?<\/style>/is', '', $html);
+
+		if (!empty($css)) {
+			$mpdf->WriteHTML($css, \Mpdf\HTMLParserMode::HEADER_CSS);
+		}
+
+		// Pecah body berdasarkan marker khusus
+		$parts = preg_split('/<!--\s*CHUNK_BREAK\s*-->/i', $body);
+
+		foreach ($parts as $part) {
+			$part = trim($part);
+			if ($part !== '') {
+				$mpdf->WriteHTML($part, \Mpdf\HTMLParserMode::HTML_BODY);
+			}
+		}
+
 		$mpdf->Output($title . '.pdf', 'I');
 	}
 

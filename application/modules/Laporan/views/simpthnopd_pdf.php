@@ -33,7 +33,7 @@ td {
 </style>
 
 <head>
-    <title><?= $tittle ?></title>
+    <!-- <title><?= $tittle ?></title> -->
 </head>
 
 <body>
