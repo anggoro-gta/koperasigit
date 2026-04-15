@@ -99,12 +99,18 @@ class Homeanggota extends MX_Controller
 	{
 		$idANggota = $this->session->id;
 		$angg = $this->MMscbUseranggota->get(array('id' => $idANggota));
+
 		$data['angg'] = $angg[0];
 		$que = "SELECT max(t.bulan) bulan, max(tahun) tahun, (sum( s.wajib ) + u.simpanan_wajib) wajib,  sum(s.sukarela) sukarela FROM t_cb_tagihan_simpanan s INNER JOIN t_cb_tagihan t ON t.id=s.fk_tagihan_id INNER JOIN ms_cb_user_anggota u ON s.fk_anggota_id = u.id WHERE fk_anggota_id=$idANggota";
 		$data['wjb'] = $this->db->query($que)->row();
 
 		$que2 = "SELECT max(t.bulan) bulan, max(tahun) tahun,sum(p.tapim) tapim FROM t_cb_tagihan_pinjaman p INNER JOIN t_cb_tagihan t ON t.id=p.fk_tagihan_id WHERE fk_anggota_id=$idANggota";
 		$data['tpm'] = $this->db->query($que2)->row();
+
+		$quewajib = "SELECT s.*, t.bulan, t.tahun, t.time_act FROM t_cb_tagihan_simpanan AS s INNER JOIN t_cb_tagihan AS t ON s.fk_tagihan_id = t.id WHERE s.fk_anggota_id = $idANggota ORDER BY t.time_act ASC";
+		$data['wajiball'] = $this->db->query($quewajib)->result();
+		$lengtharraywajib = count($data['wajiball']);		
+		$data['lengtharraywajib'] = $lengtharraywajib;
 
 		$this->load->view('Homeanggota/listDtlSimpanan', $data);
 	}
