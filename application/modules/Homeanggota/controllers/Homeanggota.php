@@ -109,8 +109,18 @@ class Homeanggota extends MX_Controller
 
 		$quewajib = "SELECT s.*, t.bulan, t.tahun, t.time_act FROM t_cb_tagihan_simpanan AS s INNER JOIN t_cb_tagihan AS t ON s.fk_tagihan_id = t.id WHERE s.fk_anggota_id = $idANggota ORDER BY t.time_act ASC";
 		$data['wajiball'] = $this->db->query($quewajib)->result();
-		$lengtharraywajib = count($data['wajiball']);		
+		$lengtharraywajib = count($data['wajiball']);
 		$data['lengtharraywajib'] = $lengtharraywajib;
+
+		$quetapim = "SELECT p.*, t.bulan, t.tahun, t.time_act FROM t_cb_tagihan_pinjaman AS p INNER JOIN t_cb_tagihan AS t ON p.fk_tagihan_id = t.id WHERE p.fk_anggota_id = $idANggota AND p.tapim != 0 ORDER BY t.time_act ASC";
+		$data['tapimall'] = $this->db->query($quetapim)->result();
+		$lengharraytapim = count($data['tapimall']);
+		$data['lengharraytapim'] = $lengharraytapim;
+
+		$quesukarela = "SELECT s.*, t.bulan, t.tahun, t.time_act FROM t_cb_tagihan_simpanan AS s INNER JOIN t_cb_tagihan AS t ON s.fk_tagihan_id = t.id WHERE s.fk_anggota_id = $idANggota AND s.sukarela != 0 ORDER BY t.time_act ASC";
+		$data['sukarelaall'] = $this->db->query($quesukarela)->result();
+		$lengtharraysukarela = count($data['sukarelaall']);
+		$data['lengtharraysukarela'] = $lengtharraysukarela;		
 
 		$this->load->view('Homeanggota/listDtlSimpanan', $data);
 	}
