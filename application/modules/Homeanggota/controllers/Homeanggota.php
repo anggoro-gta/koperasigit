@@ -38,6 +38,11 @@ class Homeanggota extends MX_Controller
 			$pnjm = $this->db->query($que2)->row();
 			$data['pinjaman'] = !isset($pnjm) ? '0' : $pnjm->pinjaman;
 
+			//START query tambahan gta
+			$quertotalpinjaman = "SELECT SUM( pinjaman ) AS total_pinjaman FROM t_cb_pinjaman WHERE fk_anggota_id = $idANggota";
+			$data['total_pinjaman'] = $this->db->query($quertotalpinjaman)->result();
+			//END query tambahan gta
+
 			$this->template->load('Homeanggota/templateanggota', 'Homeanggota/berandaanggota', $data);
 		}
 	}
@@ -120,7 +125,7 @@ class Homeanggota extends MX_Controller
 		$quesukarela = "SELECT s.*, t.bulan, t.tahun, t.time_act FROM t_cb_tagihan_simpanan AS s INNER JOIN t_cb_tagihan AS t ON s.fk_tagihan_id = t.id WHERE s.fk_anggota_id = $idANggota AND s.sukarela != 0 ORDER BY t.time_act ASC";
 		$data['sukarelaall'] = $this->db->query($quesukarela)->result();
 		$lengtharraysukarela = count($data['sukarelaall']);
-		$data['lengtharraysukarela'] = $lengtharraysukarela;		
+		$data['lengtharraysukarela'] = $lengtharraysukarela;
 
 		$this->load->view('Homeanggota/listDtlSimpanan', $data);
 	}
@@ -149,6 +154,16 @@ class Homeanggota extends MX_Controller
 			$arrDetail[$val->fk_pinjaman_id][] = $val;
 		}
 		$data['detailnya'] = $arrDetail;
+
+		//START query tambahan gta
+		$quepinjaman = "SELECT * FROM t_cb_pinjaman WHERE fk_anggota_id = $idANggota";
+		$data['pinjaman'] = $this->db->query($quepinjaman)->result();
+		$data['lengtharraypinjaman'] = count($data['pinjaman']);
+
+		$quedetailpinjaman = "SELECT p.*, t.bulan, t.tahun, t.time_act FROM t_cb_tagihan_pinjaman AS p INNER JOIN t_cb_tagihan AS t ON p.fk_tagihan_id = t.id WHERE p.fk_anggota_id = $idANggota ORDER BY t.time_act ASC";
+		$data['detailpinjaman'] = $this->db->query($quedetailpinjaman)->result();
+		$data['lengtharraydetailpinjaman'] = count($data['detailpinjaman']);
+		//END query tambahan gta
 
 		$this->load->view('Homeanggota/listDtlPinjaman', $data);
 	}
