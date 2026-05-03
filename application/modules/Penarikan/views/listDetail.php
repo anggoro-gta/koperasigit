@@ -159,7 +159,7 @@ $(document).ready(function() {
             },
         ],
         order: [
-            [0, 'asc']
+            [2, 'desc']
         ],
         rowCallback: function(row, data, iDisplayIndex) {
             var info = this.fnPagingInfo();
