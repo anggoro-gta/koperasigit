@@ -105,10 +105,24 @@ $(document).ready(function() {
                 "orderable": false,
             },
             {
-                "data": "tgl",
-                "orderable": false,
-                "className": "text-center",
-                "searchable": false,
+                data: 'tgl',
+                name: 'tcp.tgl_penarikan',
+                className: 'text-center',
+                render: function(data, type, row) {
+                    if (!data) {
+                        return '-';
+                    }
+
+                    // Untuk sorting, tetap gunakan format asli database
+                    if (type === 'sort' || type === 'type') {
+                        return data;
+                    }
+
+                    // Format tampilan dari 2026-03-26 menjadi 26-03-2026
+                    let tanggal = data.substring(0, 10).split('-');
+
+                    return tanggal[2] + '-' + tanggal[1] + '-' + tanggal[0];
+                }
             },
             {
                 "data": "jumlah",

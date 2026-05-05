@@ -38,17 +38,28 @@ class Penarikan extends CI_Controller
 	public function getDatatables()
 	{
 		$this->MHome->ceklogin();
+
 		header('Content-Type: application/json');
 
 		$skpd = $this->input->post('skpd');
-		
+
+		$this->datatables->select("
+			tcp.id,
+			us.nama,
+			us.fk_id_skpd,
+			tcp.tgl_penarikan AS tgl,
+			tcp.jumlah_penarikan AS jumlah,
+			tcp.jenis_penarikan
+		", FALSE);
+
+		$this->datatables->from("t_cb_penarikan tcp");
+		$this->datatables->join("ms_cb_user_anggota us", "tcp.fk_anggota_id = us.id", "left");
+
 		if ($skpd != '') {
 			$this->datatables->where('us.fk_id_skpd', $skpd);
 		}
 
-		$this->datatables->select("tcp.id,us.nama,us.fk_id_skpd,DATE_FORMAT(tcp.tgl_penarikan,'%d-%m-%Y')tgl,FORMAT(tcp.jumlah_penarikan,0) jumlah, tcp.jenis_penarikan");
-		$this->datatables->from("t_cb_penarikan tcp");
-		$this->datatables->join('ms_cb_user_anggota us', 'tcp.fk_anggota_id = us.id', 'left');
+		// $this->db->order_by('tcp.tgl_penarikan', 'DESC');
 
 		echo $this->datatables->generate();
 	}
