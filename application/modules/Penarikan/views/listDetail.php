@@ -129,6 +129,14 @@ $(document).ready(function() {
                 "orderable": false,
                 "className": "text-right",
                 "searchable": false,
+                "render": function(data, type, row) {
+                    let angka = parseFloat(data) || 0;
+
+                    return 'Rp ' + new Intl.NumberFormat('id-ID', {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0
+                    }).format(angka);
+                }
             },
             {
                 "data": "jenis_penarikan",
