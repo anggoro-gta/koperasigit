@@ -150,7 +150,8 @@
 
                         <div class="form-group required">
                             <label class="control-label">Anggota</label>
-                            <select class="form-control" name="fk_anggota_id" id="fk_anggota_id" required>
+                            <select class="form-control" name="fk_anggota_id" id="fk_anggota_id" required
+                                <?= $button=='Update' ? 'disabled' : '' ?>>
                                 <option value="">.: Pilih :.</option>
                                 <?php foreach ($arrUserAnggota as $valanggota) { ?>
                                 <option <?= $fk_anggota_id == $valanggota['id'] ? 'selected' : '' ?>
