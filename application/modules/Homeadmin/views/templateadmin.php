@@ -122,6 +122,13 @@
                                                         } ?>"><a
                                                 href="<?php echo base_url('MsKategori/Pengeluaran') ?>">Kategori
                                                 Pengeluaran</a></li>
+
+                                        <li class="<?php if (isset($MsSaldoAwal)) {
+                                                            echo 'active';
+                                                        } ?>"><a href="<?php echo base_url('MsSaldoAwal') ?>">Saldo
+                                                Awal
+                                                Tahun</a>
+                                        </li>
                                     </ul>
                                 </li>
                                 <?php } else { ?>
@@ -231,6 +238,23 @@
                                         <li class="<?php if (isset($variabelnya)) {
                                                             echo 'active';
                                                         } ?>"><a href="<?php echo base_url('SHU/Opd') ?>">per OPD</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <?php } ?>
+
+                                <?php if ($level == 1) { ?>
+                                <li><a><i class="fa fa-file"></i> BKU <span class="fa fa-chevron-down"></span></a>
+                                    <ul class="nav child_menu">
+                                        <li class="<?php if (isset($variabelnya)) {
+                                                            echo 'active';
+                                                        } ?>"><a
+                                                href="<?php echo base_url('SHU/Total') ?>">Penerimaan</a>
+                                        </li>
+                                        <li class="<?php if (isset($variabelnya)) {
+                                                            echo 'active';
+                                                        } ?>"><a
+                                                href="<?php echo base_url('SHU/Opd') ?>">Pengeluaran</a>
                                         </li>
                                     </ul>
                                 </li>
