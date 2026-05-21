@@ -11,18 +11,33 @@ class Pengeluaran extends CI_Controller {
 		$this->table = 'ms_cb_kategori_pengeluaran';
 	}
 
-	public function index(){
-		$data=null;
+	public function index()
+	{
+		$data = null;
 		$data['MsKategoriPengeluaran'] = 'active';
 		$data['act_add'] = base_url().'MsKategori/Pengeluaran/create';
+
+		$data['list_tahun_migrasi'] = $this->db
+			->select('tahun')
+			->from($this->table)
+			->group_by('tahun')
+			->order_by('tahun', 'ASC')
+			->get()
+			->result();
+
 		$this->template->load('Homeadmin/templateadmin','MsKategori/pengeluaran/list',$data);
 	}
 
 	public function getDatatables(){
 		header('Content-Type: application/json');
+
+		$tahun = $this->input->post('tahun', true);
 		
-        $this->datatables->select('id,nama_kategori_pengeluaran');
+        $this->datatables->select('id,nama_kategori_pengeluaran,tahun');
         $this->datatables->from("ms_cb_kategori_pengeluaran");
+		if (!empty($tahun)) {
+			$this->datatables->where('tahun', $tahun);
+		}
         $this->db->order_by('id','asc');
         $this->datatables->add_column('action', '<div class="btn-group">'.anchor(site_url('MsKategori/Pengeluaran/update/$1'),'<i title="edit" class="glyphicon glyphicon-edit icon-white"></i>','class="btn btn-xs btn-success"').anchor(site_url('MsKategori/Pengeluaran/delete/$1'),'<i title="hapus" class="glyphicon glyphicon-trash icon-white"></i>','class="btn btn-xs btn-danger" onclick="javasciprt: return confirm(\'Apakah anda yakin?\')"').'</div>', 'id');
 
@@ -31,10 +46,11 @@ class Pengeluaran extends CI_Controller {
 
 	public function create(){
 		$data = array(
-			'action'                   => base_url().'MsKategori/Pengeluaran/save',
-			'button'                   => 'Simpan',
+			'action'                    => base_url().'MsKategori/Pengeluaran/save',
+			'button'                    => 'Simpan',
 			'nama_kategori_pengeluaran' => set_value('nama_kategori_pengeluaran'),
-			'id'                       => set_value('id'),
+			'tahun'                     => set_value('tahun'),
+			'id'                        => set_value('id'),
 		);
 
 		$data['MsKategoriPengeluaran'] = 'active';
@@ -45,10 +61,11 @@ class Pengeluaran extends CI_Controller {
 		$kat = $this->db->query("SELECT * FROM ms_cb_kategori_pengeluaran WHERE id=$id")->row();
 
 		$data = array(
-			'action'                   => base_url().'MsKategori/Pengeluaran/save',
-			'button'                   => 'Update',
+			'action'                    => base_url().'MsKategori/Pengeluaran/save',
+			'button'                    => 'Update',
 			'nama_kategori_pengeluaran' => set_value('nama_kategori_pengeluaran',$kat->nama_kategori_pengeluaran),
-			'id'                       => set_value('id',$kat->id),
+			'tahun'                     => set_value('tahun',$kat->tahun),
+			'id'                        => set_value('id',$kat->id),
 		);
 		$data['MsKategoriPengeluaran'] = 'active';
 		$this->template->load('Homeadmin/templateadmin','MsKategori/pengeluaran/form',$data);
@@ -80,5 +97,115 @@ class Pengeluaran extends CI_Controller {
 		}
 
         redirect('MsKategori/Pengeluaran');
+	}
+
+	public function migrasi_action()
+	{
+		$tahun_asal   = $this->input->post('tahun_asal', true);
+		$tahun_tujuan = $this->input->post('tahun_tujuan', true);
+
+		if (empty($tahun_asal) || empty($tahun_tujuan)) {
+			echo json_encode([
+				'status'  => 'error',
+				'message' => 'Tahun referensi dan tahun tujuan wajib diisi.'
+			]);
+			return;
+		}
+
+		if ($tahun_asal == $tahun_tujuan) {
+			echo json_encode([
+				'status'  => 'error',
+				'message' => 'Tahun referensi dan tahun tujuan tidak boleh sama.'
+			]);
+			return;
+		}
+
+		$cek_asal = $this->db
+			->where('tahun', $tahun_asal)
+			->count_all_results($this->table);
+
+		if ($cek_asal == 0) {
+			echo json_encode([
+				'status'  => 'error',
+				'message' => 'Data tahun referensi tidak ditemukan.'
+			]);
+			return;
+		}
+
+		$cek_tujuan = $this->db
+			->where('tahun', $tahun_tujuan)
+			->count_all_results($this->table);
+
+		if ($cek_tujuan > 0) {
+			echo json_encode([
+				'status'  => 'error',
+				'message' => 'Tahun tujuan '.$tahun_tujuan.' sudah pernah ada. Proses migrasi dibatalkan.'
+			]);
+			return;
+		}
+
+		$data_asal = $this->db
+			->select('nama_kategori_pengeluaran')
+			->from($this->table)
+			->where('tahun', $tahun_asal)
+			->order_by('id', 'ASC')
+			->get()
+			->result();
+
+		$insert_data = [];
+
+		foreach ($data_asal as $row) {
+			$insert_data[] = [
+				'nama_kategori_pengeluaran' => $row->nama_kategori_pengeluaran,
+				'tahun'                    => $tahun_tujuan,
+			];
+		}
+
+		if (empty($insert_data)) {
+			echo json_encode([
+				'status'  => 'error',
+				'message' => 'Tidak ada data yang bisa dimigrasikan.'
+			]);
+			return;
+		}
+
+		$this->db->trans_begin();
+
+		$this->db->insert_batch($this->table, $insert_data);
+
+		if ($this->db->trans_status() === false) {
+			$this->db->trans_rollback();
+
+			echo json_encode([
+				'status'  => 'error',
+				'message' => 'Migrasi gagal diproses.'
+			]);
+			return;
+		}
+
+		$this->db->trans_commit();
+
+		echo json_encode([
+			'status'  => 'success',
+			'message' => 'Migrasi berhasil. Data tahun '.$tahun_asal.' berhasil disalin ke tahun '.$tahun_tujuan.'.'
+		]);
+	}
+
+	public function get_tahun_migrasi()
+	{
+		header('Content-Type: application/json');
+
+		$tahun = $this->db
+			->select('tahun')
+			->from($this->table)
+			->group_by('tahun')
+			->order_by('tahun', 'ASC')
+			->get()
+			->result();
+
+		echo json_encode([
+			'status' => 'success',
+			'data'   => $tahun
+		]);
 	}
 }

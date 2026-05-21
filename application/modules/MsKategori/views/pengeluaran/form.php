@@ -28,6 +28,14 @@
                     <form action="<?= $action; ?>" method="post" id="demo-form2" data-parsley-validate
                         class="form-horizontal form-label-left">
                         <div class="form-group required">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Tahun
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input type="number" name="tahun" required class="form-control col-md-7 col-xs-12"
+                                    value="<?=$tahun?>">
+                            </div>
+                        </div>
+                        <div class="form-group required">
                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Nama Kategori
                                 Pengeluaran
                             </label>

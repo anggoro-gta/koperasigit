@@ -249,12 +249,12 @@
                                         <li class="<?php if (isset($variabelnya)) {
                                                             echo 'active';
                                                         } ?>"><a
-                                                href="<?php echo base_url('SHU/Total') ?>">Penerimaan</a>
+                                                href="<?php echo base_url('BKU/Penerimaan') ?>">Penerimaan</a>
                                         </li>
                                         <li class="<?php if (isset($variabelnya)) {
                                                             echo 'active';
                                                         } ?>"><a
-                                                href="<?php echo base_url('SHU/Opd') ?>">Pengeluaran</a>
+                                                href="<?php echo base_url('BKU/Pengeluaran') ?>">Pengeluaran</a>
                                         </li>
                                     </ul>
                                 </li>
@@ -672,7 +672,7 @@ function convertToRupiah(angka) {
     return rupiah.split('', rupiah.length - 1).reverse().join('');
 }
 
-$("select").select2({
+$("select:not(.no-select2)").select2({
     placeholder: ".:Pilih:.",
     allowClear: true
 });
