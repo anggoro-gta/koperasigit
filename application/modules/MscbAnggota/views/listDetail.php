@@ -21,7 +21,7 @@
                                     <th width="5%">No</th>
                                     <!-- <th><center>Cabang</center></th> -->
                                     <th>
-                                        <center>id</center>
+                                        <center>Username</center>
                                     </th>
                                     <th>
                                         <center>Nama</center>
@@ -107,7 +107,7 @@
                     "className": "text-center"
                 },
                 {
-                    "data": "id",
+                    "data": "username",
                     "orderable": false,
                 },
                 {

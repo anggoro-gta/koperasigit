@@ -58,6 +58,7 @@ class MscbAnggota extends CI_Controller
 
 		$this->datatables->select("
 		a.id,
+		a.username,
 		a.nama,
 		a.alamat,
 		a.nik,
