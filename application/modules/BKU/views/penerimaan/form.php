@@ -42,6 +42,38 @@
 .table-bku tbody tr:nth-child(even)>th:first-child {
     background: #ffffff;
 }
+
+/* Lebar kolom Action */
+.table-bku .freeze-action {
+    min-width: 90px;
+    width: 90px;
+}
+
+/* Freeze kolom Action di kanan */
+.table-bku th.freeze-action,
+.table-bku td.freeze-action {
+    position: sticky;
+    right: 0;
+    z-index: 9;
+    background: #fff;
+    box-shadow: -2px 0 3px rgba(0, 0, 0, 0.08);
+    white-space: nowrap;
+}
+
+/* Header action lebih tinggi */
+.table-bku thead th.freeze-action {
+    z-index: 21;
+    background: #fff;
+}
+
+/* Supaya warna striped tetap rapi */
+.table-bku tbody tr:nth-child(odd) td.freeze-action {
+    background: #f9f9f9;
+}
+
+.table-bku tbody tr:nth-child(even) td.freeze-action {
+    background: #fff;
+}
 </style>
 <div class="">
     <div class="page-title">
@@ -81,8 +113,13 @@
                             </div>
                         </div>
                         <hr>
+
+                        <button type="button" class="btn btn-sm btn-success hidden" id="tambah_penerimaan"
+                            onclick="formModalTambah(`add`)">
+                            <i class="glyphicon glyphicon-plus"></i> Tambah Penerimaan
+                        </button>
                         <div class="table-responsive">
-                            <table class="table table-bordered table-striped table-bku" style="font-size: 9pt">
+                            <table class="table table-bordered table-striped table-bku" style="font-size: 8pt">
                                 <thead>
                                     <tr>
                                         <th rowspan="2" class="text-center">BULAN</th>
@@ -94,7 +131,7 @@
                                         <th rowspan="2" class="text-center">FOTO COPY</th>
                                         <th rowspan="2" class="text-center">BARANG TITIPAN & KONSINYASI</th>
                                         <th colspan="2" class="text-center">JUMLAH</th>
-                                        <th rowspan="2" class="text-center">AKSI</th>
+                                        <th rowspan="2" class="text-center freeze-action">AKSI</th>
                                     </tr>
                                     <tr>
                                         <th class="text-center">POKOK</th>
@@ -199,6 +236,11 @@ $(document).ready(function() {
             success: function(res) {
                 if (res.status == 'success') {
                     $('#tbody-penerimaan').html(res.html);
+                    if (res.btn_tambah_penerimaan != 'hidden') {
+                        $('#tambah_penerimaan').removeClass('hidden');
+                    } else {
+                        $('#tambah_penerimaan').removeClass('hidden').addClass('hidden');
+                    }
                 } else {
                     $('#tbody-penerimaan').html(`
                         <tr>
@@ -210,6 +252,7 @@ $(document).ready(function() {
                 }
             },
             error: function() {
+                $('#tambah_penerimaan').addClass('hidden');
                 $('#tbody-penerimaan').html(`
                     <tr>
                         <td colspan="15" class="text-center text-danger">
@@ -228,7 +271,44 @@ $(document).ready(function() {
 
 });
 
-function formModal(tahun, bulan, idKategori) {
+function formModalTambah(tipe) {
+    $('#modalFormPenerimaan').modal('show');
+
+    $('#modalFormPenerimaanBody').html(`
+        <div class="text-center">
+            <i class="glyphicon glyphicon-refresh"></i> Memuat form...
+        </div>
+    `);
+
+    let prd = $('#periode').val();
+
+    let pecah = prd.split("-");
+    let tahun = pecah[0];
+    let bulan = parseInt(pecah[1]);
+
+    $.ajax({
+        url: "<?= base_url('BKU/Penerimaan/form_modal') ?>",
+        type: "POST",
+        data: {
+            tahun: tahun,
+            bulan: bulan,
+            tipe: tipe
+        },
+        success: function(html) {
+            // console.log(html)
+            $('#modalFormPenerimaanBody').html(html);
+        },
+        error: function() {
+            $('#modalFormPenerimaanBody').html(`
+                <div class="alert alert-danger">
+                    Gagal memuat form penerimaan.
+                </div>
+            `);
+        }
+    });
+}
+
+function formModalEdit(tahun, bulan, idBKUPenerimaan, tipe) {
     $('#modalFormPenerimaan').modal('show');
 
     $('#modalFormPenerimaanBody').html(`
@@ -243,9 +323,11 @@ function formModal(tahun, bulan, idKategori) {
         data: {
             tahun: tahun,
             bulan: bulan,
-            id_kategori: idKategori
+            id_bku_penerimaan: idBKUPenerimaan,
+            tipe: tipe
         },
         success: function(html) {
+            // console.log(html)
             $('#modalFormPenerimaanBody').html(html);
         },
         error: function() {

@@ -15,14 +15,29 @@ function nilai_bku($row, $field)
 
 <input type="hidden" name="tahun" value="<?= $tahun ?>">
 <input type="hidden" name="bulan" value="<?= $bulan ?>">
-<input type="hidden" name="fk_id_ms_kategori_pengeluaran" value="<?= $id_kategori ?>">
+<input type="hidden" name="id_bku_pengeluaran" value="<?= $row->id ?>">
 
 <div class="alert alert-info">
-    <b>Kategori:</b> <?= htmlspecialchars($kategori->nama_kategori_pengeluaran, ENT_QUOTES, 'UTF-8') ?><br>
     <b>Periode:</b> Bulan <?= $nama_bulan ?> Tahun <?= $tahun ?>
 </div>
 
 <div class="row">
+    <div class="col-md-12">
+        <div class="form-group">
+            <label>Kategori</label>
+            <select class="form-control input-sm no-select2" name="kategori" required>
+                <option value="">Pilih</option>
+                <?php
+                    foreach ($ref_kategori as $k) {
+                ?>
+                <option value="<?= $k->id ?>" <?= $k->id==$row->fk_id_ms_kategori_pengeluaran ? 'selected' : ''?>>
+                    <?= $k->nama_kategori_pengeluaran ?></option>
+                <?php
+                    }
+                ?>
+            </select>
+        </div>
+    </div>
     <div class="col-md-6">
         <div class="form-group">
             <label>Simpanan Pokok</label>

@@ -35,8 +35,8 @@
 </style>
 <style>
 .table-responsive {
-    overflow-x: auto;
     position: relative;
+    overflow-x: visible;
 }
 
 .table-bku {
@@ -110,6 +110,51 @@
 .table-bku tbody tr:nth-child(even) td.freeze-bulan,
 .table-bku tbody tr:nth-child(even) td.freeze-tahun {
     background: #fff;
+}
+
+/* Lebar kolom Action */
+.table-bku .freeze-action {
+    min-width: 90px;
+    width: 90px;
+}
+
+/* Freeze kolom Action di kanan */
+.table-bku th.freeze-action,
+.table-bku td.freeze-action {
+    position: sticky;
+    right: 0;
+    z-index: 9;
+    background: #fff;
+    box-shadow: -2px 0 3px rgba(0, 0, 0, 0.08);
+    white-space: nowrap;
+}
+
+/* Header action lebih tinggi */
+.table-bku thead th.freeze-action {
+    z-index: 21;
+    background: #fff;
+}
+
+/* Supaya warna striped tetap rapi */
+.table-bku tbody tr:nth-child(odd) td.freeze-action {
+    background: #f9f9f9;
+}
+
+.table-bku tbody tr:nth-child(even) td.freeze-action {
+    background: #fff;
+}
+
+.dataTables_wrapper {
+    width: 100%;
+}
+
+.dataTables_scroll {
+    width: 100%;
+}
+
+.dataTables_scrollBody {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
 }
 </style>
 <div class="page-title">
@@ -190,7 +235,7 @@
                                     <th rowspan="2" class="text-center">FOTO COPY</th>
                                     <th rowspan="2" class="text-center">BARANG TITIPAN & KONSINYASI</th>
                                     <th colspan="2" class="text-center">JUMLAH</th>
-                                    <th rowspan="2" class="text-center">AKSI</th>
+                                    <th rowspan="2" class="text-center freeze-action">AKSI</th>
                                 </tr>
                                 <tr>
                                     <th class="text-center">POKOK</th>
@@ -213,6 +258,8 @@
 <script type="text/javascript">
 $(document).ready(function() {
     var t = $("#example2").DataTable({
+        scrollX: true,
+        autoWidth: false,
         initComplete: function() {
             var api = this.api();
             $('#mytable_filter input')
@@ -334,7 +381,7 @@ $(document).ready(function() {
                 data: 'action',
                 orderable: false,
                 searchable: false,
-                className: 'text-center'
+                className: 'text-center freeze-action'
             }
         ],
         order: [

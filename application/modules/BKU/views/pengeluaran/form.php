@@ -42,6 +42,38 @@
 .table-bku tbody tr:nth-child(even)>th:first-child {
     background: #ffffff;
 }
+
+/* Lebar kolom Action */
+.table-bku .freeze-action {
+    min-width: 90px;
+    width: 90px;
+}
+
+/* Freeze kolom Action di kanan */
+.table-bku th.freeze-action,
+.table-bku td.freeze-action {
+    position: sticky;
+    right: 0;
+    z-index: 9;
+    background: #fff;
+    box-shadow: -2px 0 3px rgba(0, 0, 0, 0.08);
+    white-space: nowrap;
+}
+
+/* Header action lebih tinggi */
+.table-bku thead th.freeze-action {
+    z-index: 21;
+    background: #fff;
+}
+
+/* Supaya warna striped tetap rapi */
+.table-bku tbody tr:nth-child(odd) td.freeze-action {
+    background: #f9f9f9;
+}
+
+.table-bku tbody tr:nth-child(even) td.freeze-action {
+    background: #fff;
+}
 </style>
 <div class="">
     <div class="page-title">
@@ -81,6 +113,10 @@
                             </div>
                         </div>
                         <hr>
+                        <button type="button" class="btn btn-sm btn-success hidden" id="tambah_pengeluaran"
+                            onclick="formModalTambah(`add`)">
+                            <i class="glyphicon glyphicon-plus"></i> Tambah Pengeluaran
+                        </button>
                         <div class="table-responsive">
                             <table class="table table-bordered table-striped table-bku" style="font-size: 9pt">
                                 <thead>
@@ -97,7 +133,7 @@
                                         <th rowspan="2" class="text-center">INVENTARIS_KANTOR</th>
                                         <th rowspan="2" class="text-center">CADANGAN PEMB. USAHA</th>
                                         <th rowspan="2" class="text-center">JUMLAH</th>
-                                        <th rowspan="2" class="text-center">AKSI</th>
+                                        <th rowspan="2" class="text-center freeze-action">AKSI</th>
                                     </tr>
                                     <tr>
                                         <th class="text-center">POKOK</th>
@@ -197,6 +233,7 @@ $(document).ready(function() {
                 `);
             },
             success: function(res) {
+                $('#tambah_pengeluaran').removeClass('hidden');
                 if (res.status == 'success') {
                     $('#tbody-pengeluaran').html(res.html);
                 } else {
@@ -228,7 +265,44 @@ $(document).ready(function() {
 
 });
 
-function formModal(tahun, bulan, idKategori) {
+function formModalTambah(tipe) {
+    $('#modalFormPengeluaran').modal('show');
+
+    $('#modalFormPengeluaranBody').html(`
+        <div class="text-center">
+            <i class="glyphicon glyphicon-refresh"></i> Memuat form...
+        </div>
+    `);
+
+    let prd = $('#periode').val();
+
+    let pecah = prd.split("-");
+    let tahun = pecah[0];
+    let bulan = parseInt(pecah[1]);
+
+    $.ajax({
+        url: "<?= base_url('BKU/Pengeluaran/form_modal') ?>",
+        type: "POST",
+        data: {
+            tahun: tahun,
+            bulan: bulan,
+            tipe: tipe
+        },
+        success: function(html) {
+            // console.log(html)
+            $('#modalFormPengeluaranBody').html(html);
+        },
+        error: function() {
+            $('#modalFormPengeluaranBody').html(`
+                <div class="alert alert-danger">
+                    Gagal memuat form pengeluaran.
+                </div>
+            `);
+        }
+    });
+}
+
+function formModalEdit(tahun, bulan, idBKUPengeluaran, tipe) {
     $('#modalFormPengeluaran').modal('show');
 
     $('#modalFormPengeluaranBody').html(`
@@ -243,7 +317,8 @@ function formModal(tahun, bulan, idKategori) {
         data: {
             tahun: tahun,
             bulan: bulan,
-            id_kategori: idKategori
+            id_bku_pengeluaran: idBKUPengeluaran,
+            tipe: tipe
         },
         success: function(html) {
             $('#modalFormPengeluaranBody').html(html);

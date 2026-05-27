@@ -184,92 +184,83 @@ class Pengeluaran extends CI_Controller {
 		$tahun = $pecah[0];
 		$bulan = (int) $pecah[1];
 		
-		// Ambil kategori pengeluaran sesuai tahun
-		$kategori = $this->db
-			->select('id, nama_kategori_pengeluaran, tahun')
-			->from('ms_cb_kategori_pengeluaran')
-			->where('tahun', $tahun)
-			->order_by('id', 'ASC')
-			->get()
-			->result();
 		$html = '';
+
+		$pengeluaran = $this->db
+			->where('tahun', $tahun)
+			->where('bulan', $bulan)
+			->order_by('id', 'ASC')
+			->get('t_cb_bku_pengeluaran')
+			->result();
+
+		$sum_simpanan_pokok = 0;
+		$sum_simpanan_wajib = 0;
+		$sum_simpanan_tapim = 0;
+		$sum_simpanan_sukarela = 0;
+		$sum_dana_sosial = 0;
+		$sum_biaya = 0;
+		$sum_kredit_uang = 0;
+		$sum_barang = 0;
+		$sum_pajak = 0;
+		$sum_dana_pendidikan = 0;
+		$sum_shu = 0;
+		$sum_inventaris_kantor = 0;
+		$sum_cadangan_pemb_usaha = 0;
+
+		$sum_jml_pengeluaran = 0;
 		
-		if (count($kategori) > 0) {
-
-			$sum_simpanan_pokok = 0;
-			$sum_simpanan_wajib = 0;
-			$sum_simpanan_tapim = 0;
-			$sum_simpanan_sukarela = 0;
-			$sum_dana_sosial = 0;
-			$sum_biaya = 0;
-			$sum_kredit_uang = 0;
-			$sum_barang = 0;
-			$sum_pajak = 0;
-			$sum_dana_pendidikan = 0;
-			$sum_shu = 0;
-			$sum_inventaris_kantor = 0;
-			$sum_cadangan_pemb_usaha = 0;
-
-			$sum_jml_pengeluaran = 0;
+		if (count($pengeluaran) > 0) {
 			
-			foreach ($kategori as $row) {
-
-				$html .= '<tr>';
-				$html .= '<th>'.htmlspecialchars($row->nama_kategori_pengeluaran, ENT_QUOTES, 'UTF-8').'</th>';
-
-				$row_pengeluaran = $this->db
-					->where('tahun', $tahun)
-					->where('bulan', $bulan)
-					->where('fk_id_ms_kategori_pengeluaran', $row->id)
-					->get('t_cb_bku_pengeluaran')
+			foreach ($pengeluaran as $row) {
+			
+				// Ambil kategori pengeluaran sesuai tahun
+				$kategori = $this->db
+					->select('id, nama_kategori_pengeluaran, tahun')
+					->from('ms_cb_kategori_pengeluaran')
+					->where('id', $row->fk_id_ms_kategori_pengeluaran)
+					->get()
 					->row();
 
-				if ($row_pengeluaran) {
+				$html .= '<tr>';
+				$html .= '<th>'.htmlspecialchars($kategori->nama_kategori_pengeluaran, ENT_QUOTES, 'UTF-8').'</th>';
 
-					$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row_pengeluaran->simpanan_pokok).'</td>';
-					$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row_pengeluaran->simpanan_wajib).'</td>';
-					$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row_pengeluaran->simpanan_tapim).'</td>';
-					$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row_pengeluaran->simpanan_sukarela).'</td>';
-					$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row_pengeluaran->dana_sosial).'</td>';
-					$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row_pengeluaran->biaya).'</td>';
-					$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row_pengeluaran->kredit_uang).'</td>';
-					$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row_pengeluaran->barang).'</td>';
-					$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row_pengeluaran->pajak).'</td>';
-					$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row_pengeluaran->dana_pendidikan).'</td>';
-					$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row_pengeluaran->shu).'</td>';
-					$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row_pengeluaran->inventaris_kantor).'</td>';
-					$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row_pengeluaran->cadangan_pemb_usaha).'</td>';
+				$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row->simpanan_pokok).'</td>';
+				$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row->simpanan_wajib).'</td>';
+				$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row->simpanan_tapim).'</td>';
+				$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row->simpanan_sukarela).'</td>';
+				$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row->dana_sosial).'</td>';
+				$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row->biaya).'</td>';
+				$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row->kredit_uang).'</td>';
+				$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row->barang).'</td>';
+				$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row->pajak).'</td>';
+				$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row->dana_pendidikan).'</td>';
+				$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row->shu).'</td>';
+				$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row->inventaris_kantor).'</td>';
+				$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row->cadangan_pemb_usaha).'</td>';
 
-					$jml_pengeluaran = $this->_total_pengeluaran_row($row_pengeluaran);
+				$jml_pengeluaran = $this->_total_pengeluaran_row($row);
 
-					$sum_simpanan_pokok      += $row_pengeluaran->simpanan_pokok;
-					$sum_simpanan_wajib      += $row_pengeluaran->simpanan_wajib;
-					$sum_simpanan_tapim      += $row_pengeluaran->simpanan_tapim;
-					$sum_simpanan_sukarela   += $row_pengeluaran->simpanan_sukarela;
-					$sum_dana_sosial         += $row_pengeluaran->dana_sosial;
-					$sum_biaya               += $row_pengeluaran->biaya;
-					$sum_kredit_uang         += $row_pengeluaran->kredit_uang;
-					$sum_barang              += $row_pengeluaran->barang;
-					$sum_pajak               += $row_pengeluaran->pajak;
-					$sum_dana_pendidikan     += $row_pengeluaran->dana_pendidikan;
-					$sum_shu                 += $row_pengeluaran->shu;
-					$sum_inventaris_kantor   += $row_pengeluaran->inventaris_kantor;
-					$sum_cadangan_pemb_usaha += $row_pengeluaran->cadangan_pemb_usaha;
-					$sum_jml_pengeluaran	 += $jml_pengeluaran;
-					
-					$html .= '<td class="text-right"><b>'.$this->_rupiah_or_dash($jml_pengeluaran).'</b></td>';
+				$sum_simpanan_pokok      += $row->simpanan_pokok;
+				$sum_simpanan_wajib      += $row->simpanan_wajib;
+				$sum_simpanan_tapim      += $row->simpanan_tapim;
+				$sum_simpanan_sukarela   += $row->simpanan_sukarela;
+				$sum_dana_sosial         += $row->dana_sosial;
+				$sum_biaya               += $row->biaya;
+				$sum_kredit_uang         += $row->kredit_uang;
+				$sum_barang              += $row->barang;
+				$sum_pajak               += $row->pajak;
+				$sum_dana_pendidikan     += $row->dana_pendidikan;
+				$sum_shu                 += $row->shu;
+				$sum_inventaris_kantor   += $row->inventaris_kantor;
+				$sum_cadangan_pemb_usaha += $row->cadangan_pemb_usaha;
+				$sum_jml_pengeluaran	 += $jml_pengeluaran;
+				
+				$html .= '<td class="text-right"><b>'.$this->_rupiah_or_dash($jml_pengeluaran).'</b></td>';
 
-				} else {
-
-					for ($i = 1; $i <= 14; $i++) {
-						$html .= '<td class="text-right">-</td>';
-					}
-				}
-
-				$html .= '<td class="text-center">
+				$html .= '<td class="text-center freeze-action">
 							<button type="button" 
 									class="btn btn-xs btn-primary" 
-									onclick="formModal('.$tahun.', '.$bulan.', '.$row->id.')">
+									onclick="formModalEdit('.$tahun.', '.$bulan.', '.$row->id.', `edit`)">
 								<i title="edit" class="glyphicon glyphicon-edit icon-white"></i>
 							</button>
 						</td>';
@@ -277,39 +268,33 @@ class Pengeluaran extends CI_Controller {
 				$html .= '</tr>';
 			}
 
-			$html .= '<tr>
-						<th class="text-center">JUMLAH</th>
-						<th class="text-center">'.$this->_rupiah_or_dash($sum_simpanan_pokok).'</th>
-						<th class="text-center">'.$this->_rupiah_or_dash($sum_simpanan_wajib).'</th>
-						<th class="text-center">'.$this->_rupiah_or_dash($sum_simpanan_tapim).'</th>
-						<th class="text-center">'.$this->_rupiah_or_dash($sum_simpanan_sukarela).'</th>
-						<th class="text-center">'.$this->_rupiah_or_dash($sum_dana_sosial).'</th>
-						<th class="text-center">'.$this->_rupiah_or_dash($sum_biaya).'</th>
-						<th class="text-center">'.$this->_rupiah_or_dash($sum_kredit_uang).'</th>
-						<th class="text-center">'.$this->_rupiah_or_dash($sum_barang).'</th>
-						<th class="text-center">'.$this->_rupiah_or_dash($sum_pajak).'</th>
-						<th class="text-center">'.$this->_rupiah_or_dash($sum_dana_pendidikan).'</th>
-						<th class="text-center">'.$this->_rupiah_or_dash($sum_shu).'</th>
-						<th class="text-center">'.$this->_rupiah_or_dash($sum_inventaris_kantor).'</th>
-						<th class="text-center">'.$this->_rupiah_or_dash($sum_cadangan_pemb_usaha).'</th>
-						<th class="text-center">'.$this->_rupiah_or_dash($sum_jml_pengeluaran).'</th>
-					</tr>';
-
-		} else {
-
-			$html .= '<tr>';
-			$html .= '<td colspan="16" class="text-center text-danger">';
-			$html .= 'Data kategori pengeluaran tahun '.$tahun.' belum tersedia.';
-			$html .= '</td>';
-			$html .= '</tr>';
 		}
+
+		$html .= '<tr>
+					<th class="text-left">JUMLAH</th>
+					<th class="text-center">'.$this->_rupiah_or_dash($sum_simpanan_pokok).'</th>
+					<th class="text-center">'.$this->_rupiah_or_dash($sum_simpanan_wajib).'</th>
+					<th class="text-center">'.$this->_rupiah_or_dash($sum_simpanan_tapim).'</th>
+					<th class="text-center">'.$this->_rupiah_or_dash($sum_simpanan_sukarela).'</th>
+					<th class="text-center">'.$this->_rupiah_or_dash($sum_dana_sosial).'</th>
+					<th class="text-center">'.$this->_rupiah_or_dash($sum_biaya).'</th>
+					<th class="text-center">'.$this->_rupiah_or_dash($sum_kredit_uang).'</th>
+					<th class="text-center">'.$this->_rupiah_or_dash($sum_barang).'</th>
+					<th class="text-center">'.$this->_rupiah_or_dash($sum_pajak).'</th>
+					<th class="text-center">'.$this->_rupiah_or_dash($sum_dana_pendidikan).'</th>
+					<th class="text-center">'.$this->_rupiah_or_dash($sum_shu).'</th>
+					<th class="text-center">'.$this->_rupiah_or_dash($sum_inventaris_kantor).'</th>
+					<th class="text-center">'.$this->_rupiah_or_dash($sum_cadangan_pemb_usaha).'</th>
+					<th class="text-center">'.$this->_rupiah_or_dash($sum_jml_pengeluaran).'</th>
+					<th class="freeze-action"></th>
+				</tr>';
 
 		echo json_encode(array(
 			'status'      => 'success',
 			'html'        => $html,
 			'tahun'       => $tahun,
 			'bulan'       => $bulan,
-			'total_row'   => count($kategori)
+			'total_row'   => count($pengeluaran)
 		));
 	}
 
@@ -317,51 +302,69 @@ class Pengeluaran extends CI_Controller {
 	{
 		$tahun       = $this->input->post('tahun', true);
 		$bulan       = $this->input->post('bulan', true);
-		$id_kategori = $this->input->post('id_kategori', true);
-
-		if (empty($tahun) || empty($bulan) || empty($id_kategori)) {
+		$tipe        = $this->input->post('tipe', true); // add = tambah form, edit = edit form
+			
+		if (empty($tahun) || empty($bulan)) {
 			echo '<div class="alert alert-danger">Parameter tidak lengkap.</div>';
 			return;
 		}
 
 		$kategori = $this->db
-			->where('id', $id_kategori)
+			->where('tahun', $tahun)
 			->get('ms_cb_kategori_pengeluaran')
-			->row();
-
-		if (!$kategori) {
+			->result();
+			
+		if (empty($kategori)) {
 			echo '<div class="alert alert-danger">Kategori pengeluaran tidak ditemukan.</div>';
 			return;
 		}
+			
+		if($tipe=='edit')
+		{
+			$id_bku_pengeluaran = $this->input->post('id_bku_pengeluaran', true);
 
-		$row = $this->db
-			->where('tahun', $tahun)
-			->where('bulan', $bulan)
-			->where('fk_id_ms_kategori_pengeluaran', $id_kategori)
-			->get('t_cb_bku_pengeluaran')
-			->row();
+			if (empty($id_bku_pengeluaran)) {
+				echo '<div class="alert alert-danger">Parameter tidak lengkap.</div>';
+				return;
+			}
 
-		$data = array(
-			'tahun'       => $tahun,
-			'bulan'       => $bulan,
-			'nama_bulan' => $this->_nama_bulan($bulan),
-			'id_kategori' => $id_kategori,
-			'kategori'    => $kategori,
-			'row'         => $row,
-		);
+			$row = $this->db
+				->where('tahun', $tahun)
+				->where('bulan', $bulan)
+				->where('id', $id_bku_pengeluaran)
+				->get('t_cb_bku_pengeluaran')
+				->row();
 
-		$this->load->view('BKU/pengeluaran/form_modal', $data);
+			$data = array(
+				'tahun'       => $tahun,
+				'bulan'       => $bulan,
+				'nama_bulan' => $this->_nama_bulan($bulan),
+				'ref_kategori' => $kategori,
+				'row'         => $row,
+			);
+
+			$this->load->view('BKU/pengeluaran/form_modal_edit', $data);
+		}else{
+			$data = array(
+				'tahun'        => $tahun,
+				'bulan'        => $bulan,
+				'nama_bulan'   => $this->_nama_bulan($bulan),
+				'ref_kategori' => $kategori,
+			);
+
+			$this->load->view('BKU/pengeluaran/form_modal_tambah', $data);
+		}
 	}
 
 	public function save_modal()
 	{
 		header('Content-Type: application/json');
 		
-		$tahun       = $this->input->post('tahun', true);
-		$bulan       = $this->input->post('bulan', true);
-		$id_kategori = $this->input->post('fk_id_ms_kategori_pengeluaran', true);
+		$tahun              = $this->input->post('tahun', true);
+		$bulan              = $this->input->post('bulan', true);
+		$id_bku_pengeluaran = $this->input->post('id_bku_pengeluaran', true);
 
-		if (empty($tahun) || empty($bulan) || empty($id_kategori)) {
+		if (empty($tahun) || empty($bulan)) {
 			echo json_encode(array(
 				'status'  => 'warning',
 				'message' => 'Data periode dan kategori tidak lengkap.'
@@ -372,7 +375,7 @@ class Pengeluaran extends CI_Controller {
 		$data = array(
 			'tahun'                         => $tahun,
 			'bulan'                         => $bulan,
-			'fk_id_ms_kategori_pengeluaran' => $id_kategori,
+			'fk_id_ms_kategori_pengeluaran' => $this->input->post('kategori', true),
 			
 			'simpanan_pokok'                => $this->_to_decimal($this->input->post('simpanan_pokok', true)),
 			'simpanan_wajib'                => $this->_to_decimal($this->input->post('simpanan_wajib', true)),
@@ -390,9 +393,7 @@ class Pengeluaran extends CI_Controller {
 		);
 
 		$row = $this->db
-			->where('tahun', $tahun)
-			->where('bulan', $bulan)
-			->where('fk_id_ms_kategori_pengeluaran', $id_kategori)
+			->where('id', $id_bku_pengeluaran)
 			->get('t_cb_bku_pengeluaran')
 			->row();
 
