@@ -264,6 +264,21 @@
     </div>
 </div>
 </div>
+<div class="modal fade" id="modalNotif" tabindex="-1" role="dialog" aria-labelledby="modalNotifLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="modalNotifLabel">Notifikasi</h4>
+            </div>
+            <div class="modal-body">
+                <p id="modalNotifMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
 function rupiah(n) {
@@ -383,11 +398,21 @@ $(function() {
             type: "POST",
             dataType: "json",
             data: {
-                fk_anggota_id: anggotaId
+                fk_anggota_id: anggotaId,
+                jenis_penarikan: 'sukarela'
             },
             success: function(res) {
                 if (!res.ok) {
                     alert(res.message || 'Gagal mengambil data');
+                    $detail.hide();
+                    return;
+                }
+
+                if (res.status_anggota != '') {
+                    $('#modalNotifMessage').text('');
+                    $('#modalNotif').modal('show');
+                    $('#modalNotifMessage').html('Status anggota ini telah <u><b>' + res
+                        .status_anggota.toUpperCase() + '</u></b>');
                     $detail.hide();
                     return;
                 }
@@ -422,11 +447,12 @@ $(function() {
                 }
 
                 $('#total_tanggungan').text(rupiah(res.total_tanggungan));
-                var jumlahAkhir = Number(res.simpanan.sukarela || 0);
+                var jumlahAkhir = Number((res.simpanan.sukarela) || 0);
 
                 $('#jumlah_akhir').text(rupiah(jumlahAkhir))
                     .removeClass('text-danger text-success')
-                    .addClass(jumlahAkhir > 0 ? 'text-success' : (jumlahAkhir < 0 ? 'text-danger' :
+                    .addClass(jumlahAkhir > 0 ? 'text-success' : (jumlahAkhir < 0 ?
+                        'text-danger' :
                         ''));
 
                 // mode input plus / minus
@@ -495,7 +521,8 @@ $(function() {
                     refreshSubmitState();
                     return;
                 }
-                window.location.href = res.redirect_url || "<?= site_url('Penarikan') ?>";
+                window.location.href = res.redirect_url ||
+                    "<?= site_url('Penarikan') ?>";
             },
             error: function() {
                 alert('Error AJAX simpan');

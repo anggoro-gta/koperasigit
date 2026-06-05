@@ -181,21 +181,25 @@
                                                 <span>POKOK</span>
                                                 <span class="pull-right text-right" id="simpanan_pokok"
                                                     style="font-size:14px">Rp 0,00</span>
+                                                <input type="hidden" id="simpanan_pokok_val" value="0">
                                             </li>
                                             <li class="clearfix">
                                                 <span>WAJIB</span>
                                                 <span class="pull-right text-right" id="simpanan_wajib"
                                                     style="font-size:14px">Rp 0,00</span>
+                                                <input type="hidden" id="simpanan_wajib_val" value="0">
                                             </li>
                                             <li class="clearfix">
                                                 <span>TERPIMPIN</span>
                                                 <span class="pull-right text-right" id="simpanan_tapim"
                                                     style="font-size:14px">Rp 0,00</span>
+                                                <input type="hidden" id="simpanan_tapim_val" value="0">
                                             </li>
                                             <li class="clearfix">
                                                 <span>SUKARELA</span>
                                                 <span class="pull-right text-right" id="simpanan_sukarela"
                                                     style="font-size:14px">Rp 0,00</span>
+                                                <input type="hidden" id="simpanan_sukarela_val" value="0">
                                             </li>
                                             <li class="clearfix">
                                                 <strong>TOTAL SIMPANAN</strong>
@@ -309,7 +313,7 @@
                                                 <span>STATUS ANGGOTA</span>
                                                 <span class="pull-right">
                                                     <select class="form-control form-control-sm" id="status_anggota"
-                                                        name="status_anggota" style="width:170px">
+                                                        name="status_anggota" style="width:170px" required>
                                                         <option value="">Pilih Status</option>
                                                         <option value="keluar"
                                                             <?= $status_anggota=='keluar' ? 'selected' : '' ?>>Keluar
@@ -356,6 +360,21 @@
 </div>
 </div>
 
+<div class="modal fade" id="modalNotif" tabindex="-1" role="dialog" aria-labelledby="modalNotifLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="modalNotifLabel">Notifikasi</h4>
+            </div>
+            <div class="modal-body">
+                <p id="modalNotifMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
 function rupiah(n) {
     n = Number(n || 0);
@@ -475,7 +494,8 @@ $(function() {
             type: "POST",
             dataType: "json",
             data: {
-                fk_anggota_id: anggotaId
+                fk_anggota_id: anggotaId,
+                jenis_penarikan: 'non_sukarela'
             },
             success: function(res) {
                 if (!res.ok) {
@@ -484,7 +504,21 @@ $(function() {
                     return;
                 }
 
+                if (res.status_anggota != '') {
+                    $('#modalNotifMessage').text('');
+                    $('#modalNotif').modal('show');
+                    $('#modalNotifMessage').html('Status anggota ini telah <u><b>' + res
+                        .status_anggota.toUpperCase() + '</u></b>');
+                    $detail.hide();
+                    return;
+                }
+
                 $detail.show();
+
+                $('#simpanan_pokok_val').val(res.simpanan.pokok);
+                $('#simpanan_wajib_val').val(res.simpanan.wajib);
+                $('#simpanan_tapim_val').val(res.simpanan.tapim);
+                $('#simpanan_sukarela_val').val(res.simpanan.sukarela);
 
                 $('#simpanan_pokok').text(rupiah(res.simpanan.pokok));
                 $('#simpanan_wajib').text(rupiah(res.simpanan.wajib));
@@ -518,7 +552,8 @@ $(function() {
 
                 $('#jumlah_akhir').text(rupiah(jumlahAkhir))
                     .removeClass('text-danger text-success')
-                    .addClass(jumlahAkhir > 0 ? 'text-success' : (jumlahAkhir < 0 ? 'text-danger' :
+                    .addClass(jumlahAkhir > 0 ? 'text-success' : (jumlahAkhir < 0 ?
+                        'text-danger' :
                         ''));
 
                 // mode input plus / minus
@@ -527,9 +562,10 @@ $(function() {
                 // input boleh aktif jika jumlah akhir tidak nol
                 var can = Math.abs(jumlahAkhir) > 0 || isEdit;
 
-                $('#nominal_penarikan_view, #tanggal_penarikan, #status_anggota, #keterangan').prop(
-                    'disabled', !
-                    can);
+                $('#nominal_penarikan_view, #tanggal_penarikan, #status_anggota, #keterangan')
+                    .prop(
+                        'disabled', !
+                        can);
 
                 refreshSubmitState();
             },
@@ -580,7 +616,11 @@ $(function() {
                 tanggal_penarikan: $('#tanggal_penarikan').val(),
                 status_anggota: $('#status_anggota').val(),
                 keterangan: $('#keterangan').val(),
-                nominal_penarikan: $('#nominal_penarikan').val()
+                nominal_penarikan: $('#nominal_penarikan').val(),
+                simpanan_pokok: $('#simpanan_pokok_val').val(),
+                simpanan_wajib: $('#simpanan_wajib_val').val(),
+                simpanan_tapim: $('#simpanan_tapim_val').val(),
+                simpanan_sukarela: $('#simpanan_sukarela_val').val()
             },
             success: function(res) {
                 if (!res.ok) {
@@ -589,7 +629,8 @@ $(function() {
                     refreshSubmitState();
                     return;
                 }
-                window.location.href = res.redirect_url || "<?= site_url('Penarikan') ?>";
+                window.location.href = res.redirect_url ||
+                    "<?= site_url('Penarikan') ?>";
             },
             error: function() {
                 alert('Error AJAX simpan');

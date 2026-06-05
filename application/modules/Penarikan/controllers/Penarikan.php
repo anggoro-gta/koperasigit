@@ -69,6 +69,7 @@ class Penarikan extends CI_Controller
 		if (!$this->input->is_ajax_request()) show_404();
 
 		$anggota_id = (int) $this->input->post('fk_anggota_id');
+		$jenis_penarikan = $this->input->post('jenis_penarikan');
 		if ($anggota_id <= 0) {
 			echo json_encode(['ok' => false, 'message' => 'Anggota tidak valid']);
 			return;
@@ -103,11 +104,40 @@ class Penarikan extends CI_Controller
 			[$anggota_id]
 		)->row_array();
 
+		if($jenis_penarikan == 'sukarela') {
+			$q_riwayat_penarikan = $this->db->query(
+				"SELECT COALESCE(SUM(jumlah_penarikan),0) AS jumlah
+				FROM t_cb_penarikan
+				WHERE fk_anggota_id = ? AND jenis_penarikan = 'sukarela'",
+				[$anggota_id]
+			)->row_array();
+		}else{
+			$q_riwayat_penarikan = $this->db->query(
+				"SELECT COALESCE(SUM(jumlah_penarikan),0) AS jumlah
+				FROM t_cb_penarikan
+				WHERE fk_anggota_id = ?",
+				[$anggota_id]
+			)->row_array();
+		}
+
+		$jml_penarikan_sebelumnya = (float)($q_riwayat_penarikan['jumlah'] ?? 0);
+
+		$q_status_anggota = $this->db->query(
+			"SELECT status_anggota FROM t_cb_penarikan WHERE fk_anggota_id = ? AND status_anggota != '' LIMIT 1",
+			[$anggota_id]
+		)->row_array();
+
+		$status_anggota = '';
+		
+		if(!empty($q_status_anggota)){
+			$status_anggota = $q_status_anggota['status_anggota'];
+		}
+	
 		$simpanan = [
 			'pokok'    => (float)($q_pokok['jumlah'] ?? 0),
 			'wajib'    => (float)($q_wajib['jumlah'] ?? 0),
 			'tapim'    => (float)($q_tapim['jumlah'] ?? 0),
-			'sukarela' => (float)($q_sukarela['jumlah'] ?? 0),
+			'sukarela' => (float)($q_sukarela['jumlah'] - $jml_penarikan_sebelumnya ?? 0),
 		];
 
 		$total_simpanan = $simpanan['pokok'] + $simpanan['wajib'] + $simpanan['tapim'] + $simpanan['sukarela'];
@@ -165,17 +195,18 @@ class Penarikan extends CI_Controller
 		$jumlah_akhir = $total_simpanan - $total_tanggungan;
 
 		echo json_encode([
-			'ok' => true,
-			'simpanan' => $simpanan,
-			'total_simpanan' => $total_simpanan,
-			'tanggungan' => [
-				'uang' => $uang_rows,
-				'barang' => $barang_rows,
-				'palen' => $palen_rows,
+			'ok'                         => true,
+			'simpanan'                   => $simpanan,
+			'total_simpanan'             => $total_simpanan,
+			'tanggungan'                 => [
+				'uang'                      => $uang_rows,
+				'barang'                    => $barang_rows,
+				'palen'                     => $palen_rows,
 			],
-			'total_tanggungan' => $total_tanggungan,
-			'jumlah_akhir' => $jumlah_akhir,
-			'can_withdraw' => ($jumlah_akhir > 0)
+			'total_tanggungan'           => $total_tanggungan,
+			'jumlah_akhir'               => $jumlah_akhir,
+			'can_withdraw'               => ($jumlah_akhir > 0),
+			'status_anggota'             => $status_anggota,
 		]);
 	}
 
@@ -248,6 +279,11 @@ class Penarikan extends CI_Controller
 		$status_anggota = $this->input->post('status_anggota', true);
 		$keterangan     = $this->input->post('keterangan', true);
 
+		$s_pokok = $this->input->post('simpanan_pokok');
+		$s_wajib = $this->input->post('simpanan_wajib');
+		$s_tapim = $this->input->post('simpanan_tapim');
+		$s_sukarela = $this->input->post('simpanan_sukarela');
+
 		if ($anggota_id <= 0) {
 			echo json_encode(['ok'=>false,'message'=>'Anggota wajib dipilih']); return;
 		}
@@ -266,6 +302,10 @@ class Penarikan extends CI_Controller
 		$data = [
 			'fk_anggota_id'    => $anggota_id,
 			'tgl_penarikan'    => $tgl,
+			'pokok'            => $s_pokok,
+			'wajib'            => $s_wajib,
+			'tapim'            => $s_tapim,
+			'sukarela'         => $s_sukarela,
 			'jumlah_penarikan' => $nominal,
 			'status_anggota'   => $status_anggota,
 			'keterangan'       => $keterangan,
@@ -274,6 +314,9 @@ class Penarikan extends CI_Controller
 			'user_act'         => $user_id,
 			'time_act'         => date('Y-m-d H:i:s'),
 		];
+
+		// print_r($data); // debug
+		// die();
 
 		$this->db->trans_begin();
 
@@ -380,10 +423,14 @@ class Penarikan extends CI_Controller
 		$data = [
 			'fk_anggota_id'    => $anggota_id,
 			'tgl_penarikan'    => $tgl,
+			'pokok'            => 0,
+			'wajib'            => 0,
+			'tapim'            => 0,
+			'sukarela'         => $nominal,
 			'jumlah_penarikan' => $nominal,
 			'keterangan'       => $keterangan,
 			'jenis_penarikan'  => 'sukarela',
-			'tipe_angka'       => $nominal >= 0 ? 'plus' : 'minus',
+			'tipe_angka'       => $nominal >= 0 ? 'plus': 'minus',
 			'user_act'         => $user_id,
 			'time_act'         => date('Y-m-d H:i:s'),
 		];
