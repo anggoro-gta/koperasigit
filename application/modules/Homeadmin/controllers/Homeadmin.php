@@ -135,6 +135,10 @@ class homeadmin extends MX_Controller
 			$data = [
 				'judul' => 'SIMPANAN'
 			];
+		} elseif($jenis=='penerimaan_bunga') {
+			$data = [
+				'judul' => 'PENERIMAAN BUNGA'
+			];
 		}
 
 		$startYear = 2023;
@@ -216,6 +220,41 @@ class homeadmin extends MX_Controller
 				'sukarela' => $sukarela ?? 0,
 				'total'    => $total ?? 0,
 			];
+		}else if ($jenis === 'penerimaan_bunga') {
+
+			// normalisasi tahun
+			$isAll = ($tahun === 'all' || $tahun === 'semua' || $tahun === null || $tahun === '');
+			$tahunInt = $isAll ? null : (int) $tahun;
+
+			// SQL dengan COALESCE biar tidak NULL
+			$sql_reguler = "SELECT COALESCE(SUM(tctp.bunga),0) AS nominal FROM t_cb_tagihan_pinjaman tctp JOIN t_cb_tagihan tct ON tctp.fk_tagihan_id = tct.id WHERE tct.tahun = ? AND tctp.is_pelunasan = 0 AND tctp.is_kompensasi = 0";
+
+			$sql_kompensasi = "SELECT COALESCE(SUM(tctp.bunga),0) AS nominal FROM t_cb_tagihan_pinjaman tctp JOIN t_cb_tagihan tct ON tctp.fk_tagihan_id = tct.id WHERE tct.tahun = ? AND tctp.is_kompensasi = 1";
+
+			$sql_pelunasan = "SELECT COALESCE(SUM(tctp.bunga),0) AS nominal FROM t_cb_tagihan_pinjaman tctp JOIN t_cb_tagihan tct ON tctp.fk_tagihan_id = tct.id WHERE tct.tahun = ? AND tctp.is_pelunasan = 1";
+			
+			if ($isAll) {
+				$reguler    = (float) $this->db->query("SELECT COALESCE(SUM(tctp.bunga),0) AS nominal FROM t_cb_tagihan_pinjaman tctp JOIN t_cb_tagihan tct ON tctp.fk_tagihan_id = tct.id WHERE tctp.is_pelunasan = 0 AND tctp.is_kompensasi = 0")->row()->nominal;
+				
+				$kompensasi    = (float) $this->db->query("SELECT COALESCE(SUM(tctp.bunga),0) AS nominal FROM t_cb_tagihan_pinjaman tctp JOIN t_cb_tagihan tct ON tctp.fk_tagihan_id = tct.id WHERE tctp.is_kompensasi = 1")->row()->nominal;
+				
+				$pelunasan  = (float) $this->db->query("SELECT COALESCE(SUM(tctp.bunga),0) AS nominal FROM t_cb_tagihan_pinjaman tctp JOIN t_cb_tagihan tct ON tctp.fk_tagihan_id = tct.id WHERE tctp.is_pelunasan = 1")->row()->nominal;
+				
+			} else {
+				$reguler    = (float)$this->db->query($sql_reguler,    [$tahunInt])->row()->nominal;
+				$kompensasi = (float)$this->db->query($sql_kompensasi, [$tahunInt])->row()->nominal;
+				$pelunasan  = (float)$this->db->query($sql_pelunasan,  [$tahunInt])->row()->nominal;
+			}
+
+			$total = $reguler + $kompensasi + $pelunasan;
+
+			$data = [
+				'status'     => true,
+				'reguler'    => $reguler ?? 0,
+				'kompensasi' => $kompensasi ?? 0,
+				'pelunasan'  => $pelunasan ?? 0,
+				'total'      => $total ?? 0,
+			];
 		}
 
 		$this->output
@@ -223,14 +262,14 @@ class homeadmin extends MX_Controller
 			->set_output(json_encode($data));
 	}
 
-	public function ajaxGrafik()
+	public function ajaxGrafikSimpanan()
 	{
 		$jenis = $this->input->get('jenis', true);
 		$tahun = $this->input->get('tahun', true);
 
 		$data = ['status' => false, 'message' => 'Jenis tidak dikenali'];
 
-		if ($jenis !== 'simpanan') {
+		if (!in_array($jenis, ['simpanan'])) {
 			return $this->output
 				->set_content_type('application/json')
 				->set_output(json_encode($data));
@@ -427,7 +466,197 @@ class homeadmin extends MX_Controller
 			->set_output(json_encode($data));
 	}
 
+	public function ajaxGrafikPenerimaanBunga()
+	{
+		$jenis = $this->input->get('jenis', true);
+		$tahun = $this->input->get('tahun', true);
 
+		$data = [
+			'status'  => false,
+			'message' => 'Jenis tidak dikenali'
+		];
 
+		if (!in_array($jenis, ['penerimaan_bunga'])) {
+			return $this->output
+				->set_content_type('application/json')
+				->set_output(json_encode($data));
+		}
 
+		$isAll = (
+			$tahun === 'all' ||
+			$tahun === 'semua' ||
+			$tahun === null ||
+			$tahun === ''
+		);
+
+		$bulanNama = [
+			1  => 'Jan',
+			2  => 'Feb',
+			3  => 'Mar',
+			4  => 'Apr',
+			5  => 'Mei',
+			6  => 'Jun',
+			7  => 'Jul',
+			8  => 'Agu',
+			9  => 'Sep',
+			10 => 'Okt',
+			11 => 'Nov',
+			12 => 'Des'
+		];
+
+		// Master bulan supaya bulan yang tidak ada transaksi tetap tampil 0
+		$monthTable = "
+			(
+				SELECT 1 bulan UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+				UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8
+				UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12
+			) m
+		";
+
+		// Normalisasi bulan dari t_cb_tagihan
+		$bulanTagihanExpr = "
+			CASE 
+				WHEN tct.bulan BETWEEN 1 AND 12 THEN tct.bulan
+				ELSE 12
+			END
+		";
+
+		if ($isAll) {
+
+			$sql = "
+				SELECT 
+					m.bulan,
+					COALESCE(x.reguler, 0)    AS reguler,
+					COALESCE(x.kompensasi, 0) AS kompensasi,
+					COALESCE(x.pelunasan, 0)  AS pelunasan
+				FROM {$monthTable}
+
+				LEFT JOIN (
+					SELECT 
+						{$bulanTagihanExpr} AS bulan,
+
+						SUM(
+							CASE 
+								WHEN COALESCE(tctp.is_pelunasan, 0) = 0
+								AND COALESCE(tctp.is_kompensasi, 0) = 0
+								THEN COALESCE(tctp.bunga, 0)
+								ELSE 0
+							END
+						) AS reguler,
+
+						SUM(
+							CASE 
+								WHEN COALESCE(tctp.is_kompensasi, 0) = 1
+								THEN COALESCE(tctp.bunga, 0)
+								ELSE 0
+							END
+						) AS kompensasi,
+
+						SUM(
+							CASE 
+								WHEN COALESCE(tctp.is_pelunasan, 0) = 1
+								THEN COALESCE(tctp.bunga, 0)
+								ELSE 0
+							END
+						) AS pelunasan
+
+					FROM t_cb_tagihan_pinjaman tctp
+					JOIN t_cb_tagihan tct 
+						ON tctp.fk_tagihan_id = tct.id
+					GROUP BY bulan
+				) x ON x.bulan = m.bulan
+
+				ORDER BY m.bulan
+			";
+
+			$rows = $this->db->query($sql)->result_array();
+			$tahunOut = 'all';
+
+		} else {
+
+			$tahunInt = (int) $tahun;
+
+			$sql = "
+				SELECT 
+					m.bulan,
+					COALESCE(x.reguler, 0)    AS reguler,
+					COALESCE(x.kompensasi, 0) AS kompensasi,
+					COALESCE(x.pelunasan, 0)  AS pelunasan
+				FROM {$monthTable}
+
+				LEFT JOIN (
+					SELECT 
+						{$bulanTagihanExpr} AS bulan,
+
+						SUM(
+							CASE 
+								WHEN COALESCE(tctp.is_pelunasan, 0) = 0
+								AND COALESCE(tctp.is_kompensasi, 0) = 0
+								THEN COALESCE(tctp.bunga, 0)
+								ELSE 0
+							END
+						) AS reguler,
+
+						SUM(
+							CASE 
+								WHEN COALESCE(tctp.is_kompensasi, 0) = 1
+								THEN COALESCE(tctp.bunga, 0)
+								ELSE 0
+							END
+						) AS kompensasi,
+
+						SUM(
+							CASE 
+								WHEN COALESCE(tctp.is_pelunasan, 0) = 1
+								THEN COALESCE(tctp.bunga, 0)
+								ELSE 0
+							END
+						) AS pelunasan
+
+					FROM t_cb_tagihan_pinjaman tctp
+					JOIN t_cb_tagihan tct 
+						ON tctp.fk_tagihan_id = tct.id
+					WHERE tct.tahun = ?
+					GROUP BY bulan
+				) x ON x.bulan = m.bulan
+
+				ORDER BY m.bulan
+			";
+
+			$rows = $this->db->query($sql, [$tahunInt])->result_array();
+			$tahunOut = $tahunInt;
+		}
+
+		$labels = [];
+		$reguler = [];
+		$kompensasi = [];
+		$pelunasan = [];
+
+		foreach ($rows as $r) {
+			$b = (int) $r['bulan'];
+
+			$labels[]     = $bulanNama[$b] ?? (string) $b;
+			$reguler[]    = (float) $r['reguler'];
+			$kompensasi[] = (float) $r['kompensasi'];
+			$pelunasan[]  = (float) $r['pelunasan'];
+		}
+
+		$grandTotal = array_sum($reguler) + array_sum($kompensasi) + array_sum($pelunasan);
+
+		$data = [
+			'status' => true,
+			'tahun'  => $tahunOut,
+			'labels' => $labels,
+			'series' => [
+				'reguler'    => $reguler,
+				'kompensasi' => $kompensasi,
+				'pelunasan'  => $pelunasan,
+			],
+			'total' => $grandTotal
+		];
+
+		return $this->output
+			->set_content_type('application/json')
+			->set_output(json_encode($data));
+	}
 }

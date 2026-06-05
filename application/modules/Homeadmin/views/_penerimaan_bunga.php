@@ -86,19 +86,19 @@
 <div class="col-md-8 col-sm-12 col-xs-12">
     <div class="x_panel tile">
         <div class="x_title">
-            <h2>Detail Simpanan</h2>
+            <h2>Detail Penerimaan Bunga</h2>
             <div class="clearfix"></div>
         </div>
         <div class="x_content">
             <div class="widget_summary">
                 <div class="w_left w_25">
-                    <span>POKOK</span>
+                    <span>BUNGA REGULER</span>
                 </div>
 
                 <div class="w_center" style="width: 75%">
-                    <div class="progress progress-nominal" id="wrap-pokok">
-                        <div class="progress-bar bg-green" id="bar-pokok" role="progressbar" style="width:0%"></div>
-                        <span class="nominal-right" id="val-pokok">0</span>
+                    <div class="progress progress-nominal" id="wrap-reguler">
+                        <div class="progress-bar bg-green" id="bar-reguler" role="progressbar" style="width:0%"></div>
+                        <span class="nominal-right" id="val-reguler">0</span>
                     </div>
                 </div>
 
@@ -107,13 +107,14 @@
 
             <div class="widget_summary">
                 <div class="w_left w_25">
-                    <span>WAJIB</span>
+                    <span>BUNGA KOMPENSASI</span>
                 </div>
 
                 <div class="w_center" style="width: 75%">
-                    <div class="progress progress-nominal" id="wrap-wajib">
-                        <div class="progress-bar bg-green" id="bar-wajib" role="progressbar" style="width:0%"></div>
-                        <span class="nominal-right" id="val-wajib">0</span>
+                    <div class="progress progress-nominal" id="wrap-kompensasi">
+                        <div class="progress-bar bg-green" id="bar-kompensasi" role="progressbar" style="width:0%">
+                        </div>
+                        <span class="nominal-right" id="val-kompensasi">0</span>
                     </div>
                 </div>
 
@@ -122,28 +123,13 @@
 
             <div class="widget_summary">
                 <div class="w_left w_25">
-                    <span>TAPIM</span>
+                    <span>BUNGA PELUNASAN</span>
                 </div>
 
                 <div class="w_center" style="width: 75%">
-                    <div class="progress progress-nominal" id="wrap-tapim">
-                        <div class="progress-bar bg-green" id="bar-tapim" role="progressbar" style="width:0%"></div>
-                        <span class="nominal-right" id="val-tapim">0</span>
-                    </div>
-                </div>
-
-                <div class="clearfix"></div>
-            </div>
-
-            <div class="widget_summary">
-                <div class="w_left w_25">
-                    <span>SUKARELA</span>
-                </div>
-
-                <div class="w_center" style="width: 75%">
-                    <div class="progress progress-nominal" id="wrap-sukarela">
-                        <div class="progress-bar bg-green" id="bar-sukarela" role="progressbar" style="width:0%"></div>
-                        <span class="nominal-right" id="val-sukarela">0</span>
+                    <div class="progress progress-nominal" id="wrap-pelunasan">
+                        <div class="progress-bar bg-green" id="bar-pelunasan" role="progressbar" style="width:0%"></div>
+                        <span class="nominal-right" id="val-pelunasan">0</span>
                     </div>
                 </div>
 
@@ -157,16 +143,15 @@
 <div class="col-md-12 col-sm-12 col-xs-12">
     <div class="x_panel">
         <div class="x_title">
-            <h2>Grafik Simpanan</h2>
+            <h2>Grafik Penerimaan Bunga</h2>
             <div class="clearfix"></div>
         </div>
         <div class="x_content2">
             <div id="graphx" style="width:100%; height:500px;"></div>
-            <div class="morris-legend" id="legend-simpanan">
-                <span class="l pokok">Pokok</span>
-                <span class="l wajib">Wajib</span>
-                <span class="l tapim">Tapim</span>
-                <span class="l sukarela">Sukarela</span>
+            <div class="morris-legend" id="legend-penerimaan_bunga">
+                <span class="l reguler">Bunga Reguler</span>
+                <span class="l kompensasi">Bunga Kompensasi</span>
+                <span class="l pelunasan">Bunga Pelunasan</span>
             </div>
         </div>
     </div>
@@ -200,9 +185,9 @@ function setProgress(key, value, total) {
     else wrap.classList.remove('text-on-green');
 }
 
-async function loadDetailSimpanan(tahun) {
+async function loadDetail(tahun) {
     try {
-        const url = AJAX_URL + '?jenis=simpanan&tahun=' + encodeURIComponent(tahun) + '&_=' + Date.now();
+        const url = AJAX_URL + '?jenis=penerimaan_bunga&tahun=' + encodeURIComponent(tahun) + '&_=' + Date.now();
         const res = await fetch(url, {
             headers: {
                 'Accept': 'application/json'
@@ -210,17 +195,16 @@ async function loadDetailSimpanan(tahun) {
         });
         const json = await res.json();
 
-        setProgress('pokok', json.pokok, json.total);
-        setProgress('wajib', json.wajib, json.total);
-        setProgress('tapim', json.tapim, json.total);
-        setProgress('sukarela', json.sukarela, json.total);
+        setProgress('reguler', json.reguler, json.total);
+        setProgress('kompensasi', json.kompensasi, json.total);
+        setProgress('pelunasan', json.pelunasan, json.total);
     } catch (e) {
         console.error(e);
     }
 }
 </script>
 <script>
-const AJAX_GRAFIK = '<?= site_url("Homeadmin/ajaxGrafikSimpanan"); ?>';
+const AJAX_GRAFIK = '<?= site_url("Homeadmin/ajaxGrafikPenerimaanBunga"); ?>';
 let chartSimpanan = null;
 
 function buildMorrisData(labels, series) {
@@ -228,17 +212,16 @@ function buildMorrisData(labels, series) {
     for (let i = 0; i < labels.length; i++) {
         out.push({
             x: labels[i],
-            pokok: Number(series.pokok?. [i] ?? 0),
-            wajib: Number(series.wajib?. [i] ?? 0),
-            tapim: Number(series.tapim?. [i] ?? 0),
-            sukarela: Number(series.sukarela?. [i] ?? 0),
+            reguler: Number(series.reguler?. [i] ?? 0),
+            kompensasi: Number(series.kompensasi?. [i] ?? 0),
+            pelunasan: Number(series.pelunasan?. [i] ?? 0),
         });
     }
     return out;
 }
 
-async function loadGrafikSimpanan(tahun) {
-    const url = AJAX_GRAFIK + '?jenis=simpanan&tahun=' + encodeURIComponent(tahun) + '&_=' + Date.now();
+async function loadGrafik(tahun) {
+    const url = AJAX_GRAFIK + '?jenis=penerimaan_bunga&tahun=' + encodeURIComponent(tahun) + '&_=' + Date.now();
     const res = await fetch(url, {
         headers: {
             'Accept': 'application/json'
@@ -256,9 +239,9 @@ async function loadGrafikSimpanan(tahun) {
         element: 'graphx',
         data: data,
         xkey: 'x',
-        ykeys: ['pokok', 'wajib', 'tapim', 'sukarela'],
-        labels: ['Pokok', 'Wajib', 'Tapim', 'Sukarela'],
-        barColors: ['#26B99A', '#34495E', '#ACADAC', '#3498DB'],
+        ykeys: ['reguler', 'kompensasi', 'pelunasan'],
+        labels: ['Bunga Reguler', 'Bunga Kompensasi', 'Bunga Pelunasan'],
+        barColors: ['#26B99A', '#34495E', '#ACADAC'],
         hideHover: 'auto',
         resize: true,
 
@@ -277,8 +260,8 @@ async function loadGrafikSimpanan(tahun) {
 function refreshAll() {
     const tahunEl = document.querySelector('.filter-tahun');
     const tahun = tahunEl ? tahunEl.value : 'all';
-    loadDetailSimpanan(tahun);
-    loadGrafikSimpanan(tahun);
+    loadDetail(tahun);
+    loadGrafik(tahun);
 }
 
 $(document).on('change', '.filter-tahun', function() {

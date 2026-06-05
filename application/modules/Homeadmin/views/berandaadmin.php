@@ -51,7 +51,7 @@
                 <p>POKOK PINJAMAN, BUNGA</p>
             </div>
         </div>
-        <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12" id='pinjaman'>
+        <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12 simpanan" id='penerimaan_bunga'>
             <div class="tile-stats" style="background-color: gray;color: white">
                 <div class="icon"><i class="fa-solid fa-wallet" style="color: white"></i></div>
                 <div class="count"><?= number_format($bungalall) ?></div>
@@ -203,9 +203,15 @@ icons.play();
 </script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.simpanan').forEach(function(el) {
+    document.querySelectorAll('#simpanan').forEach(function(el) {
         el.addEventListener('click', function() {
             window.location.href = '<?= base_url("Homeadmin/detail/simpanan"); ?>';
+        });
+    });
+
+    document.querySelectorAll('#penerimaan_bunga').forEach(function(el) {
+        el.addEventListener('click', function() {
+            window.location.href = '<?= base_url("Homeadmin/detail/penerimaan_bunga"); ?>';
         });
     });
 });
