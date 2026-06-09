@@ -281,6 +281,8 @@
 </div>
 
 <script>
+var button = '<?= $button ?>';
+
 function rupiah(n) {
     n = Number(n || 0);
     var absVal = Math.abs(n).toLocaleString('id-ID', {
@@ -408,62 +410,69 @@ $(function() {
                     return;
                 }
 
-                if (res.status_anggota != '') {
+                if (res.status_anggota != '' && button != 'Update') {
                     $('#modalNotifMessage').text('');
                     $('#modalNotif').modal('show');
                     $('#modalNotifMessage').html('Status anggota ini telah <u><b>' + res
                         .status_anggota.toUpperCase() + '</u></b>');
                     $detail.hide();
                     return;
+                } else {
+                    if (res.status_anggota != '') {
+                        $('#btn_submit').hide();
+                        $('#nominal_penarikan_view, #tanggal_penarikan, #keterangan')
+                            .prop(
+                                'disabled', true);
+                    } else {
+                        $('#simpanan_pokok').text(rupiah(res.simpanan.pokok));
+                        $('#simpanan_wajib').text(rupiah(res.simpanan.wajib));
+                        $('#simpanan_tapim').text(rupiah(res.simpanan.tapim));
+                        $('#simpanan_sukarela').text(rupiah(res.simpanan.sukarela));
+                        $('#total_simpanan').text(rupiah(res.total_simpanan));
+
+                        if (res.tanggungan.uang && res.tanggungan.uang.length) {
+                            $('#sec_uang').show();
+                            renderRows('tbody_uang', res.tanggungan.uang);
+                        } else {
+                            $('#sec_uang').hide();
+                        }
+
+                        if (res.tanggungan.barang && res.tanggungan.barang.length) {
+                            $('#sec_barang').show();
+                            renderRows('tbody_barang', res.tanggungan.barang);
+                        } else {
+                            $('#sec_barang').hide();
+                        }
+
+                        if (res.tanggungan.palen && res.tanggungan.palen.length) {
+                            $('#sec_palen').show();
+                            renderRows('tbody_palen', res.tanggungan.palen);
+                        } else {
+                            $('#sec_palen').hide();
+                        }
+
+                        $('#total_tanggungan').text(rupiah(res.total_tanggungan));
+                        var jumlahAkhir = Number((res.simpanan.sukarela) || 0);
+
+                        $('#jumlah_akhir').text(rupiah(jumlahAkhir))
+                            .removeClass('text-danger text-success')
+                            .addClass(jumlahAkhir > 0 ? 'text-success' : (jumlahAkhir < 0 ?
+                                'text-danger' :
+                                ''));
+
+                        // mode input plus / minus
+                        setNominalMode(jumlahAkhir);
+
+                        // input boleh aktif jika jumlah akhir tidak nol
+                        var can = Math.abs(jumlahAkhir) > 0 || isEdit;
+
+                        $('#nominal_penarikan_view, #tanggal_penarikan, #keterangan').prop(
+                            'disabled', !
+                            can);
+                    }
                 }
 
                 $detail.show();
-
-                $('#simpanan_pokok').text(rupiah(res.simpanan.pokok));
-                $('#simpanan_wajib').text(rupiah(res.simpanan.wajib));
-                $('#simpanan_tapim').text(rupiah(res.simpanan.tapim));
-                $('#simpanan_sukarela').text(rupiah(res.simpanan.sukarela));
-                $('#total_simpanan').text(rupiah(res.total_simpanan));
-
-                if (res.tanggungan.uang && res.tanggungan.uang.length) {
-                    $('#sec_uang').show();
-                    renderRows('tbody_uang', res.tanggungan.uang);
-                } else {
-                    $('#sec_uang').hide();
-                }
-
-                if (res.tanggungan.barang && res.tanggungan.barang.length) {
-                    $('#sec_barang').show();
-                    renderRows('tbody_barang', res.tanggungan.barang);
-                } else {
-                    $('#sec_barang').hide();
-                }
-
-                if (res.tanggungan.palen && res.tanggungan.palen.length) {
-                    $('#sec_palen').show();
-                    renderRows('tbody_palen', res.tanggungan.palen);
-                } else {
-                    $('#sec_palen').hide();
-                }
-
-                $('#total_tanggungan').text(rupiah(res.total_tanggungan));
-                var jumlahAkhir = Number((res.simpanan.sukarela) || 0);
-
-                $('#jumlah_akhir').text(rupiah(jumlahAkhir))
-                    .removeClass('text-danger text-success')
-                    .addClass(jumlahAkhir > 0 ? 'text-success' : (jumlahAkhir < 0 ?
-                        'text-danger' :
-                        ''));
-
-                // mode input plus / minus
-                setNominalMode(jumlahAkhir);
-
-                // input boleh aktif jika jumlah akhir tidak nol
-                var can = Math.abs(jumlahAkhir) > 0 || isEdit;
-
-                $('#nominal_penarikan_view, #tanggal_penarikan, #keterangan').prop(
-                    'disabled', !
-                    can);
 
                 refreshSubmitState();
             },
