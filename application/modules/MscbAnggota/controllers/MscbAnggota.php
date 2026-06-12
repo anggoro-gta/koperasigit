@@ -100,6 +100,7 @@ class MscbAnggota extends CI_Controller
 			'simpanan_pokok' => set_value('simpanan_pokok', $pokok->nominal),
 			'simpanan_wajib' => set_value('simpanan_wajib', $wajib->nominal),
 			'keterangan' => set_value('keterangan'),
+			'tgl_keluar' => set_value('tgl_keluar'),
 		);
 
 		$data['MscbAnggota'] = 'active';
@@ -133,6 +134,7 @@ class MscbAnggota extends CI_Controller
 			'simpanan_pokok' => set_value('simpanan_pokok', $kat->simpanan_pokok),
 			'simpanan_wajib' => set_value('simpanan_wajib', $kat->simpanan_wajib),
 			'keterangan' => set_value('keterangan', $kat->keterangan),
+			'tgl_keluar' => set_value('tgl_keluar', $kat->tgl_keluar),
 		);
 		$data['MscbAnggota'] = 'active';
 		$data['act_back'] = base_url() . 'MscbAnggota';
