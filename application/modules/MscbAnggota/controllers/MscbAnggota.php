@@ -250,6 +250,10 @@ class MscbAnggota extends CI_Controller
 				$data['simpanan_pokok'] = str_replace(",", "", $this->input->post('simpanan_pokok'));
 				// $data['simpanan_wajib'] = NULL;
 				$data['keterangan'] = $this->input->post('keterangan');
+				
+				if(!empty($this->input->post('tgl_keluar'))){
+					$data['tgl_keluar'] = date('Y-m-d', strtotime($this->input->post('tgl_keluar')));
+				}
 
 				$this->MMscbUseranggota->update($id, $data);
 				$this->session->set_flashdata('success', 'Data Berhasil diupdate.');
@@ -268,6 +272,10 @@ class MscbAnggota extends CI_Controller
 				$data['simpanan_pokok'] = str_replace(",", "", $this->input->post('simpanan_pokok'));
 				$data['simpanan_wajib'] = str_replace(",", "", $this->input->post('simpanan_wajib'));
 				$data['keterangan'] = $this->input->post('keterangan');
+				
+				if(!empty($this->input->post('tgl_keluar'))){
+					$data['tgl_keluar'] = date('Y-m-d', strtotime($this->input->post('tgl_keluar')));
+				}
 
 				$this->MMscbUseranggota->update($id, $data);
 				$this->session->set_flashdata('success', 'Data Berhasil diupdate.');
