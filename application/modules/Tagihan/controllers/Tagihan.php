@@ -144,7 +144,8 @@ class Tagihan extends CI_Controller
 			// 	tenor,
 			// 	jml_tagihan,
 			// 	mcua.tanggal_mulai_aktif,
-			// 	'1' as anggota_baru 
+			// 	'' as is_anggota_baru,
+			// 	'' as is_tunggakan 
 			// from
 			// 	t_cb_pinjaman tcp
 			// join ms_cb_user_anggota mcua on
@@ -218,19 +219,28 @@ class Tagihan extends CI_Controller
 						mcua.tanggal_mulai_aktif,
 
 						CASE 
-							WHEN DATE_FORMAT(mcua.tanggal_mulai_aktif, '%Y-%m') = ?
+							WHEN mcua.tanggal_mulai_aktif IS NOT NULL
+							AND ? BETWEEN 
+								(
+									(YEAR(mcua.tanggal_mulai_aktif) * 12) 
+									+ MONTH(mcua.tanggal_mulai_aktif)
+								)
+								AND
+								(
+									(YEAR(mcua.tanggal_mulai_aktif) * 12) 
+									+ MONTH(mcua.tanggal_mulai_aktif)
+									+ 1
+								)
 							AND EXISTS (
 								SELECT 1
 								FROM t_cb_tagihan_pinjaman a
 								INNER JOIN t_cb_tagihan b 
 									ON a.fk_tagihan_id = b.id
-								INNER JOIN t_cb_pinjaman c 
-									ON a.fk_pinjaman_id = c.id
 								WHERE 
 									a.fk_anggota_id = mcua.id
 									AND b.kategori = 'kolektif'
 									AND b.fk_skpd_id = mcua.fk_id_skpd
-									AND CONCAT(b.tahun, '-', LPAD(b.bulan, 2, '0')) IN (?, ?)
+									AND ((b.tahun * 12) + b.bulan) = ?
 							)
 							THEN 'ANGGOTA BARU'
 							ELSE NULL
@@ -281,9 +291,8 @@ class Tagihan extends CI_Controller
 
 				ORDER BY q.fk_kategori_id ASC
 			", [
-				$periode,
-				$periode,
-				$periode_plus_1,
+				$cutoff_angka, // cek periode dipilih berada di bulan aktif / +1 bulan
+				$cutoff_angka, // cek tagihan pada periode yang dipilih
 
 				$cutoff_angka,
 				$cutoff_angka,
