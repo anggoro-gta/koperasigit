@@ -45,31 +45,49 @@ class Laporan extends CI_Controller
 	}
 	function getTunggakanPinjaman($periode, $fk_skpd_id)
 	{
-		return $this->db->query("	select * from (SELECT
-			nip,
-			nama,
-			jml_angsuran,
-			tenor,
-			MAX(
-			STR_TO_DATE( CONCAT( tahun, '-', bulan, '-', 01 ), '%Y-%m-%d' )) last_tx,
-		CASE
-
-				WHEN tenor - jml_angsuran < TIMESTAMPDIFF( MONTH, MAX( STR_TO_DATE( CONCAT( tahun, '-', bulan, '-', 01 ), '%Y-%m-%d' )), ? ) THEN
-				tenor - jml_angsuran ELSE TIMESTAMPDIFF( MONTH, MAX( STR_TO_DATE( CONCAT( tahun, '-', bulan, '-', 01 ), '%Y-%m-%d' )), ? )
-			END AS jml_tunggakan
-		FROM
-			t_cb_pinjaman
-			JOIN t_cb_tagihan_pinjaman ON t_cb_tagihan_pinjaman.fk_pinjaman_id = t_cb_pinjaman.id
-			JOIN ms_cb_user_anggota ON ms_cb_user_anggota.id = t_cb_tagihan_pinjaman.fk_anggota_id
-			JOIN t_cb_tagihan ON t_cb_tagihan.id = t_cb_tagihan_pinjaman.fk_tagihan_id
-		WHERE
-			status = 0
-			AND fk_id_skpd = ?
-		GROUP BY
-			t_cb_pinjaman.id
-		) a WHERE jml_tunggakan > 0
-	ORDER BY
-		jml_tunggakan DESC;", [$periode, $periode, $fk_skpd_id])->result();
+		return $this->db->query("SELECT *
+		FROM (
+			SELECT
+				ms_cb_user_anggota.nip,
+				ms_cb_user_anggota.nama,
+				t_cb_pinjaman.jml_angsuran,
+				t_cb_pinjaman.tenor,
+				MAX(
+					STR_TO_DATE(CONCAT(t_cb_tagihan.tahun, '-', t_cb_tagihan.bulan, '-01'), '%Y-%m-%d')
+				) AS last_tx,
+				CASE
+					WHEN t_cb_pinjaman.tenor - t_cb_pinjaman.jml_angsuran <
+						TIMESTAMPDIFF(
+							MONTH,
+							MAX(STR_TO_DATE(CONCAT(t_cb_tagihan.tahun, '-', t_cb_tagihan.bulan, '-01'), '%Y-%m-%d')),
+							?
+						)
+					THEN t_cb_pinjaman.tenor - t_cb_pinjaman.jml_angsuran
+					ELSE TIMESTAMPDIFF(
+							MONTH,
+							MAX(STR_TO_DATE(CONCAT(t_cb_tagihan.tahun, '-', t_cb_tagihan.bulan, '-01'), '%Y-%m-%d')),
+							?
+						)
+				END AS jml_tunggakan
+			FROM t_cb_pinjaman
+			JOIN t_cb_tagihan_pinjaman 
+				ON t_cb_tagihan_pinjaman.fk_pinjaman_id = t_cb_pinjaman.id
+			JOIN ms_cb_user_anggota 
+				ON ms_cb_user_anggota.id = t_cb_tagihan_pinjaman.fk_anggota_id
+			JOIN t_cb_tagihan 
+				ON t_cb_tagihan.id = t_cb_tagihan_pinjaman.fk_tagihan_id
+			WHERE
+				t_cb_pinjaman.status = 0
+				AND t_cb_tagihan.fk_skpd_id = ?
+			GROUP BY
+				t_cb_pinjaman.id,
+				ms_cb_user_anggota.nip,
+				ms_cb_user_anggota.nama,
+				t_cb_pinjaman.jml_angsuran,
+				t_cb_pinjaman.tenor
+		) a
+		WHERE a.jml_tunggakan > 0
+		ORDER BY a.jml_tunggakan DESC;", [$periode, $periode, $fk_skpd_id])->result();
 	}
 
 	public function pinjaman()
