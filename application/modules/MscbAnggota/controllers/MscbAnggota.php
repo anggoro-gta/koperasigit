@@ -55,6 +55,7 @@ class MscbAnggota extends CI_Controller
 		// 	$this->datatables->where("p.tgl >=", $this->help->ReverseTgl($tgl_dari));
 		// 	$this->datatables->where("p.tgl <=", $this->help->ReverseTgl($tgl_sampai));
 		// }
+		
 
 		$this->datatables->select("
 		a.id,
@@ -70,7 +71,7 @@ class MscbAnggota extends CI_Controller
 		s.nama_skpd");
 		$this->datatables->from("ms_cb_user_anggota a");
 		$this->datatables->join('ms_cb_skpd s', 'a.fk_id_skpd=s.id', 'inner');
-		$this->db->order_by('id', 'asc');
+		// $this->db->order_by('id', 'asc');
 		$this->datatables->add_column('action', '<div class="btn-group">' . anchor(site_url('MscbAnggota/update/$1'), '<i title="edit" class="glyphicon glyphicon-edit icon-white"></i>', 'class="btn btn-xs btn-success"') . anchor(site_url('MscbAnggota/delete/$1'), '<i title="hapus" class="glyphicon glyphicon-trash icon-white"></i>', 'class="btn btn-xs btn-danger" onclick="javasciprt: return confirm(\'Apakah anda yakin?\')"') . anchor(site_url('MscbAnggota/resetpassword/$1'), '<i title="reset password" class="glyphicon glyphicon-refresh icon-white"></i>', 'class="btn btn-xs btn-warning" onclick="javasciprt: return confirm(\'Apakah anda yakin?\')"') . anchor(site_url('MscbAnggotaMutasi/update/$1'), '<i title="mutasi" class="glyphicon glyphicon-share icon-white"></i>', 'class="btn btn-xs btn-primary"') . anchor(site_url('MscbAnggotaMutasi/detail_mutasi/$1'), '<i title="histori mutasi" class="glyphicon glyphicon-list-alt icon-white"></i>', 'class="btn btn-xs btn-primary"') . '</div>', 'id');
 
 		echo $this->datatables->generate();
