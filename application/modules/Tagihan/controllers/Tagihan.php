@@ -155,7 +155,15 @@ class Tagihan extends CI_Controller
 			// 	where status=0 and mcua.fk_id_skpd = ? 
 			// 	ORDER BY tcp.fk_kategori_id asc",  [$fk_skpd_id])->result();
 
-			$periode = date('Y-m', strtotime('01-' . $this->input->post('periode')));
+			$raw_periode = trim($this->input->post('periode'));
+
+			if (preg_match('/^\d{4}-\d{2}$/', $raw_periode)) {
+				$periode = $raw_periode; // contoh: 2026-05
+			} elseif (preg_match('/^\d{2}-\d{4}$/', $raw_periode)) {
+				$periode = date('Y-m', strtotime('01-' . $raw_periode)); // contoh: 05-2026
+			} else {
+				show_error('Format periode tidak valid');
+			}
 
 			$cutoff_tahun = (int) substr($periode, 0, 4);
 			$cutoff_bulan = (int) substr($periode, 5, 2);
@@ -182,7 +190,7 @@ class Tagihan extends CI_Controller
 						c.*,
 
 						CASE
-							WHEN c.tgl IS NOT NULL
+							WHEN c.angsuran_awal_angka IS NOT NULL
 								AND COALESCE(c.tenor, 0) > 0
 								AND c.batas_cek_angka >= c.angsuran_awal_angka
 							THEN 
@@ -191,7 +199,7 @@ class Tagihan extends CI_Controller
 						END AS jumlah_bulan_wajib,
 
 						CASE
-							WHEN c.tgl IS NOT NULL
+							WHEN c.angsuran_awal_angka IS NOT NULL
 								AND COALESCE(c.tenor, 0) > 0
 								AND c.batas_cek_angka >= c.angsuran_awal_angka
 							THEN (
@@ -215,112 +223,144 @@ class Tagihan extends CI_Controller
 
 					FROM (
 						SELECT
-							b.*,
+							x.*,
+
+							(
+								x.angsuran_awal_angka 
+								+ COALESCE(x.tenor, 0) 
+								- 1
+							) AS angsuran_akhir_angka,
 
 							LEAST(
-								b.angsuran_akhir_angka,
-								CASE
-									WHEN b.last_tagihan_angka IS NULL THEN 0
-									WHEN b.last_tagihan_angka >= ? THEN ?
-									ELSE b.last_tagihan_angka
-								END
+								(
+									x.angsuran_awal_angka 
+									+ COALESCE(x.tenor, 0) 
+									- 1
+								),
+								?
 							) AS batas_cek_angka
 
 						FROM (
 							SELECT
-								tcp.id,
-								tcp.fk_anggota_id,
-								tcp.fk_kategori_id,
-								tcp.tgl,
-								mcua.nama,
-								mcua.nip,
-								mcua.fk_id_skpd,
-								tcp.pinjaman,
-								mckp.kategori,
-								tcp.jml_angsuran + 1 AS angsuran_ke,
-								tcp.pokok,
-								tcp.tapim,
-								tcp.bunga,
-								tcp.tenor,
-								tcp.jml_tagihan,
-								mcua.tanggal_mulai_aktif,
+								b.*,
 
-								(
-									(YEAR(DATE_ADD(tcp.tgl, INTERVAL 1 MONTH)) * 12)
-									+ MONTH(DATE_ADD(tcp.tgl, INTERVAL 1 MONTH))
-								) AS angsuran_awal_angka,
+								CASE
+									WHEN b.tgl IS NOT NULL THEN
+										(YEAR(DATE_ADD(b.tgl, INTERVAL 1 MONTH)) * 12)
+										+ MONTH(DATE_ADD(b.tgl, INTERVAL 1 MONTH))
 
-								(
-									(
-										(YEAR(DATE_ADD(tcp.tgl, INTERVAL 1 MONTH)) * 12)
-										+ MONTH(DATE_ADD(tcp.tgl, INTERVAL 1 MONTH))
-									)
-									+ COALESCE(tcp.tenor, 0)
-									- 1
-								) AS angsuran_akhir_angka,
+									WHEN b.first_tagihan_angka IS NOT NULL THEN
+										b.first_tagihan_angka
 
-								(
-									SELECT 
-										MAX((tg.tahun * 12) + tg.bulan)
-									FROM t_cb_tagihan_pinjaman tp
-									INNER JOIN t_cb_tagihan tg
-										ON tp.fk_tagihan_id = tg.id
-									WHERE
-										tp.fk_pinjaman_id = tcp.id
-										AND tp.fk_anggota_id = tcp.fk_anggota_id
-										AND tg.kategori = 'kolektif'
-										AND tg.fk_skpd_id = mcua.fk_id_skpd
-										AND tg.status_posting = 1
-								) AS last_tagihan_angka,
+									WHEN b.tanggal_mulai_aktif IS NOT NULL THEN
+										(YEAR(b.tanggal_mulai_aktif) * 12)
+										+ MONTH(b.tanggal_mulai_aktif)
 
-								CASE 
-									WHEN mcua.tanggal_mulai_aktif IS NOT NULL
-										AND ? BETWEEN 
-											(
-												(YEAR(mcua.tanggal_mulai_aktif) * 12) 
-												+ MONTH(mcua.tanggal_mulai_aktif)
-											)
-											AND
-											(
-												(YEAR(mcua.tanggal_mulai_aktif) * 12) 
-												+ MONTH(mcua.tanggal_mulai_aktif)
-												+ 1
-											)
-										AND EXISTS (
-											SELECT 1
-											FROM t_cb_tagihan_pinjaman a
-											INNER JOIN t_cb_tagihan b 
-												ON a.fk_tagihan_id = b.id
-											WHERE 
-												a.fk_anggota_id = mcua.id
-												AND b.kategori = 'kolektif'
-												AND b.fk_skpd_id = mcua.fk_id_skpd
-												AND b.status_posting = 1
-												AND ((b.tahun * 12) + b.bulan) = ?
-										)
-									THEN 'ANGGOTA BARU'
 									ELSE NULL
-								END AS is_anggota_baru
+								END AS angsuran_awal_angka,
 
-							FROM t_cb_pinjaman tcp
-							JOIN ms_cb_user_anggota mcua 
-								ON tcp.fk_anggota_id = mcua.id
-							JOIN ms_cb_kategori_pinjam mckp 
-								ON tcp.fk_kategori_id = mckp.id
-							WHERE 
-								tcp.status = 0
-								AND mcua.fk_id_skpd = ?
-						) b
+								CASE
+									WHEN b.tgl IS NOT NULL THEN 'TGL_PINJAMAN'
+									WHEN b.first_tagihan_angka IS NOT NULL THEN 'TAGIHAN_PERTAMA'
+									WHEN b.tanggal_mulai_aktif IS NOT NULL THEN 'TANGGAL_MULAI_AKTIF'
+									ELSE 'DATA_TIDAK_LENGKAP'
+								END AS sumber_angsuran_awal
+
+							FROM (
+								SELECT
+									tcp.id,
+									tcp.fk_anggota_id,
+									tcp.fk_kategori_id,
+									tcp.tgl,
+									mcua.nama,
+									mcua.nip,
+									mcua.fk_id_skpd,
+									tcp.pinjaman,
+									mckp.kategori,
+									tcp.jml_angsuran + 1 AS angsuran_ke,
+									tcp.pokok,
+									tcp.tapim,
+									tcp.bunga,
+									tcp.tenor,
+									tcp.jml_tagihan,
+									mcua.tanggal_mulai_aktif,
+
+									(
+										SELECT 
+											MIN((tg.tahun * 12) + tg.bulan)
+										FROM t_cb_tagihan_pinjaman tp
+										INNER JOIN t_cb_tagihan tg
+											ON tp.fk_tagihan_id = tg.id
+										WHERE
+											tp.fk_pinjaman_id = tcp.id
+											AND tp.fk_anggota_id = tcp.fk_anggota_id
+											AND tg.kategori = 'kolektif'
+											AND tg.fk_skpd_id = mcua.fk_id_skpd
+											AND tg.status_posting = 1
+									) AS first_tagihan_angka,
+
+									(
+										SELECT 
+											MAX((tg.tahun * 12) + tg.bulan)
+										FROM t_cb_tagihan_pinjaman tp
+										INNER JOIN t_cb_tagihan tg
+											ON tp.fk_tagihan_id = tg.id
+										WHERE
+											tp.fk_pinjaman_id = tcp.id
+											AND tp.fk_anggota_id = tcp.fk_anggota_id
+											AND tg.kategori = 'kolektif'
+											AND tg.fk_skpd_id = mcua.fk_id_skpd
+											AND tg.status_posting = 1
+									) AS last_tagihan_angka,
+
+									CASE 
+										WHEN mcua.tanggal_mulai_aktif IS NOT NULL
+											AND ? BETWEEN 
+												(
+													(YEAR(mcua.tanggal_mulai_aktif) * 12) 
+													+ MONTH(mcua.tanggal_mulai_aktif)
+												)
+												AND
+												(
+													(YEAR(mcua.tanggal_mulai_aktif) * 12) 
+													+ MONTH(mcua.tanggal_mulai_aktif)
+													+ 1
+												)
+											AND EXISTS (
+												SELECT 1
+												FROM t_cb_tagihan_pinjaman a
+												INNER JOIN t_cb_tagihan b2
+													ON a.fk_tagihan_id = b2.id
+												WHERE 
+													a.fk_anggota_id = mcua.id
+													AND b2.kategori = 'kolektif'
+													AND b2.fk_skpd_id = mcua.fk_id_skpd
+													AND b2.status_posting = 1
+													AND ((b2.tahun * 12) + b2.bulan) = ?
+											)
+										THEN 'ANGGOTA BARU'
+										ELSE NULL
+									END AS is_anggota_baru
+
+								FROM t_cb_pinjaman tcp
+								JOIN ms_cb_user_anggota mcua 
+									ON tcp.fk_anggota_id = mcua.id
+								JOIN ms_cb_kategori_pinjam mckp 
+									ON tcp.fk_kategori_id = mckp.id
+								WHERE 
+									tcp.status = 0
+									AND mcua.fk_id_skpd = ?
+							) b
+						) x
 					) c
 				) q
 
 				ORDER BY q.fk_kategori_id ASC
 			", [
-				$cutoff_angka,
-				$cutoff_angka,
+				$cutoff_angka, // untuk batas_cek_angka
 
-				$cutoff_angka,
-				$cutoff_angka,
+				$cutoff_angka, // untuk is_anggota_baru BETWEEN
+				$cutoff_angka, // untuk EXISTS bulan periode
 
 				$fk_skpd_id
 			])->result();
