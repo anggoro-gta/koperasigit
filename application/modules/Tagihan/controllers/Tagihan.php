@@ -355,7 +355,7 @@ class Tagihan extends CI_Controller
 					) c
 				) q
 
-				ORDER BY q.fk_kategori_id ASC
+				ORDER BY q.nama ASC
 			", [
 				$cutoff_angka, // untuk batas_cek_angka
 
