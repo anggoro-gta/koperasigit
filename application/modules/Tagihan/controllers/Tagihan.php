@@ -169,6 +169,10 @@ class Tagihan extends CI_Controller
 			$cutoff_bulan = (int) substr($periode, 5, 2);
 			$cutoff_angka = ($cutoff_tahun * 12) + $cutoff_bulan;
 
+			// ini batas bulan yang dihitung sebagai tunggakan
+			// contoh filter 2026-05, maka yang dicek hanya sampai 2026-04
+			$batas_tunggakan_angka = $cutoff_angka - 1;
+			
 			$pinjaman = $this->db->query("
 				SELECT
 					q.*,
@@ -211,7 +215,7 @@ class Tagihan extends CI_Controller
 								WHERE
 									tp.fk_pinjaman_id = c.id
 									AND tp.fk_anggota_id = c.fk_anggota_id
-									AND tg.kategori = 'kolektif'
+									AND tg.kategori IN ('kolektif', 'individu')
 									AND tg.fk_skpd_id = c.fk_id_skpd
 									AND tg.status_posting = 1
 									AND ((tg.tahun * 12) + tg.bulan)
@@ -294,7 +298,7 @@ class Tagihan extends CI_Controller
 										WHERE
 											tp.fk_pinjaman_id = tcp.id
 											AND tp.fk_anggota_id = tcp.fk_anggota_id
-											AND tg.kategori = 'kolektif'
+											AND tg.kategori IN ('kolektif', 'individu')
 											AND tg.fk_skpd_id = mcua.fk_id_skpd
 											AND tg.status_posting = 1
 									) AS first_tagihan_angka,
@@ -308,7 +312,7 @@ class Tagihan extends CI_Controller
 										WHERE
 											tp.fk_pinjaman_id = tcp.id
 											AND tp.fk_anggota_id = tcp.fk_anggota_id
-											AND tg.kategori = 'kolektif'
+											AND tg.kategori IN ('kolektif', 'individu')
 											AND tg.fk_skpd_id = mcua.fk_id_skpd
 											AND tg.status_posting = 1
 									) AS last_tagihan_angka,
@@ -357,7 +361,7 @@ class Tagihan extends CI_Controller
 
 				ORDER BY q.nama ASC
 			", [
-				$cutoff_angka, // untuk batas_cek_angka
+				$batas_tunggakan_angka, // untuk batas_cek_angka tunggakan, bukan $cutoff_angka
 
 				$cutoff_angka, // untuk is_anggota_baru BETWEEN
 				$cutoff_angka, // untuk EXISTS bulan periode
