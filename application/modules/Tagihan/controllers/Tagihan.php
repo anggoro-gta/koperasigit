@@ -172,6 +172,10 @@ class Tagihan extends CI_Controller
 			// ini batas bulan yang dihitung sebagai tunggakan
 			// contoh filter 2026-05, maka yang dicek hanya sampai 2026-04
 			$batas_tunggakan_angka = $cutoff_angka - 1;
+			// 12-2023 adalah data dummy/saldo awal migrasi, jadi tunggakan dihitung setelah periode ini.
+			// Riwayat pinjaman dihitung lintas SKPD agar mutasi anggota tidak terlihat sebagai bulan bolong.
+			$batas_dummy_angka = (2023 * 12) + 12;
+			$awal_hitung_angka = $batas_dummy_angka + 1;
 			
 			$pinjaman = $this->db->query("
 				SELECT
@@ -216,8 +220,8 @@ class Tagihan extends CI_Controller
 									tp.fk_pinjaman_id = c.id
 									AND tp.fk_anggota_id = c.fk_anggota_id
 									AND tg.kategori IN ('kolektif', 'individu')
-									AND tg.fk_skpd_id = c.fk_id_skpd
 									AND tg.status_posting = 1
+									AND ((tg.tahun * 12) + tg.bulan) > ?
 									AND ((tg.tahun * 12) + tg.bulan)
 										BETWEEN c.angsuran_awal_angka
 										AND c.batas_cek_angka
@@ -250,15 +254,21 @@ class Tagihan extends CI_Controller
 
 								CASE
 									WHEN b.tgl IS NOT NULL THEN
-										(YEAR(DATE_ADD(b.tgl, INTERVAL 1 MONTH)) * 12)
-										+ MONTH(DATE_ADD(b.tgl, INTERVAL 1 MONTH))
+										GREATEST(
+											(YEAR(DATE_ADD(b.tgl, INTERVAL 1 MONTH)) * 12)
+											+ MONTH(DATE_ADD(b.tgl, INTERVAL 1 MONTH)),
+											?
+										)
 
 									WHEN b.first_tagihan_angka IS NOT NULL THEN
 										b.first_tagihan_angka
 
 									WHEN b.tanggal_mulai_aktif IS NOT NULL THEN
-										(YEAR(b.tanggal_mulai_aktif) * 12)
-										+ MONTH(b.tanggal_mulai_aktif)
+										GREATEST(
+											(YEAR(b.tanggal_mulai_aktif) * 12)
+											+ MONTH(b.tanggal_mulai_aktif),
+											?
+										)
 
 									ELSE NULL
 								END AS angsuran_awal_angka,
@@ -299,8 +309,8 @@ class Tagihan extends CI_Controller
 											tp.fk_pinjaman_id = tcp.id
 											AND tp.fk_anggota_id = tcp.fk_anggota_id
 											AND tg.kategori IN ('kolektif', 'individu')
-											AND tg.fk_skpd_id = mcua.fk_id_skpd
 											AND tg.status_posting = 1
+											AND ((tg.tahun * 12) + tg.bulan) > ?
 									) AS first_tagihan_angka,
 
 									(
@@ -313,8 +323,8 @@ class Tagihan extends CI_Controller
 											tp.fk_pinjaman_id = tcp.id
 											AND tp.fk_anggota_id = tcp.fk_anggota_id
 											AND tg.kategori IN ('kolektif', 'individu')
-											AND tg.fk_skpd_id = mcua.fk_id_skpd
 											AND tg.status_posting = 1
+											AND ((tg.tahun * 12) + tg.bulan) > ?
 									) AS last_tagihan_angka,
 
 									CASE 
@@ -361,7 +371,14 @@ class Tagihan extends CI_Controller
 
 				ORDER BY q.nama ASC
 			", [
+				$batas_dummy_angka,
 				$batas_tunggakan_angka, // untuk batas_cek_angka tunggakan, bukan $cutoff_angka
+
+				$awal_hitung_angka,
+				$awal_hitung_angka,
+
+				$batas_dummy_angka,
+				$batas_dummy_angka,
 
 				$cutoff_angka, // untuk is_anggota_baru BETWEEN
 				$cutoff_angka, // untuk EXISTS bulan periode
