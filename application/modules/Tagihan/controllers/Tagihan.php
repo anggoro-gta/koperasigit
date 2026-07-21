@@ -125,36 +125,6 @@ class Tagihan extends CI_Controller
 			$readonly = true;
 			$status_posting = $this->db->query("select * from t_cb_tagihan where id = ? ", [$id])->row()->status_posting;
 		} else {
-			$simpanan = $this->db->query("SELECT id,nama,nip FROM ms_cb_user_anggota where fk_id_skpd = ? AND status_keaktifan='Aktif'",  [$fk_skpd_id])->result();
-			$sw = $this->db->query("SELECT nominal FROM ms_cb_simpanan where id = ? ", [2])->row()->nominal;
-			$readonly = false;
-			// $pinjaman = $this->db->query("select
-			// 	tcp.id,
-			// 	tcp.fk_anggota_id,
-			// 	tcp.fk_kategori_id ,
-			// 	tgl,
-			// 	nama,
-			// 	nip,
-			// 	pinjaman,
-			// 	kategori ,
-			// 	jml_angsuran+1 as angsuran_ke,
-			// 	pokok,
-			// 	tapim,
-			// 	tcp.bunga,
-			// 	tenor,
-			// 	jml_tagihan,
-			// 	mcua.tanggal_mulai_aktif,
-			// 	'' as is_anggota_baru,
-			// 	'' as is_tunggakan 
-			// from
-			// 	t_cb_pinjaman tcp
-			// join ms_cb_user_anggota mcua on
-			// 	tcp.fk_anggota_id = mcua.id
-			// join ms_cb_kategori_pinjam mckp on
-			// 	tcp.fk_kategori_id = mckp.id
-			// 	where status=0 and mcua.fk_id_skpd = ? 
-			// 	ORDER BY tcp.fk_kategori_id asc",  [$fk_skpd_id])->result();
-
 			$raw_periode = trim($this->input->post('periode'));
 
 			if (preg_match('/^\d{4}-\d{2}$/', $raw_periode)) {
@@ -175,20 +145,44 @@ class Tagihan extends CI_Controller
 			// Riwayat pinjaman dihitung lintas SKPD agar mutasi anggota tidak terlihat sebagai bulan bolong.
 			$batas_dummy_angka = (2023 * 12) + 12;
 			$awal_hitung_angka = $batas_dummy_angka + 1;
+
+			$simpanan = $this->db->query("
+				SELECT
+					id,
+					nama,
+					nip,
+					tanggal_mulai_aktif,
+					CASE
+						WHEN tanggal_mulai_aktif IS NOT NULL
+							AND ? BETWEEN
+								((YEAR(tanggal_mulai_aktif) * 12) + MONTH(tanggal_mulai_aktif))
+								AND ((YEAR(tanggal_mulai_aktif) * 12) + MONTH(tanggal_mulai_aktif) + 1)
+						THEN 'ANGGOTA BARU'
+						ELSE NULL
+					END AS is_anggota_baru
+				FROM ms_cb_user_anggota
+				WHERE fk_id_skpd = ?
+					AND status_keaktifan = 'Aktif'
+				ORDER BY nama ASC
+			", [$cutoff_angka, $fk_skpd_id])->result();
+			$sw = $this->db->query("SELECT nominal FROM ms_cb_simpanan where id = ? ", [2])->row()->nominal;
+			$readonly = false;
 			
 			$pinjaman = $this->db->query("
 				SELECT
 					q.*,
 
 					CASE 
-						WHEN q.last_bayar_angka IS NOT NULL
+						WHEN q.has_pinjaman = 1
+							AND q.last_bayar_angka IS NOT NULL
 							AND q.last_bayar_angka < ?
 						THEN 'TUNGGAKAN'
 						ELSE NULL
 					END AS is_tunggakan,
 
 					CASE 
-						WHEN q.last_bayar_angka IS NOT NULL
+						WHEN q.has_pinjaman = 1
+							AND q.last_bayar_angka IS NOT NULL
 							AND q.last_bayar_angka < ?
 						THEN ? - q.last_bayar_angka
 						ELSE 0
@@ -201,6 +195,7 @@ class Tagihan extends CI_Controller
 					FROM (
 						SELECT
 							tcp.id,
+							CASE WHEN tcp.id IS NULL THEN 0 ELSE 1 END AS has_pinjaman,
 							tcp.fk_anggota_id,
 							tcp.fk_kategori_id,
 							tcp.tgl,
@@ -267,30 +262,36 @@ class Tagihan extends CI_Controller
 											+ MONTH(mcua.tanggal_mulai_aktif)
 											+ 1
 										)
-									AND EXISTS (
-										SELECT 1
-										FROM t_cb_tagihan_pinjaman a
-										INNER JOIN t_cb_tagihan b2
-											ON a.fk_tagihan_id = b2.id
-										WHERE
-											a.fk_anggota_id = mcua.id
-											AND b2.kategori = 'kolektif'
-											AND b2.fk_skpd_id = mcua.fk_id_skpd
-											AND b2.status_posting = 1
-											AND ((b2.tahun * 12) + b2.bulan) = ?
-									)
 								THEN 'ANGGOTA BARU'
 								ELSE NULL
 							END AS is_anggota_baru
 
-						FROM t_cb_pinjaman tcp
-						JOIN ms_cb_user_anggota mcua
+						FROM ms_cb_user_anggota mcua
+						LEFT JOIN t_cb_pinjaman tcp
 							ON tcp.fk_anggota_id = mcua.id
-						JOIN ms_cb_kategori_pinjam mckp
+							AND tcp.status = 0
+						LEFT JOIN ms_cb_kategori_pinjam mckp
 							ON tcp.fk_kategori_id = mckp.id
 						WHERE
-							tcp.status = 0
-							AND mcua.fk_id_skpd = ?
+							mcua.fk_id_skpd = ?
+							AND (
+								tcp.id IS NOT NULL
+								OR (
+									mcua.status_keaktifan = 'Aktif'
+									AND mcua.tanggal_mulai_aktif IS NOT NULL
+									AND ? BETWEEN
+										(
+											(YEAR(mcua.tanggal_mulai_aktif) * 12)
+											+ MONTH(mcua.tanggal_mulai_aktif)
+										)
+										AND
+										(
+											(YEAR(mcua.tanggal_mulai_aktif) * 12)
+											+ MONTH(mcua.tanggal_mulai_aktif)
+											+ 1
+										)
+								)
+							)
 					) p
 				) q
 
@@ -307,9 +308,9 @@ class Tagihan extends CI_Controller
 				$cutoff_angka,
 
 				$cutoff_angka, // untuk is_anggota_baru BETWEEN
-				$cutoff_angka, // untuk EXISTS bulan periode
 
-				$fk_skpd_id
+				$fk_skpd_id,
+				$cutoff_angka
 			])->result();
 
 			$status_posting = 0;
