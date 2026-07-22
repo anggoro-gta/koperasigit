@@ -74,6 +74,7 @@ class Pengeluaran extends CI_Controller {
 	public function save(){
 		$id = $this->input->post('id');
 		$data['nama_kategori_pengeluaran'] = $this->input->post('nama_kategori_pengeluaran');
+		$data['tahun'] = $this->input->post('tahun');
 
 		if(empty($id)){
 			$this->MMsKategori->insert($this->table, $data);
