@@ -154,13 +154,29 @@
                                         </li>
                                     </ul>
                                 </li>
+
+                                <li><a><i class="fa fa-file"></i> BKU <span class="fa fa-chevron-down"></span></a>
+                                    <ul class="nav child_menu">
+                                        <li class="<?php if (isset($variabelnya)) {
+                                                            echo 'active';
+                                                        } ?>"><a
+                                                href="<?php echo base_url('BKU/Penerimaan') ?>">Penerimaan</a>
+                                        </li>
+                                        <li class="<?php if (isset($variabelnya)) {
+                                                            echo 'active';
+                                                        } ?>"><a
+                                                href="<?php echo base_url('BKU/Pengeluaran') ?>">Pengeluaran</a>
+                                        </li>
+                                    </ul>
+                                </li>
+
                                 <li class="<?php if (isset($Penarikan)) {
                                                     echo 'active';
                                                 } ?>"><a href="<?php echo base_url('Penarikan') ?>"><i
                                             class="fa fa-file-invoice-dollar"></i>
                                         Penarikan</a>
                                 </li>
-                                <?php } ?>
+                                <?php } ?>                                                           
 
                                 <?php if ($level == 1) { ?>
                                 <li><a><i class="fa fa-bar-chart"></i> Laporan <span
@@ -241,24 +257,7 @@
                                         </li>
                                     </ul>
                                 </li>
-                                <?php } ?>
-
-                                <?php if ($level == 1) { ?>
-                                <li><a><i class="fa fa-file"></i> BKU <span class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu">
-                                        <li class="<?php if (isset($variabelnya)) {
-                                                            echo 'active';
-                                                        } ?>"><a
-                                                href="<?php echo base_url('BKU/Penerimaan') ?>">Penerimaan</a>
-                                        </li>
-                                        <li class="<?php if (isset($variabelnya)) {
-                                                            echo 'active';
-                                                        } ?>"><a
-                                                href="<?php echo base_url('BKU/Pengeluaran') ?>">Pengeluaran</a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <?php } ?>
+                                <?php } ?>                                
                             </ul>
                         </div>
                         <!-- <div class="menu_section">
