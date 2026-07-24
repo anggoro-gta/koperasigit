@@ -233,6 +233,7 @@
                                     <th rowspan="2" class="text-center">PENJUALAN TUNAI</th>
                                     <th rowspan="2" class="text-center">BANK</th>
                                     <th rowspan="2" class="text-center">FOTO COPY</th>
+                                    <th rowspan="2" class="text-center">SHU PKPRI</th>
                                     <th rowspan="2" class="text-center">BARANG TITIPAN & KONSINYASI</th>
                                     <th colspan="2" class="text-center">JUMLAH</th>
                                     <th rowspan="2" class="text-center freeze-action">AKSI</th>
@@ -359,6 +360,11 @@ $(document).ready(function() {
             },
             {
                 data: 'foto_copy',
+                orderable: false,
+                className: 'text-right'
+            },
+            {
+                data: 'shu_pkpri',
                 orderable: false,
                 className: 'text-right'
             },

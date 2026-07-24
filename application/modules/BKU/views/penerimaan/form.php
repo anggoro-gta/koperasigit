@@ -129,6 +129,7 @@
                                         <th rowspan="2" class="text-center">PENJUALAN TUNAI</th>
                                         <th rowspan="2" class="text-center">BANK</th>
                                         <th rowspan="2" class="text-center">FOTO COPY</th>
+                                        <th rowspan="2" class="text-center">SHU PKPRI</th>
                                         <th rowspan="2" class="text-center">BARANG TITIPAN & KONSINYASI</th>
                                         <th colspan="2" class="text-center">JUMLAH</th>
                                         <th rowspan="2" class="text-center freeze-action">AKSI</th>
@@ -146,7 +147,7 @@
                                 </thead>
                                 <tbody id="tbody-penerimaan">
                                     <tr>
-                                        <td colspan="15" class="text-center text-muted">
+                                        <td colspan="16" class="text-center text-muted">
                                             Silakan pilih periode terlebih dahulu.
                                         </td>
                                     </tr>
@@ -206,7 +207,7 @@ $(document).ready(function() {
 
             $('#tbody-penerimaan').html(`
                 <tr>
-                    <td colspan="15" class="text-center text-muted">
+                    <td colspan="16" class="text-center text-muted">
                         Silakan pilih periode terlebih dahulu.
                     </td>
                 </tr>
@@ -227,7 +228,7 @@ $(document).ready(function() {
 
                 $('#tbody-penerimaan').html(`
                     <tr>
-                        <td colspan="15" class="text-center">
+                        <td colspan="16" class="text-center">
                             <i class="glyphicon glyphicon-refresh"></i> Memuat data...
                         </td>
                     </tr>
@@ -244,7 +245,7 @@ $(document).ready(function() {
                 } else {
                     $('#tbody-penerimaan').html(`
                         <tr>
-                            <td colspan="15" class="text-center text-danger">
+                            <td colspan="16" class="text-center text-danger">
                                 ${res.message}
                             </td>
                         </tr>
@@ -255,7 +256,7 @@ $(document).ready(function() {
                 $('#tambah_penerimaan').addClass('hidden');
                 $('#tbody-penerimaan').html(`
                     <tr>
-                        <td colspan="15" class="text-center text-danger">
+                        <td colspan="16" class="text-center text-danger">
                             Gagal mengambil data periode.
                         </td>
                     </tr>

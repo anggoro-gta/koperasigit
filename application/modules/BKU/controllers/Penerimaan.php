@@ -82,6 +82,7 @@ class Penerimaan extends CI_Controller {
 				'penjualan_tunai'     => $this->_rupiah($row->penjualan_tunai),
 				'bank'                => $this->_rupiah($row->bank),
 				'foto_copy'           => $this->_rupiah($row->foto_copy),
+				'shu_pkpri'           => $this->_rupiah($row->shu_pkpri),
 				'barang_titipan'      => $this->_rupiah($row->barang_titipan),
 
 				'jumlah_penerimaan'   => $this->_rupiah($row->jumlah_penerimaan),
@@ -117,6 +118,7 @@ class Penerimaan extends CI_Controller {
 					|| strpos((string) $row['penjualan_tunai'], $keyword) !== false
 					|| strpos((string) $row['bank'], $keyword) !== false
 					|| strpos((string) $row['foto_copy'], $keyword) !== false
+					|| strpos((string) $row['shu_pkpri'], $keyword) !== false
 					|| strpos((string) $row['barang_titipan'], $keyword) !== false
 					|| strpos((string) $row['jumlah_penerimaan'], $keyword) !== false
 					|| strpos((string) $row['saldo'], $keyword) !== false;
@@ -283,7 +285,7 @@ class Penerimaan extends CI_Controller {
 		$html .= '<tr>';
 		$html .= '<th class="text-left">SALDO AWAL</th>';
 
-		for ($i = 1; $i <= 12; $i++) {
+		for ($i = 1; $i <= 13; $i++) {
 			$html .= '<td class="text-right">-</td>';
 		}
 
@@ -294,7 +296,7 @@ class Penerimaan extends CI_Controller {
 		$html .= '<tr>';
 		$html .= '<td>&nbsp;</td>';
 
-		for ($i = 1; $i <= 13; $i++) {
+		for ($i = 1; $i <= 14; $i++) {
 			$html .= '<td class="text-right">-</td>';
 		}
 
@@ -318,6 +320,7 @@ class Penerimaan extends CI_Controller {
 		$sum_penjualan_tunai   = 0;
 		$sum_bank              = 0;
 		$sum_foto_copy         = 0;
+		$sum_shu_pkpri         = 0;
 		$sum_barang_titipan    = 0;
 
 		$sum_jml_penerimaan    = 0;
@@ -347,6 +350,7 @@ class Penerimaan extends CI_Controller {
 				$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row->penjualan_tunai).'</td>';
 				$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row->bank).'</td>';
 				$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row->foto_copy).'</td>';
+				$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row->shu_pkpri).'</td>';
 				$html .= '<td class="text-right">'.$this->_rupiah_or_dash($row->barang_titipan).'</td>';
 
 				$jml_penerimaan = $this->_total_penerimaan_row($row);
@@ -361,6 +365,7 @@ class Penerimaan extends CI_Controller {
 				$sum_penjualan_tunai   += $row->penjualan_tunai;
 				$sum_bank              += $row->bank;
 				$sum_foto_copy         += $row->foto_copy;
+				$sum_shu_pkpri         += $row->shu_pkpri;
 				$sum_barang_titipan    += $row->barang_titipan;
 				$sum_jml_penerimaan	   += $jml_penerimaan;
 
@@ -393,6 +398,7 @@ class Penerimaan extends CI_Controller {
 			<th class="text-right">'.$this->_rupiah_or_dash($sum_penjualan_tunai).'</th>
 			<th class="text-right">'.$this->_rupiah_or_dash($sum_bank).'</th>
 			<th class="text-right">'.$this->_rupiah_or_dash($sum_foto_copy).'</th>
+			<th class="text-right">'.$this->_rupiah_or_dash($sum_shu_pkpri).'</th>
 			<th class="text-right">'.$this->_rupiah_or_dash($sum_barang_titipan).'</th>
 			<th class="text-right">'.$this->_rupiah_or_dash($sum_jml_penerimaan).'</th>
 			<th class="text-right">'.$this->_rupiah_or_dash($total_saldo).'</th>
@@ -501,6 +507,7 @@ class Penerimaan extends CI_Controller {
 			'penjualan_tunai'               => $this->_to_decimal($this->input->post('penjualan_tunai', true)),
 			'bank'                          => $this->_to_decimal($this->input->post('bank', true)),
 			'foto_copy'                     => $this->_to_decimal($this->input->post('foto_copy', true)),
+			'shu_pkpri'                     => $this->_to_decimal($this->input->post('shu_pkpri', true)),
 			'barang_titipan'                => $this->_to_decimal($this->input->post('barang_titipan', true)),
 		);
 
@@ -618,6 +625,7 @@ class Penerimaan extends CI_Controller {
 					COALESCE(penjualan_tunai, 0) +
 					COALESCE(bank, 0) +
 					COALESCE(foto_copy, 0) +
+					COALESCE(shu_pkpri, 0) +
 					COALESCE(barang_titipan, 0)
 				), 0) AS total
 			", false)
@@ -646,6 +654,7 @@ class Penerimaan extends CI_Controller {
 					COALESCE(penjualan_tunai, 0) +
 					COALESCE(bank, 0) +
 					COALESCE(foto_copy, 0) +
+					COALESCE(shu_pkpri, 0) +
 					COALESCE(barang_titipan, 0)
 				), 0) AS total
 			", false)
@@ -753,6 +762,7 @@ class Penerimaan extends CI_Controller {
 			(float) $row->penjualan_tunai +
 			(float) $row->bank +
 			(float) $row->foto_copy +
+			(float) $row->shu_pkpri +
 			(float) $row->barang_titipan;
 	}
 
@@ -808,6 +818,7 @@ class Penerimaan extends CI_Controller {
 			COALESCE(SUM(penjualan_tunai), 0) AS penjualan_tunai,
 			COALESCE(SUM(bank), 0) AS bank,
 			COALESCE(SUM(foto_copy), 0) AS foto_copy,
+			COALESCE(SUM(shu_pkpri), 0) AS shu_pkpri,
 			COALESCE(SUM(barang_titipan), 0) AS barang_titipan,
 
 			COALESCE(SUM(
@@ -821,6 +832,7 @@ class Penerimaan extends CI_Controller {
 				COALESCE(penjualan_tunai, 0) +
 				COALESCE(bank, 0) +
 				COALESCE(foto_copy, 0) +
+				COALESCE(shu_pkpri, 0) +
 				COALESCE(barang_titipan, 0)
 			), 0) AS jumlah_penerimaan
 		", false);

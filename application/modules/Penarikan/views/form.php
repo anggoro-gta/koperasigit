@@ -109,6 +109,15 @@
 .bs3-ico-cyan {
     color: #00bcd4;
 }
+
+.bs3-money-input {
+    width: 190px;
+}
+
+.bs3-money-input .form-control {
+    height: 30px;
+    padding: 4px 8px;
+}
 </style>
 <div class="">
     <div class="page-title">
@@ -161,11 +170,18 @@
                             </select>
                         </div>
                         <?php
-                          $jumlah_akhir = 0;
-                          $total_simpanan = 0;
-                          $total_tanggungan = 0;
+                          $is_update = ($button == 'Update');
+                          $simpanan_pokok = isset($simpanan_pokok) ? (float)$simpanan_pokok : 0;
+                          $simpanan_wajib = isset($simpanan_wajib) ? (float)$simpanan_wajib : 0;
+                          $simpanan_tapim = isset($simpanan_tapim) ? (float)$simpanan_tapim : 0;
+                          $simpanan_sukarela = isset($simpanan_sukarela) ? (float)$simpanan_sukarela : 0;
+                          $total_simpanan = isset($total_simpanan)
+                            ? (float)$total_simpanan
+                            : ($simpanan_pokok + $simpanan_wajib + $simpanan_tapim + $simpanan_sukarela);
+                          $total_tanggungan = isset($total_tanggungan) ? (float)$total_tanggungan : 0;
+                          $jumlah_akhir = isset($jumlah_akhir) ? (float)$jumlah_akhir : ($total_simpanan - $total_tanggungan);
                         ?>
-                        <div class="row" id="div_detail" style="display:none;">
+                        <div class="row" id="div_detail" style="<?= $fk_anggota_id ? '' : 'display:none;' ?>">
                             <div class="col-sm-12">
 
                                 <!-- CARD: Quick Stats -->
@@ -180,31 +196,70 @@
                                             <li class="clearfix">
                                                 <span>POKOK</span>
                                                 <span class="pull-right text-right" id="simpanan_pokok"
-                                                    style="font-size:14px">Rp 0,00</span>
-                                                <input type="hidden" id="simpanan_pokok_val" value="0">
+                                                    style="font-size:14px">Rp <?= number_format($simpanan_pokok, 2, ',', '.') ?></span>
+                                                <input type="hidden" id="simpanan_pokok_val" value="<?= $simpanan_pokok ?>">
                                             </li>
                                             <li class="clearfix">
                                                 <span>WAJIB</span>
+                                                <?php if ($is_update) : ?>
                                                 <span class="pull-right text-right" id="simpanan_wajib"
-                                                    style="font-size:14px">Rp 0,00</span>
-                                                <input type="hidden" id="simpanan_wajib_val" value="0">
+                                                    style="font-size:14px">Rp <?= number_format($simpanan_wajib, 2, ',', '.') ?></span>
+                                                <?php else : ?>
+                                                <span class="pull-right text-right">
+                                                    <div class="input-group input-group-sm bs3-money-input">
+                                                        <span class="input-group-addon">Rp</span>
+                                                        <input type="text" id="simpanan_wajib_input"
+                                                            class="form-control text-right simpanan-nominal-input"
+                                                            data-target="#simpanan_wajib_val"
+                                                            value="<?= number_format($simpanan_wajib, 0, ',', '.') ?>"
+                                                            autocomplete="off" inputmode="numeric">
+                                                    </div>
+                                                </span>
+                                                <?php endif; ?>
+                                                <input type="hidden" id="simpanan_wajib_val" value="<?= $simpanan_wajib ?>">
                                             </li>
                                             <li class="clearfix">
                                                 <span>TERPIMPIN</span>
+                                                <?php if ($is_update) : ?>
                                                 <span class="pull-right text-right" id="simpanan_tapim"
-                                                    style="font-size:14px">Rp 0,00</span>
-                                                <input type="hidden" id="simpanan_tapim_val" value="0">
+                                                    style="font-size:14px">Rp <?= number_format($simpanan_tapim, 2, ',', '.') ?></span>
+                                                <?php else : ?>
+                                                <span class="pull-right text-right">
+                                                    <div class="input-group input-group-sm bs3-money-input">
+                                                        <span class="input-group-addon">Rp</span>
+                                                        <input type="text" id="simpanan_tapim_input"
+                                                            class="form-control text-right simpanan-nominal-input"
+                                                            data-target="#simpanan_tapim_val"
+                                                            value="<?= number_format($simpanan_tapim, 0, ',', '.') ?>"
+                                                            autocomplete="off" inputmode="numeric">
+                                                    </div>
+                                                </span>
+                                                <?php endif; ?>
+                                                <input type="hidden" id="simpanan_tapim_val" value="<?= $simpanan_tapim ?>">
                                             </li>
                                             <li class="clearfix">
                                                 <span>SUKARELA</span>
+                                                <?php if ($is_update) : ?>
                                                 <span class="pull-right text-right" id="simpanan_sukarela"
-                                                    style="font-size:14px">Rp 0,00</span>
-                                                <input type="hidden" id="simpanan_sukarela_val" value="0">
+                                                    style="font-size:14px">Rp <?= number_format($simpanan_sukarela, 2, ',', '.') ?></span>
+                                                <?php else : ?>
+                                                <span class="pull-right text-right">
+                                                    <div class="input-group input-group-sm bs3-money-input">
+                                                        <span class="input-group-addon">Rp</span>
+                                                        <input type="text" id="simpanan_sukarela_input"
+                                                            class="form-control text-right simpanan-nominal-input"
+                                                            data-target="#simpanan_sukarela_val"
+                                                            value="<?= number_format($simpanan_sukarela, 0, ',', '.') ?>"
+                                                            autocomplete="off" inputmode="numeric">
+                                                    </div>
+                                                </span>
+                                                <?php endif; ?>
+                                                <input type="hidden" id="simpanan_sukarela_val" value="<?= $simpanan_sukarela ?>">
                                             </li>
                                             <li class="clearfix">
                                                 <strong>TOTAL SIMPANAN</strong>
                                                 <strong class="pull-right text-right" id="total_simpanan"
-                                                    style="font-size:16px">Rp 0,00</strong>
+                                                    style="font-size:16px">Rp <?= number_format($total_simpanan, 2, ',', '.') ?></strong>
                                             </li>
                                         </ul>
                                     </div>
@@ -277,7 +332,7 @@
                                             <li class="clearfix">
                                                 <strong>TOTAL TANGGUNGAN</strong>
                                                 <strong class="pull-right text-right" id="total_tanggungan"
-                                                    style="font-size:16px">Rp 0,00</strong>
+                                                    style="font-size:16px">Rp <?= number_format($total_tanggungan, 2, ',', '.') ?></strong>
                                             </li>
                                         </ul>
                                     </div>
@@ -289,7 +344,7 @@
                                             <li class="clearfix">
                                                 <span>JUMLAH AKHIR</span>
                                                 <strong class="pull-right text-right" id="jumlah_akhir"
-                                                    style="font-size:16px">Rp 0,00</strong>
+                                                    style="font-size:16px">Rp <?= number_format($jumlah_akhir, 2, ',', '.') ?></strong>
                                             </li>
                                             <li class="clearfix">
                                                 <span>PENARIKAN</span>
@@ -300,7 +355,8 @@
                                                             id="addon_nominal_penarikan">Rp</span>
                                                         <input type="text" id="nominal_penarikan_view"
                                                             class="form-control text-right" placeholder="0"
-                                                            autocomplete="off" inputmode="numeric">
+                                                            autocomplete="off" inputmode="numeric"
+                                                            <?= $button=='Update' ? 'disabled' : '' ?>>
                                                     </div>
                                                     <small id="nominal_info" class="text-muted pull-right"
                                                         style="display:block;margin-top:5px;"></small>
@@ -313,7 +369,8 @@
                                                 <span>STATUS ANGGOTA</span>
                                                 <span class="pull-right">
                                                     <select class="form-control form-control-sm" id="status_anggota"
-                                                        name="status_anggota" style="width:170px" required>
+                                                        name="status_anggota" style="width:170px" required
+                                                        <?= $button=='Update' ? 'disabled' : '' ?>>
                                                         <option value="">Pilih Status</option>
                                                         <option value="keluar"
                                                             <?= $status_anggota=='keluar' ? 'selected' : '' ?>>Keluar
@@ -332,14 +389,16 @@
                                                 <span class="pull-right text-right">
                                                     <input type="date" id="tanggal_penarikan" name="tanggal_penarikan"
                                                         class="form-control form-control-sm" style="width:170px"
-                                                        value="<?= $tgl_penarikan ?>"></span>
+                                                        value="<?= $tgl_penarikan ?>"
+                                                        <?= $button=='Update' ? 'disabled' : '' ?>></span>
                                             </li>
                                             <li class="clearfix">
                                                 <span>KETERANGAN</span>
                                                 <span class="pull-right">
                                                     <textarea id="keterangan" name="keterangan"
                                                         class="form-control form-control-sm"
-                                                        style="width:270px"><?= $keterangan ?></textarea>
+                                                        style="width:270px"
+                                                        <?= $button=='Update' ? 'disabled' : '' ?>><?= $keterangan ?></textarea>
                                                 </span>
                                             </li>
                                         </ul>
@@ -416,6 +475,80 @@ function setNominalMode(jumlahAkhir) {
     }
 }
 
+function getSimpananValue(key) {
+    return Number($('#simpanan_' + key + '_val').val() || 0);
+}
+
+function setSimpananValue(key, value) {
+    value = Number(value || 0);
+    if (isNaN(value)) value = 0;
+
+    $('#simpanan_' + key + '_val').val(value);
+
+    var $input = $('#simpanan_' + key + '_input');
+    if ($input.length) {
+        $input.val(formatRupiahInt(String(Math.abs(Math.round(value)))));
+    }
+
+    var $label = $('#simpanan_' + key);
+    if ($label.length) {
+        $label.text(rupiah(value));
+    }
+}
+
+function setTanggunganTotal(value) {
+    value = Number(value || 0);
+    if (isNaN(value)) value = 0;
+
+    $('#total_tanggungan')
+        .data('value', value)
+        .text(rupiah(value));
+}
+
+function syncNominalPenarikanLimit() {
+    var $view = $('#nominal_penarikan_view');
+    var $raw = $('#nominal_penarikan');
+    var maks = Number($view.data('maks') || 0);
+    var sign = Number($view.data('sign') || 1);
+    var valAbs = Math.abs(Number($raw.val() || 0));
+
+    if (maks <= 0) {
+        valAbs = 0;
+    } else if (valAbs > maks) {
+        valAbs = maks;
+    }
+
+    $raw.val(sign < 0 ? -valAbs : valAbs);
+    $view.val(formatRupiahInt(String(Math.floor(valAbs))));
+}
+
+function renderJumlahAkhir(jumlahAkhir) {
+    jumlahAkhir = Number(jumlahAkhir || 0);
+
+    $('#jumlah_akhir').text(rupiah(jumlahAkhir))
+        .removeClass('text-danger text-success')
+        .addClass(jumlahAkhir > 0 ? 'text-success' : (jumlahAkhir < 0 ? 'text-danger' : ''));
+
+    setNominalMode(jumlahAkhir);
+    syncNominalPenarikanLimit();
+
+    var can = Math.abs(jumlahAkhir) > 0;
+    $('#nominal_penarikan_view, #tanggal_penarikan, #status_anggota, #keterangan')
+        .prop('disabled', !can);
+}
+
+function recalcSimpananSummary() {
+    var totalSimpanan = getSimpananValue('pokok') +
+        getSimpananValue('wajib') +
+        getSimpananValue('tapim') +
+        getSimpananValue('sukarela');
+    var totalTanggungan = Number($('#total_tanggungan').data('value') || 0);
+
+    $('#total_simpanan').text(rupiah(totalSimpanan));
+    renderJumlahAkhir(totalSimpanan - totalTanggungan);
+    refreshSubmitState();
+}
+
 function renderRows(tbodyId, rows) {
     var $tb = $('#' + tbodyId);
     $tb.empty();
@@ -437,7 +570,24 @@ function renderRows(tbodyId, rows) {
     });
 }
 
+function isEditMode() {
+    return Number($('input[name="id"]').val() || 0) > 0;
+}
+
+function lockEditForm() {
+    if (!isEditMode()) return;
+
+    $('#fk_anggota_id, #nominal_penarikan_view, #tanggal_penarikan, #status_anggota, #keterangan')
+        .prop('disabled', true);
+    $('#btn_submit').prop('disabled', true).hide();
+}
+
 function refreshSubmitState() {
+    if (isEditMode()) {
+        lockEditForm();
+        return;
+    }
+
     var anggota = $('#fk_anggota_id').val();
     var nominal = Number($('#nominal_penarikan').val() || 0);
     var tgl = ($('#tanggal_penarikan').val() || '').trim();
@@ -452,10 +602,13 @@ $(function() {
     var $detail = $('#div_detail');
     var $view = $('#nominal_penarikan_view');
     var $raw = $('#nominal_penarikan');
-    var isEdit = Number($('input[name="id"]').val() || 0) > 0;
+    var isEdit = isEditMode();
 
     // init format nominal dari hidden
     $view.val(formatRupiahInt($raw.val()));
+    setNominalMode(<?= json_encode((float)$jumlah_akhir) ?>);
+    setTanggunganTotal(<?= json_encode((float)$total_tanggungan) ?>);
+    lockEditForm();
 
     // format input + update hidden raw
     $view.on('input', function() {
@@ -480,6 +633,17 @@ $(function() {
         this.select();
     });
 
+    $('.simpanan-nominal-input').on('input', function() {
+        var digits = onlyDigits($(this).val());
+        var value = Number(digits || 0);
+
+        $(this).val(formatRupiahInt(String(value)));
+        $($(this).data('target')).val(value);
+        recalcSimpananSummary();
+    }).on('focus', function() {
+        this.select();
+    });
+
     $('#tanggal_penarikan, #status_anggota, #fk_anggota_id').on('change input',
         refreshSubmitState);
 
@@ -496,6 +660,7 @@ $(function() {
             type: "POST",
             dataType: "json",
             data: {
+                id: $('input[name="id"]').val(),
                 fk_anggota_id: anggotaId,
                 jenis_penarikan: 'non_sukarela'
             },
@@ -522,15 +687,10 @@ $(function() {
                                 'disabled', true);
                     } else {
                         $('#btn_submit').show();
-                        $('#simpanan_pokok_val').val(res.simpanan.pokok);
-                        $('#simpanan_wajib_val').val(res.simpanan.wajib);
-                        $('#simpanan_tapim_val').val(res.simpanan.tapim);
-                        $('#simpanan_sukarela_val').val(res.simpanan.sukarela);
-
-                        $('#simpanan_pokok').text(rupiah(res.simpanan.pokok));
-                        $('#simpanan_wajib').text(rupiah(res.simpanan.wajib));
-                        $('#simpanan_tapim').text(rupiah(res.simpanan.tapim));
-                        $('#simpanan_sukarela').text(rupiah(res.simpanan.sukarela));
+                        setSimpananValue('pokok', res.simpanan.pokok);
+                        setSimpananValue('wajib', res.simpanan.wajib);
+                        setSimpananValue('tapim', res.simpanan.tapim);
+                        setSimpananValue('sukarela', res.simpanan.sukarela);
 
                         $('#total_simpanan').text(rupiah(res.total_simpanan));
 
@@ -555,31 +715,16 @@ $(function() {
                             $('#sec_palen').hide();
                         }
 
-                        $('#total_tanggungan').text(rupiah(res.total_tanggungan));
+                        setTanggunganTotal(res.total_tanggungan);
                         var jumlahAkhir = Number(res.jumlah_akhir || 0);
 
-                        $('#jumlah_akhir').text(rupiah(jumlahAkhir))
-                            .removeClass('text-danger text-success')
-                            .addClass(jumlahAkhir > 0 ? 'text-success' : (jumlahAkhir < 0 ?
-                                'text-danger' :
-                                ''));
-
-                        // mode input plus / minus
-                        setNominalMode(jumlahAkhir);
-
-                        // input boleh aktif jika jumlah akhir tidak nol
-                        var can = Math.abs(jumlahAkhir) > 0 || isEdit;
-
-                        $('#nominal_penarikan_view, #tanggal_penarikan, #status_anggota, #keterangan')
-                            .prop(
-                                'disabled', !
-                                can);
+                        renderJumlahAkhir(jumlahAkhir);
                     }
                 }
 
                 $detail.show();
 
-
+                lockEditForm();
                 refreshSubmitState();
             },
             error: function() {

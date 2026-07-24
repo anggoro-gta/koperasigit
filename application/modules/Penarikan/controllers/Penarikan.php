@@ -69,10 +69,20 @@ class Penarikan extends CI_Controller
 		if (!$this->input->is_ajax_request()) show_404();
 
 		$anggota_id = (int) $this->input->post('fk_anggota_id');
+		$penarikan_id = (int) $this->input->post('id');
 		$jenis_penarikan = $this->input->post('jenis_penarikan');
 		if ($anggota_id <= 0) {
 			echo json_encode(['ok' => false, 'message' => 'Anggota tidak valid']);
 			return;
+		}
+
+		$current_penarikan = [];
+		if ($penarikan_id > 0) {
+			$current_penarikan = $this->db->get_where('t_cb_penarikan', ['id' => $penarikan_id])->row_array();
+			if (!$current_penarikan || (int)$current_penarikan['fk_anggota_id'] !== $anggota_id) {
+				echo json_encode(['ok' => false, 'message' => 'Data penarikan tidak sesuai anggota']);
+				return;
+			}
 		}
 
 		// SIMPANAN
@@ -122,10 +132,17 @@ class Penarikan extends CI_Controller
 
 		$jml_penarikan_sebelumnya = (float)($q_riwayat_penarikan['jumlah'] ?? 0);
 
-		$q_status_anggota = $this->db->query(
-			"SELECT status_anggota FROM t_cb_penarikan WHERE fk_anggota_id = ? AND status_anggota != '' LIMIT 1",
-			[$anggota_id]
-		)->row_array();
+		$status_sql = "SELECT status_anggota
+			FROM t_cb_penarikan
+			WHERE fk_anggota_id = ? AND status_anggota != ''";
+		$status_params = [$anggota_id];
+		if ($penarikan_id > 0) {
+			$status_sql .= " AND id != ?";
+			$status_params[] = $penarikan_id;
+		}
+		$status_sql .= " LIMIT 1";
+
+		$q_status_anggota = $this->db->query($status_sql, $status_params)->row_array();
 
 		$status_anggota = '';
 		
@@ -139,6 +156,15 @@ class Penarikan extends CI_Controller
 			'tapim'    => (float)($q_tapim['jumlah'] ?? 0),
 			'sukarela' => (float)($q_sukarela['jumlah'] - $jml_penarikan_sebelumnya ?? 0),
 		];
+
+		if (!empty($current_penarikan)) {
+			$simpanan = [
+				'pokok'    => (float)($current_penarikan['pokok'] ?? 0),
+				'wajib'    => (float)($current_penarikan['wajib'] ?? 0),
+				'tapim'    => (float)($current_penarikan['tapim'] ?? 0),
+				'sukarela' => (float)($current_penarikan['sukarela'] ?? 0),
+			];
+		}
 
 		$total_simpanan = $simpanan['pokok'] + $simpanan['wajib'] + $simpanan['tapim'] + $simpanan['sukarela'];
 
@@ -222,6 +248,11 @@ class Penarikan extends CI_Controller
 			'fk_anggota_id'    => '',
 			'tgl_penarikan'    => date('Y-m-d'),
 			'jumlah_penarikan' => 0,
+			'simpanan_pokok'   => 0,
+			'simpanan_wajib'   => 0,
+			'simpanan_tapim'   => 0,
+			'simpanan_sukarela'=> 0,
+			'total_simpanan'   => 0,
 			'status_anggota'   => '',
 			'keterangan'       => '',
 			'act_back'         => site_url('Penarikan'),
@@ -246,6 +277,11 @@ class Penarikan extends CI_Controller
 			return;
 		}
 
+		$simpanan_pokok = (float)($row['pokok'] ?? 0);
+		$simpanan_wajib = (float)($row['wajib'] ?? 0);
+		$simpanan_tapim = (float)($row['tapim'] ?? 0);
+		$simpanan_sukarela = (float)($row['sukarela'] ?? 0);
+
 		$data = [
 			'action'           => site_url('Penarikan/ajax_save'),
 			'button'           => 'Update',
@@ -254,6 +290,11 @@ class Penarikan extends CI_Controller
 			'fk_anggota_id'    => (int)$row['fk_anggota_id'],
 			'tgl_penarikan'    => $row['tgl_penarikan'],
 			'jumlah_penarikan' => (float)$row['jumlah_penarikan'],
+			'simpanan_pokok'   => $simpanan_pokok,
+			'simpanan_wajib'   => $simpanan_wajib,
+			'simpanan_tapim'   => $simpanan_tapim,
+			'simpanan_sukarela'=> $simpanan_sukarela,
+			'total_simpanan'   => $simpanan_pokok + $simpanan_wajib + $simpanan_tapim + $simpanan_sukarela,
 			'status_anggota'   => $row['status_anggota'],
 			'keterangan'       => $row['keterangan'],
 			'act_back'         => site_url('Penarikan'),

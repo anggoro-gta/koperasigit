@@ -137,7 +137,11 @@
                         </td>
                         <?php } ?>
                         <td scope="row"><?= ++$key ?></td>
-                        <td><?= $value->nama ?></td>
+                        <td><?= $value->nama ?>
+                            <?php if (!empty($value->is_anggota_baru)) { ?>
+                            <br><span class="label label-success">Baru</span>
+                            <?php } ?>
+                        </td>
                         <td><?= $value->nip ?></td>
                         <td><?= number_format($simpananWajib) ?></td>
                         <td>

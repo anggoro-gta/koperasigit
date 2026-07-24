@@ -195,7 +195,7 @@ class Tagihan extends CI_Controller
 					FROM (
 						SELECT
 							tcp.id,
-							CASE WHEN tcp.id IS NULL THEN 0 ELSE 1 END AS has_pinjaman,
+							1 AS has_pinjaman,
 							tcp.fk_anggota_id,
 							tcp.fk_kategori_id,
 							tcp.tgl,
@@ -219,18 +219,11 @@ class Tagihan extends CI_Controller
 										+ MONTH(DATE_ADD(tcp.tgl, INTERVAL 1 MONTH)),
 										?
 									)
-								WHEN mcua.tanggal_mulai_aktif IS NOT NULL THEN
-									GREATEST(
-										(YEAR(mcua.tanggal_mulai_aktif) * 12)
-										+ MONTH(mcua.tanggal_mulai_aktif),
-										?
-									)
 								ELSE NULL
 							END AS angsuran_awal_angka,
 
 							CASE
 								WHEN tcp.tgl IS NOT NULL THEN 'TGL_PINJAMAN'
-								WHEN mcua.tanggal_mulai_aktif IS NOT NULL THEN 'TANGGAL_MULAI_AKTIF'
 								ELSE 'DATA_TIDAK_LENGKAP'
 							END AS sumber_angsuran_awal,
 
@@ -247,51 +240,16 @@ class Tagihan extends CI_Controller
 									AND tg.status_posting = 1
 									AND ((tg.tahun * 12) + tg.bulan) > ?
 									AND ((tg.tahun * 12) + tg.bulan) < ?
-							) AS last_tagihan_angka,
+							) AS last_tagihan_angka
 
-							CASE
-								WHEN mcua.tanggal_mulai_aktif IS NOT NULL
-									AND ? BETWEEN
-										(
-											(YEAR(mcua.tanggal_mulai_aktif) * 12)
-											+ MONTH(mcua.tanggal_mulai_aktif)
-										)
-										AND
-										(
-											(YEAR(mcua.tanggal_mulai_aktif) * 12)
-											+ MONTH(mcua.tanggal_mulai_aktif)
-											+ 1
-										)
-								THEN 'ANGGOTA BARU'
-								ELSE NULL
-							END AS is_anggota_baru
-
-						FROM ms_cb_user_anggota mcua
-						LEFT JOIN t_cb_pinjaman tcp
+						FROM t_cb_pinjaman tcp
+						INNER JOIN ms_cb_user_anggota mcua
 							ON tcp.fk_anggota_id = mcua.id
-							AND tcp.status = 0
-						LEFT JOIN ms_cb_kategori_pinjam mckp
+						INNER JOIN ms_cb_kategori_pinjam mckp
 							ON tcp.fk_kategori_id = mckp.id
 						WHERE
 							mcua.fk_id_skpd = ?
-							AND (
-								tcp.id IS NOT NULL
-								OR (
-									mcua.status_keaktifan = 'Aktif'
-									AND mcua.tanggal_mulai_aktif IS NOT NULL
-									AND ? BETWEEN
-										(
-											(YEAR(mcua.tanggal_mulai_aktif) * 12)
-											+ MONTH(mcua.tanggal_mulai_aktif)
-										)
-										AND
-										(
-											(YEAR(mcua.tanggal_mulai_aktif) * 12)
-											+ MONTH(mcua.tanggal_mulai_aktif)
-											+ 1
-										)
-								)
-							)
+							AND tcp.status = 0
 					) p
 				) q
 
@@ -302,15 +260,11 @@ class Tagihan extends CI_Controller
 				$batas_tunggakan_angka,
 
 				$awal_hitung_angka,
-				$awal_hitung_angka,
 
 				$batas_dummy_angka,
 				$cutoff_angka,
 
-				$cutoff_angka, // untuk is_anggota_baru BETWEEN
-
-				$fk_skpd_id,
-				$cutoff_angka
+				$fk_skpd_id
 			])->result();
 
 			$status_posting = 0;
@@ -356,8 +310,9 @@ class Tagihan extends CI_Controller
 		$this->MTagihan->insert($data);
 		$tagihanId = $this->db->insert_id();
 		$dataPinjaman = [];
-		for ($i = 0; $i < count($this->input->post('tcp_id')); $i++) {
-			$tcp_id = $this->input->post('tcp_id')[$i];
+		$tcp_ids = (array) $this->input->post('tcp_id');
+		for ($i = 0; $i < count($tcp_ids); $i++) {
+			$tcp_id = $tcp_ids[$i];
 			$pinjaman = [
 				'fk_tagihan_id' => $tagihanId,
 				'fk_pinjaman_id' => $fk_pinjaman_id[$tcp_id],
@@ -379,14 +334,15 @@ class Tagihan extends CI_Controller
 		}
 		// insert tagihan simpanan
 		$dataSimpanan = [];
+		$simpanan_ids = (array) $this->input->post('simpanan');
 
-		for ($i = 0; $i < count($this->input->post('simpanan')); $i++) {
+		for ($i = 0; $i < count($simpanan_ids); $i++) {
 			$simpanan = [
 				'fk_tagihan_id' => $tagihanId,
 				'fk_skpd_id' => $fk_skpd_id,
-				'fk_anggota_id' => $this->input->post('simpanan')[$i],
+				'fk_anggota_id' => $simpanan_ids[$i],
 				'wajib' => str_replace(",", "", $wajib[$i]),
-				'sukarela' => str_replace(",", "", $sukarela[$this->input->post('simpanan')[$i]]),
+				'sukarela' => str_replace(",", "", $sukarela[$simpanan_ids[$i]]),
 			];
 			array_push($dataSimpanan, $simpanan);
 		}

@@ -121,6 +121,14 @@ function nilai_bku($row, $field)
 
     <div class="col-md-6">
         <div class="form-group">
+            <label>SHU PKPRI</label>
+            <input type="text" name="shu_pkpri" class="form-control input-sm text-right input-rupiah"
+                value="<?= nilai_bku($row, 'shu_pkpri') ?>">
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-group">
             <label>Barang Titipan & Konsinyasi</label>
             <input type="text" name="barang_titipan" class="form-control input-sm text-right input-rupiah"
                 value="<?= nilai_bku($row, 'barang_titipan') ?>">
