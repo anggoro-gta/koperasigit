@@ -33,7 +33,7 @@ class Pengeluaran extends CI_Controller {
 		header('Content-Type: application/json');
 
 		$tahun = $this->input->post('tahun', true);
-		$tahun = !empty($tahun) ? (int) $tahun : null;
+		$tahun = !empty($tahun) ? (int) $tahun : 2024;
 
 		$draw   = (int) $this->input->post('draw');
 		$start  = (int) $this->input->post('start');
@@ -83,7 +83,21 @@ class Pengeluaran extends CI_Controller {
 				'cadangan_pemb_usaha' => $this->_rupiah($row->cadangan_pemb_usaha),
 				'jumlah_pengeluaran'  => $this->_rupiah($row->jumlah_pengeluaran),
 
+				'simpanan_pokok_raw'      => (float) $row->simpanan_pokok,
+				'simpanan_wajib_raw'      => (float) $row->simpanan_wajib,
+				'simpanan_tapim_raw'      => (float) $row->simpanan_tapim,
+				'simpanan_sukarela_raw'   => (float) $row->simpanan_sukarela,
+				'dana_sosial_raw'         => (float) $row->dana_sosial,
+				'biaya_raw'               => (float) $row->biaya,
+				'kredit_uang_raw'         => (float) $row->kredit_uang,
+				'barang_raw'              => (float) $row->barang,
+				'pajak_raw'               => (float) $row->pajak,
+				'dana_pendidikan_raw'     => (float) $row->dana_pendidikan,
+				'shu_raw'                 => (float) $row->shu,
+				'inventaris_kantor_raw'   => (float) $row->inventaris_kantor,
+				'cadangan_pemb_usaha_raw' => (float) $row->cadangan_pemb_usaha,
 				'jumlah_raw'          => (float) $row->jumlah_pengeluaran,
+				'jumlah_pengeluaran_raw'  => (float) $row->jumlah_pengeluaran,
 
 				'action'              => $buttonView,
 			);
@@ -115,13 +129,14 @@ class Pengeluaran extends CI_Controller {
 					|| strpos((string) $row['shu'], $keyword) !== false
 					|| strpos((string) $row['inventaris_kantor'], $keyword) !== false
 					|| strpos((string) $row['cadangan_pemb_usaha'], $keyword) !== false
-					|| strpos((string) $row['jumlah'], $keyword) !== false;
+					|| strpos((string) $row['jumlah_pengeluaran'], $keyword) !== false;
 			});
 
 			$data = array_values($data);
 		}
 
 		$recordsFiltered = count($data);
+		$totals = $this->_get_footer_totals($data);
 
 		$dataPaging = array_slice($data, $start, $length);
 
@@ -133,7 +148,8 @@ class Pengeluaran extends CI_Controller {
 			'draw'            => $draw,
 			'recordsTotal'    => $recordsTotal,
 			'recordsFiltered' => $recordsFiltered,
-			'data'            => $dataPaging
+			'data'            => $dataPaging,
+			'totals'          => $totals
 		));
 	}
 	
@@ -570,6 +586,41 @@ class Pengeluaran extends CI_Controller {
 		}
 
 		return $this->_rupiah($angka);
+	}
+
+	private function _get_footer_totals($rows)
+	{
+		$columns = array(
+			'simpanan_pokok',
+			'simpanan_wajib',
+			'simpanan_tapim',
+			'simpanan_sukarela',
+			'dana_sosial',
+			'biaya',
+			'kredit_uang',
+			'barang',
+			'pajak',
+			'dana_pendidikan',
+			'shu',
+			'inventaris_kantor',
+			'cadangan_pemb_usaha',
+			'jumlah_pengeluaran',
+		);
+
+		$totals = array();
+
+		foreach ($columns as $column) {
+			$total = 0;
+			$rawColumn = $column . '_raw';
+
+			foreach ($rows as $row) {
+				$total += isset($row[$rawColumn]) ? (float) $row[$rawColumn] : 0;
+			}
+
+			$totals[$column] = $this->_rupiah_or_dash($total);
+		}
+
+		return $totals;
 	}
 
 	private function _total_pengeluaran_row($row)

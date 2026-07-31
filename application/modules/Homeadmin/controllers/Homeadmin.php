@@ -139,6 +139,10 @@ class homeadmin extends MX_Controller
 			$data = [
 				'judul' => 'PENERIMAAN BUNGA'
 			];
+		} elseif($jenis=='anggota') {
+			$data = [
+				'judul' => 'ANGGOTA'
+			];
 		}
 
 		$startYear = 2023;
@@ -254,6 +258,43 @@ class homeadmin extends MX_Controller
 				'kompensasi' => $kompensasi ?? 0,
 				'pelunasan'  => $pelunasan ?? 0,
 				'total'      => $total ?? 0,
+			];
+		}else if ($jenis === 'anggota') {
+
+			// normalisasi tahun
+			$isAll = ($tahun === 'all' || $tahun === 'semua' || $tahun === null || $tahun === '');
+			$tahunInt = $isAll ? null : (int) $tahun;
+
+			// SQL dengan COALESCE biar tidak NULL
+			$sql_aktif = "SELECT COALESCE(COUNT(*),0) AS jumlah
+						FROM ms_cb_user_anggota
+						WHERE YEAR(tanggal_mulai_aktif) = ? AND tgl_keluar IS NULL
+						";
+
+			$sql_nonaktif = "SELECT COALESCE(COUNT(*),0) AS jumlah
+						FROM ms_cb_user_anggota
+						WHERE YEAR(tgl_keluar) = ? AND tgl_keluar IS NOT NULL
+						";
+
+			if ($isAll) {
+				$aktif    = (float) $this->db->query("SELECT COALESCE(COUNT(*),0) AS jumlah
+						FROM ms_cb_user_anggota
+						WHERE tgl_keluar IS NULL")->row()->jumlah;
+				$nonaktif    = (float) $this->db->query("SELECT COALESCE(COUNT(*),0) AS jumlah
+						FROM ms_cb_user_anggota
+						WHERE tgl_keluar IS NOT NULL")->row()->jumlah;
+			} else {
+				$aktif    = (float) $this->db->query($sql_aktif,    [$tahunInt])->row()->jumlah;
+				$nonaktif    = (float) $this->db->query($sql_nonaktif, [$tahunInt])->row()->jumlah;
+			}
+
+			$total = $aktif + $nonaktif;
+
+			$data = [
+				'status'   => true,
+				'aktif'    => $aktif ?? 0,
+				'nonaktif' => $nonaktif ?? 0,
+				'total'    => $total ?? 0,
 			];
 		}
 
@@ -659,4 +700,114 @@ class homeadmin extends MX_Controller
 			->set_content_type('application/json')
 			->set_output(json_encode($data));
 	}
+
+	public function ajaxGrafikAnggota()
+	{
+		$jenis = $this->input->get('jenis', true);
+		$tahun = $this->input->get('tahun', true);
+
+		$data = ['status' => false, 'message' => 'Jenis tidak dikenali'];
+
+		if (!in_array($jenis, ['anggota'])) {
+			return $this->output
+				->set_content_type('application/json')
+				->set_output(json_encode($data));
+		}
+
+		$isAll = ($tahun === 'all' || $tahun === 'semua' || $tahun === null || $tahun === '');
+		$bulanNama = [1=>'Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+
+		$monthTable = "
+			(SELECT 1 bulan UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+			UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8
+			UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12) m
+		";
+
+		if ($isAll) {
+			$sql = "
+				SELECT m.bulan,
+					COALESCE(a.aktif, 0) AS aktif,
+					COALESCE(n.nonaktif, 0) AS nonaktif
+				FROM {$monthTable}
+				LEFT JOIN (
+					SELECT
+						CASE WHEN MONTH(tanggal_mulai_aktif) BETWEEN 1 AND 12 THEN MONTH(tanggal_mulai_aktif) ELSE 12 END AS bulan,
+						COUNT(*) AS aktif
+					FROM ms_cb_user_anggota
+					WHERE tgl_keluar IS NULL
+					GROUP BY bulan
+				) a ON a.bulan = m.bulan
+				LEFT JOIN (
+					SELECT
+						CASE WHEN MONTH(tgl_keluar) BETWEEN 1 AND 12 THEN MONTH(tgl_keluar) ELSE 12 END AS bulan,
+						COUNT(*) AS nonaktif
+					FROM ms_cb_user_anggota
+					WHERE tgl_keluar IS NOT NULL
+					GROUP BY bulan
+				) n ON n.bulan = m.bulan
+				ORDER BY m.bulan
+			";
+
+			$rows = $this->db->query($sql)->result_array();
+			$tahunOut = 'all';
+		} else {
+			$tahunInt = (int)$tahun;
+
+			$sql = "
+				SELECT m.bulan,
+					COALESCE(a.aktif, 0) AS aktif,
+					COALESCE(n.nonaktif, 0) AS nonaktif
+				FROM {$monthTable}
+				LEFT JOIN (
+					SELECT
+						CASE WHEN MONTH(tanggal_mulai_aktif) BETWEEN 1 AND 12 THEN MONTH(tanggal_mulai_aktif) ELSE 12 END AS bulan,
+						COUNT(*) AS aktif
+					FROM ms_cb_user_anggota
+					WHERE YEAR(tanggal_mulai_aktif) = ?
+						AND tgl_keluar IS NULL
+					GROUP BY bulan
+				) a ON a.bulan = m.bulan
+				LEFT JOIN (
+					SELECT
+						CASE WHEN MONTH(tgl_keluar) BETWEEN 1 AND 12 THEN MONTH(tgl_keluar) ELSE 12 END AS bulan,
+						COUNT(*) AS nonaktif
+					FROM ms_cb_user_anggota
+					WHERE YEAR(tgl_keluar) = ?
+						AND tgl_keluar IS NOT NULL
+					GROUP BY bulan
+				) n ON n.bulan = m.bulan
+				ORDER BY m.bulan
+			";
+
+			$rows = $this->db->query($sql, [$tahunInt, $tahunInt])->result_array();
+			$tahunOut = $tahunInt;
+		}
+
+		$labels = [];
+		$aktif = [];
+		$nonaktif = [];
+
+		foreach ($rows as $r) {
+			$b = (int)$r['bulan'];
+			$labels[] = $bulanNama[$b] ?? (string)$b;
+			$aktif[] = (int)$r['aktif'];
+			$nonaktif[] = (int)$r['nonaktif'];
+		}
+
+		$data = [
+			'status' => true,
+			'tahun' => $tahunOut,
+			'labels' => $labels,
+			'series' => [
+				'aktif' => $aktif,
+				'nonaktif' => $nonaktif,
+			],
+			'total' => array_sum($aktif) + array_sum($nonaktif),
+		];
+
+		return $this->output
+			->set_content_type('application/json')
+			->set_output(json_encode($data));
+	}
+
 }

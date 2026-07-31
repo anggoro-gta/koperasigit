@@ -32,7 +32,7 @@
             </div>
         </div>
 
-        <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12" id='simulasi'>
+        <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12 simpanan" id='simulasi'>
             <div class="tile-stats" style="background-color: #748CAB;color: white">
                 <div class="icon"><i class="fa-solid fa-user" style="color: white"></i></div>
                 <div class="count"><?= number_format($jmlhuseraktif) ?></div>
@@ -212,6 +212,12 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('#penerimaan_bunga').forEach(function(el) {
         el.addEventListener('click', function() {
             window.location.href = '<?= base_url("Homeadmin/detail/penerimaan_bunga"); ?>';
+        });
+    });
+
+    document.querySelectorAll('#simulasi').forEach(function(el) {
+        el.addEventListener('click', function() {
+            window.location.href = '<?= base_url("Homeadmin/detail/anggota"); ?>';
         });
     });
 });

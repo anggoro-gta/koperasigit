@@ -144,6 +144,26 @@
     background: #fff;
 }
 
+.table-bku tfoot th {
+    background: #eef3f7;
+    border-top: 2px solid #d8dee6;
+    color: #2A3F54;
+    font-weight: bold;
+    vertical-align: middle;
+}
+
+.table-bku tfoot th.freeze-no,
+.table-bku tfoot th.freeze-bulan,
+.table-bku tfoot th.freeze-tahun {
+    z-index: 22;
+    background: #eef3f7;
+}
+
+.table-bku tfoot th.freeze-action {
+    z-index: 23;
+    background: #eef3f7;
+}
+
 .dataTables_wrapper {
     width: 100%;
 }
@@ -188,9 +208,11 @@
                 <div class="clearfix"></div>
             </div>
 
+            <?php $default_tahun = 2024; ?>
             <select name="tahun" id="tahun" class="form-control no-select2" style="width: 180px;" required>
-                <option value="">Semua Tahun</option>
+                <option value="<?= $default_tahun ?>" selected><?= $default_tahun ?></option>
                 <?php foreach ($list_tahun as $th): ?>
+                <?php if ((int) $th->tahun === $default_tahun) continue; ?>
                 <option value="<?= $th->tahun ?>"><?= $th->tahun ?></option>
                 <?php endforeach; ?>
             </select>
@@ -247,6 +269,28 @@
                                     <th class="text-center">S. RELA</th>
                                 </tr>
                             </thead>
+                            <tfoot>
+                                <tr>
+                                    <th class="freeze-no"></th>
+                                    <th class="freeze-bulan"></th>
+                                    <th class="text-center freeze-tahun">TOTAL</th>
+                                    <th class="text-right"></th>
+                                    <th class="text-right"></th>
+                                    <th class="text-right"></th>
+                                    <th class="text-right"></th>
+                                    <th class="text-right"></th>
+                                    <th class="text-right"></th>
+                                    <th class="text-right"></th>
+                                    <th class="text-right"></th>
+                                    <th class="text-right"></th>
+                                    <th class="text-right"></th>
+                                    <th class="text-right"></th>
+                                    <th class="text-right"></th>
+                                    <th class="text-right"></th>
+                                    <th class="text-right"></th>
+                                    <th class="freeze-action"></th>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </form>
@@ -256,6 +300,7 @@
 </div>
 <script type="text/javascript">
 $(document).ready(function() {
+
     var t = $("#example2").DataTable({
         scrollX: true,
         autoWidth: false,
@@ -397,6 +442,31 @@ $(document).ready(function() {
             var length = info.iLength;
             var index = page * length + (iDisplayIndex + 1);
             $('td:eq(0)', row).html(index);
+        },
+        footerCallback: function() {
+            var api = this.api();
+            var json = api.ajax.json() || {};
+            var totals = json.totals || {};
+            var footerColumns = {
+                3: 'simpanan_pokok',
+                4: 'simpanan_wajib',
+                5: 'simpanan_tapim',
+                6: 'simpanan_sukarela',
+                7: 'dana_sosial',
+                8: 'biaya',
+                9: 'kredit_uang',
+                10: 'barang',
+                11: 'pajak',
+                12: 'dana_pendidikan',
+                13: 'shu',
+                14: 'inventaris_kantor',
+                15: 'cadangan_pemb_usaha',
+                16: 'jumlah_pengeluaran'
+            };
+
+            $.each(footerColumns, function(columnIndex, totalKey) {
+                $(api.column(columnIndex).footer()).html(totals[totalKey] || '-');
+            });
         }
     });
 

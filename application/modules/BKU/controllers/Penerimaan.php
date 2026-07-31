@@ -33,7 +33,7 @@ class Penerimaan extends CI_Controller {
 		header('Content-Type: application/json');
 
 		$tahun = $this->input->post('tahun', true);
-		$tahun = !empty($tahun) ? (int) $tahun : null;
+		$tahun = !empty($tahun) ? (int) $tahun : 2024;
 
 		$draw   = (int) $this->input->post('draw');
 		$start  = (int) $this->input->post('start');
@@ -88,7 +88,20 @@ class Penerimaan extends CI_Controller {
 				'jumlah_penerimaan'   => $this->_rupiah($row->jumlah_penerimaan),
 				'saldo'               => $this->_rupiah($saldo),
 
+				'angsuran_pokok_raw'      => (float) $row->angsuran_pokok,
+				'angsuran_bunga_raw'      => (float) $row->angsuran_bunga,
+				'simpanan_pokok_raw'      => (float) $row->simpanan_pokok,
+				'simpanan_wajib_raw'      => (float) $row->simpanan_wajib,
+				'simpanan_tapim_raw'      => (float) $row->simpanan_tapim,
+				'simpanan_sukarela_raw'   => (float) $row->simpanan_sukarela,
+				'angsuran_barang_raw'     => (float) $row->angsuran_barang,
+				'penjualan_tunai_raw'     => (float) $row->penjualan_tunai,
+				'bank_raw'                => (float) $row->bank,
+				'foto_copy_raw'           => (float) $row->foto_copy,
+				'shu_pkpri_raw'           => (float) $row->shu_pkpri,
+				'barang_titipan_raw'      => (float) $row->barang_titipan,
 				'jumlah_raw'          => (float) $row->jumlah_penerimaan,
+				'jumlah_penerimaan_raw'   => (float) $row->jumlah_penerimaan,
 				'saldo_raw'           => (float) $saldo,
 
 				'action' => $buttonView,
@@ -128,6 +141,7 @@ class Penerimaan extends CI_Controller {
 		}
 
 		$recordsFiltered = count($data);
+		$totals = $this->_get_footer_totals($data);
 
 		$dataPaging = array_slice($data, $start, $length);
 
@@ -139,7 +153,8 @@ class Penerimaan extends CI_Controller {
 			'draw'            => $draw,
 			'recordsTotal'    => $recordsTotal,
 			'recordsFiltered' => $recordsFiltered,
-			'data'            => $dataPaging
+			'data'            => $dataPaging,
+			'totals'          => $totals
 		));
 	}
 	
@@ -747,6 +762,71 @@ class Penerimaan extends CI_Controller {
 		}
 
 		return $this->_rupiah($angka);
+	}
+
+	private function _get_footer_totals($rows)
+	{
+		$columns = array(
+			'angsuran_pokok',
+			'angsuran_bunga',
+			'simpanan_pokok',
+			'simpanan_wajib',
+			'simpanan_tapim',
+			'simpanan_sukarela',
+			'angsuran_barang',
+			'penjualan_tunai',
+			'bank',
+			'foto_copy',
+			'shu_pkpri',
+			'barang_titipan',
+			'jumlah_penerimaan',
+		);
+
+		$totals = array();
+
+		foreach ($columns as $column) {
+			$total = 0;
+			$rawColumn = $column . '_raw';
+
+			foreach ($rows as $row) {
+				$total += isset($row[$rawColumn]) ? (float) $row[$rawColumn] : 0;
+			}
+
+			$totals[$column] = $this->_rupiah_or_dash($total);
+		}
+
+		$totals['saldo'] = $this->_get_footer_saldo($rows);
+
+		return $totals;
+	}
+
+	private function _get_footer_saldo($rows)
+	{
+		if (empty($rows)) {
+			return '-';
+		}
+
+		$latestYear = null;
+		$latestMonth = null;
+
+		foreach ($rows as $row) {
+			$tahun = isset($row['tahun']) ? (int) $row['tahun'] : 0;
+			$bulan = isset($row['bulan_angka']) ? (int) $row['bulan_angka'] : 0;
+
+			if ($latestYear === null
+				|| $tahun > $latestYear
+				|| ($tahun === $latestYear && $bulan > $latestMonth)) {
+				$latestYear = $tahun;
+				$latestMonth = $bulan;
+			}
+		}
+
+		if (empty($latestYear) || empty($latestMonth)) {
+			return '-';
+		}
+
+		// Saldo tidak dijumlahkan; ambil saldo berjalan periode terakhir karena terkait pengeluaran.
+		return $this->_rupiah_or_dash($this->_getSaldoBulanBerjalan($latestYear, $latestMonth));
 	}
 
 	private function _total_penerimaan_row($row)
