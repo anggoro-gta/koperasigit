@@ -168,6 +168,105 @@ class Tagihan extends CI_Controller
 			$sw = $this->db->query("SELECT nominal FROM ms_cb_simpanan where id = ? ", [2])->row()->nominal;
 			$readonly = false;
 			
+			// $pinjaman = $this->db->query("
+			// 	SELECT
+			// 		q.*,
+
+			// 		CASE 
+			// 			WHEN q.has_pinjaman = 1
+			// 				AND q.last_bayar_angka IS NOT NULL
+			// 				AND q.last_bayar_angka < ?
+			// 			THEN 'TUNGGAKAN'
+			// 			ELSE NULL
+			// 		END AS is_tunggakan,
+
+			// 		CASE 
+			// 			WHEN q.has_pinjaman = 1
+			// 				AND q.last_bayar_angka IS NOT NULL
+			// 				AND q.last_bayar_angka < ?
+			// 			THEN ? - q.last_bayar_angka
+			// 			ELSE 0
+			// 		END AS jumlah_bulan_tunggakan
+
+			// 	FROM (
+			// 		SELECT
+			// 			p.*,
+			// 			COALESCE(p.last_tagihan_angka, p.angsuran_awal_angka - 1) AS last_bayar_angka
+			// 		FROM (
+			// 			SELECT
+			// 				tcp.id,
+			// 				1 AS has_pinjaman,
+			// 				tcp.fk_anggota_id,
+			// 				tcp.fk_kategori_id,
+			// 				tcp.tgl,
+			// 				mcua.nama,
+			// 				mcua.nip,
+			// 				mcua.fk_id_skpd,
+			// 				tcp.pinjaman,
+			// 				mckp.kategori,
+			// 				tcp.jml_angsuran + 1 AS angsuran_ke,
+			// 				tcp.pokok,
+			// 				tcp.tapim,
+			// 				tcp.bunga,
+			// 				tcp.tenor,
+			// 				tcp.jml_tagihan,
+			// 				mcua.tanggal_mulai_aktif,
+
+			// 				CASE
+			// 					WHEN tcp.tgl IS NOT NULL THEN
+			// 						GREATEST(
+			// 							(YEAR(DATE_ADD(tcp.tgl, INTERVAL 1 MONTH)) * 12)
+			// 							+ MONTH(DATE_ADD(tcp.tgl, INTERVAL 1 MONTH)),
+			// 							?
+			// 						)
+			// 					ELSE NULL
+			// 				END AS angsuran_awal_angka,
+
+			// 				CASE
+			// 					WHEN tcp.tgl IS NOT NULL THEN 'TGL_PINJAMAN'
+			// 					ELSE 'DATA_TIDAK_LENGKAP'
+			// 				END AS sumber_angsuran_awal,
+
+			// 				(
+			// 					SELECT 
+			// 						MAX((tg.tahun * 12) + tg.bulan)
+			// 					FROM t_cb_tagihan_pinjaman tp
+			// 					INNER JOIN t_cb_tagihan tg
+			// 						ON tp.fk_tagihan_id = tg.id
+			// 					WHERE
+			// 						tp.fk_pinjaman_id = tcp.id
+			// 						AND tp.fk_anggota_id = tcp.fk_anggota_id
+			// 						AND tg.kategori IN ('kolektif', 'individu')
+			// 						AND tg.status_posting = 1
+			// 						AND ((tg.tahun * 12) + tg.bulan) > ?
+			// 						AND ((tg.tahun * 12) + tg.bulan) < ?
+			// 				) AS last_tagihan_angka
+
+			// 			FROM t_cb_pinjaman tcp
+			// 			INNER JOIN ms_cb_user_anggota mcua
+			// 				ON tcp.fk_anggota_id = mcua.id
+			// 			INNER JOIN ms_cb_kategori_pinjam mckp
+			// 				ON tcp.fk_kategori_id = mckp.id
+			// 			WHERE
+			// 				mcua.fk_id_skpd = ?
+			// 				AND tcp.status = 0
+			// 		) p
+			// 	) q
+
+			// 	ORDER BY q.nama ASC
+			// ", [
+			// 	$batas_tunggakan_angka,
+			// 	$batas_tunggakan_angka,
+			// 	$batas_tunggakan_angka,
+
+			// 	$awal_hitung_angka,
+
+			// 	$batas_dummy_angka,
+			// 	$cutoff_angka,
+
+			// 	$fk_skpd_id
+			// ])->result();
+
 			$pinjaman = $this->db->query("
 				SELECT
 					q.*,
@@ -212,18 +311,21 @@ class Tagihan extends CI_Controller
 							tcp.jml_tagihan,
 							mcua.tanggal_mulai_aktif,
 
+							-- MODIFIKASI 1: Fallback ke tanggal_mulai_aktif jika tcp.tgl bernilai NULL
 							CASE
-								WHEN tcp.tgl IS NOT NULL THEN
+								WHEN COALESCE(tcp.tgl, mcua.tanggal_mulai_aktif) IS NOT NULL THEN
 									GREATEST(
-										(YEAR(DATE_ADD(tcp.tgl, INTERVAL 1 MONTH)) * 12)
-										+ MONTH(DATE_ADD(tcp.tgl, INTERVAL 1 MONTH)),
+										(YEAR(DATE_ADD(COALESCE(tcp.tgl, mcua.tanggal_mulai_aktif), INTERVAL 1 MONTH)) * 12)
+										+ MONTH(DATE_ADD(COALESCE(tcp.tgl, mcua.tanggal_mulai_aktif), INTERVAL 1 MONTH)),
 										?
 									)
 								ELSE NULL
 							END AS angsuran_awal_angka,
 
+							-- MODIFIKASI 2: Penyesuaian label indikator sumber tanggal
 							CASE
 								WHEN tcp.tgl IS NOT NULL THEN 'TGL_PINJAMAN'
+								WHEN mcua.tanggal_mulai_aktif IS NOT NULL THEN 'TGL_AKTIF_ANGGOTA'
 								ELSE 'DATA_TIDAK_LENGKAP'
 							END AS sumber_angsuran_awal,
 
@@ -238,7 +340,8 @@ class Tagihan extends CI_Controller
 									AND tp.fk_anggota_id = tcp.fk_anggota_id
 									AND tg.kategori IN ('kolektif', 'individu')
 									AND tg.status_posting = 1
-									AND ((tg.tahun * 12) + tg.bulan) > ?
+									-- MODIFIKASI 3: Gunakan >= agar tagihan di titik awal batas periode tetap terhitung
+									AND ((tg.tahun * 12) + tg.bulan) >= ?
 									AND ((tg.tahun * 12) + tg.bulan) < ?
 							) AS last_tagihan_angka
 
