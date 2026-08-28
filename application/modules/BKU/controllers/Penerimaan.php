@@ -181,7 +181,7 @@ class Penerimaan extends CI_Controller {
 			'button'       => 'Simpan',
 			'periode'      => set_value('periode', $periode),
 			'auto_load'    => !empty($periode),
-			'ref_kategori' => $kategori
+			'ref_kategori' => $kategori,
 		);
 
 		$data['BKUPenerimaan'] = 'active';
@@ -215,6 +215,19 @@ class Penerimaan extends CI_Controller {
 
 		$tahun = $pecah[0];
 		$bulan = (int) $pecah[1];
+
+		$check_next_tahun = $this->db
+			->where('tahun >', $tahun)
+			->get('ms_cb_saldo_awal_tahun')
+			->row();
+
+		$lock_data = false;
+		$btn_tambah_penerimaan = '';
+		
+		if(!empty($check_next_tahun)) {
+			$lock_data = true;
+			$btn_tambah_penerimaan = 'hidden';
+		}
 		
 		$total_saldo = 0;
 
@@ -389,12 +402,21 @@ class Penerimaan extends CI_Controller {
 				$html .= '<td class="text-right">'.$this->_rupiah_or_dash($jml_penerimaan).'</td>';
 				$html .= '<td class="text-right"><b>'.$this->_rupiah($total_saldo).'</b></td>';
 
+				$btn='<button type="button" 
+										class="btn btn-xs btn-primary" 
+										onclick="formModalEdit('.$tahun.', '.$bulan.', '.$row->id.', `edit`)">
+									<i title="edit" class="glyphicon glyphicon-edit icon-white"></i>
+								</button>';
+				if($lock_data) {
+					$btn = '<button type="button" 
+										class="btn btn-xs btn-info" 
+										onclick="formModalEdit('.$tahun.', '.$bulan.', '.$row->id.', `view`)">
+									<i title="view" class="glyphicon glyphicon-eye-open icon-white"></i>
+								</button>';				
+				}
+				
 				$html .= '<td class="text-center freeze-action">
-							<button type="button" 
-									class="btn btn-xs btn-primary" 
-									onclick="formModalEdit('.$tahun.', '.$bulan.', '.$row->id.', `edit`)">
-								<i title="edit" class="glyphicon glyphicon-edit icon-white"></i>
-							</button>
+							'.$btn.'
 						</td>';
 
 				$html .= '</tr>';
@@ -427,7 +449,8 @@ class Penerimaan extends CI_Controller {
 			'bulan'       => $bulan,
 			'saldo_awal'  => $total_saldo,
 			'total_row'   => count($penerimaan),
-			'btn_tambah_penerimaan' => ''
+			'lock_data' => $lock_data,
+			'btn_tambah_penerimaan' => $btn_tambah_penerimaan
 		));
 	}
 
@@ -452,7 +475,7 @@ class Penerimaan extends CI_Controller {
 			return;
 		}
 			
-		if($tipe=='edit')
+		if($tipe=='edit' || $tipe=='view')
 		{
 			$id_bku_penerimaan = $this->input->post('id_bku_penerimaan', true);
 
@@ -473,6 +496,7 @@ class Penerimaan extends CI_Controller {
 				'bulan'        => $bulan,
 				'nama_bulan'   => $this->_nama_bulan($bulan),
 				'ref_kategori' => $kategori,
+				'tipe' 		   => $tipe,
 				'row'          => $row,
 			);
 
@@ -484,7 +508,8 @@ class Penerimaan extends CI_Controller {
 				'tahun'        => $tahun,
 				'bulan'        => $bulan,
 				'nama_bulan'   => $this->_nama_bulan($bulan),
-				'ref_kategori' => $kategori
+				'ref_kategori' => $kategori,
+				'tipe' 		   => $tipe,
 			);
 
 			$this->load->view('BKU/penerimaan/form_modal_tambah', $data);

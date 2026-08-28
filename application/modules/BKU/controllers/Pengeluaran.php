@@ -199,6 +199,19 @@ class Pengeluaran extends CI_Controller {
 
 		$tahun = $pecah[0];
 		$bulan = (int) $pecah[1];
+
+		$check_next_tahun = $this->db
+			->where('tahun >', $tahun)
+			->get('ms_cb_saldo_awal_tahun')
+			->row();
+
+		$lock_data = false;
+		$btn_tambah_pengeluaran = '';
+		
+		if(!empty($check_next_tahun)) {
+			$lock_data = true;
+			$btn_tambah_pengeluaran = 'hidden';
+		}
 		
 		$html = '';
 
@@ -273,12 +286,21 @@ class Pengeluaran extends CI_Controller {
 				
 				$html .= '<td class="text-right"><b>'.$this->_rupiah_or_dash($jml_pengeluaran).'</b></td>';
 
-				$html .= '<td class="text-center freeze-action">
-							<button type="button" 
+				$btn='<button type="button" 
 									class="btn btn-xs btn-primary" 
 									onclick="formModalEdit('.$tahun.', '.$bulan.', '.$row->id.', `edit`)">
 								<i title="edit" class="glyphicon glyphicon-edit icon-white"></i>
-							</button>
+							</button>';
+				if($lock_data) {
+					$btn = '<button type="button" 
+										class="btn btn-xs btn-info" 
+										onclick="formModalEdit('.$tahun.', '.$bulan.', '.$row->id.', `view`)">
+									<i title="view" class="glyphicon glyphicon-eye-open icon-white"></i>
+								</button>';				
+				}
+				
+				$html .= '<td class="text-center freeze-action">
+							'.$btn.'
 						</td>';
 
 				$html .= '</tr>';
@@ -310,7 +332,9 @@ class Pengeluaran extends CI_Controller {
 			'html'        => $html,
 			'tahun'       => $tahun,
 			'bulan'       => $bulan,
-			'total_row'   => count($pengeluaran)
+			'total_row'   => count($pengeluaran),
+			'lock_data' => $lock_data,
+			'btn_tambah_pengeluaran' => $btn_tambah_pengeluaran
 		));
 	}
 
@@ -335,7 +359,7 @@ class Pengeluaran extends CI_Controller {
 			return;
 		}
 			
-		if($tipe=='edit')
+		if($tipe=='edit' || $tipe=='view')
 		{
 			$id_bku_pengeluaran = $this->input->post('id_bku_pengeluaran', true);
 
@@ -356,6 +380,7 @@ class Pengeluaran extends CI_Controller {
 				'bulan'       => $bulan,
 				'nama_bulan' => $this->_nama_bulan($bulan),
 				'ref_kategori' => $kategori,
+				'tipe' 		   => $tipe,
 				'row'         => $row,
 			);
 
@@ -366,6 +391,7 @@ class Pengeluaran extends CI_Controller {
 				'bulan'        => $bulan,
 				'nama_bulan'   => $this->_nama_bulan($bulan),
 				'ref_kategori' => $kategori,
+				'tipe' 		   => $tipe,
 			);
 
 			$this->load->view('BKU/pengeluaran/form_modal_tambah', $data);

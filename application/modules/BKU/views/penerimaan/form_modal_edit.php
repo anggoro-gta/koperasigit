@@ -11,6 +11,10 @@ function nilai_bku($row, $field)
 
     return '';
 }
+$disabled = '';
+if($tipe=='view'){
+    $disabled = 'disabled';
+}
 ?>
 
 <input type="hidden" name="id_bku_penerimaan" value="<?= $row->id ?>">
@@ -43,7 +47,7 @@ function nilai_bku($row, $field)
         <div class="form-group">
             <label>Angsuran Pokok</label>
             <input type="text" name="angsuran_pokok" class="form-control input-sm text-right input-rupiah"
-                value="<?= nilai_bku($row, 'angsuran_pokok') ?>">
+                value="<?= nilai_bku($row, 'angsuran_pokok') ?>" <?= $disabled ?>>
         </div>
     </div>
 
@@ -51,7 +55,7 @@ function nilai_bku($row, $field)
         <div class="form-group">
             <label>Angsuran Bunga</label>
             <input type="text" name="angsuran_bunga" class="form-control input-sm text-right input-rupiah"
-                value="<?= nilai_bku($row, 'angsuran_bunga') ?>">
+                value="<?= nilai_bku($row, 'angsuran_bunga') ?>" <?= $disabled ?>>
         </div>
     </div>
 
@@ -59,7 +63,7 @@ function nilai_bku($row, $field)
         <div class="form-group">
             <label>Simpanan Pokok</label>
             <input type="text" name="simpanan_pokok" class="form-control input-sm text-right input-rupiah"
-                value="<?= nilai_bku($row, 'simpanan_pokok') ?>">
+                value="<?= nilai_bku($row, 'simpanan_pokok') ?>" <?= $disabled ?>>
         </div>
     </div>
 
@@ -67,7 +71,7 @@ function nilai_bku($row, $field)
         <div class="form-group">
             <label>Simpanan Wajib</label>
             <input type="text" name="simpanan_wajib" class="form-control input-sm text-right input-rupiah"
-                value="<?= nilai_bku($row, 'simpanan_wajib') ?>">
+                value="<?= nilai_bku($row, 'simpanan_wajib') ?>" <?= $disabled ?>>
         </div>
     </div>
 
@@ -75,7 +79,7 @@ function nilai_bku($row, $field)
         <div class="form-group">
             <label>Simpanan TAPIM</label>
             <input type="text" name="simpanan_tapim" class="form-control input-sm text-right input-rupiah"
-                value="<?= nilai_bku($row, 'simpanan_tapim') ?>">
+                value="<?= nilai_bku($row, 'simpanan_tapim') ?>" <?= $disabled ?>>
         </div>
     </div>
 
@@ -83,7 +87,7 @@ function nilai_bku($row, $field)
         <div class="form-group">
             <label>Simpanan Sukarela</label>
             <input type="text" name="simpanan_sukarela" class="form-control input-sm text-right input-rupiah"
-                value="<?= nilai_bku($row, 'simpanan_sukarela') ?>">
+                value="<?= nilai_bku($row, 'simpanan_sukarela') ?>" <?= $disabled ?>>
         </div>
     </div>
 
@@ -91,7 +95,7 @@ function nilai_bku($row, $field)
         <div class="form-group">
             <label>Angsuran Barang</label>
             <input type="text" name="angsuran_barang" class="form-control input-sm text-right input-rupiah"
-                value="<?= nilai_bku($row, 'angsuran_barang') ?>">
+                value="<?= nilai_bku($row, 'angsuran_barang') ?>" <?= $disabled ?>>
         </div>
     </div>
 
@@ -99,7 +103,7 @@ function nilai_bku($row, $field)
         <div class="form-group">
             <label>Penjualan Tunai</label>
             <input type="text" name="penjualan_tunai" class="form-control input-sm text-right input-rupiah"
-                value="<?= nilai_bku($row, 'penjualan_tunai') ?>">
+                value="<?= nilai_bku($row, 'penjualan_tunai') ?>" <?= $disabled ?>>
         </div>
     </div>
 
@@ -107,7 +111,7 @@ function nilai_bku($row, $field)
         <div class="form-group">
             <label>Bank</label>
             <input type="text" name="bank" class="form-control input-sm text-right input-rupiah"
-                value="<?= nilai_bku($row, 'bank') ?>">
+                value="<?= nilai_bku($row, 'bank') ?>" <?= $disabled ?>>
         </div>
     </div>
 
@@ -115,7 +119,7 @@ function nilai_bku($row, $field)
         <div class="form-group">
             <label>Foto Copy</label>
             <input type="text" name="foto_copy" class="form-control input-sm text-right input-rupiah"
-                value="<?= nilai_bku($row, 'foto_copy') ?>">
+                value="<?= nilai_bku($row, 'foto_copy') ?>" <?= $disabled ?>>
         </div>
     </div>
 
@@ -123,7 +127,7 @@ function nilai_bku($row, $field)
         <div class="form-group">
             <label>SHU PKPRI</label>
             <input type="text" name="shu_pkpri" class="form-control input-sm text-right input-rupiah"
-                value="<?= nilai_bku($row, 'shu_pkpri') ?>">
+                value="<?= nilai_bku($row, 'shu_pkpri') ?>" <?= $disabled ?>>
         </div>
     </div>
 
@@ -131,7 +135,7 @@ function nilai_bku($row, $field)
         <div class="form-group">
             <label>Barang Titipan & Konsinyasi</label>
             <input type="text" name="barang_titipan" class="form-control input-sm text-right input-rupiah"
-                value="<?= nilai_bku($row, 'barang_titipan') ?>">
+                value="<?= nilai_bku($row, 'barang_titipan') ?>" <?= $disabled ?>>
         </div>
     </div>
 </div>

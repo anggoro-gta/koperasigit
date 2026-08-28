@@ -187,7 +187,7 @@
                         Batal
                     </button>
 
-                    <button type="submit" class="btn btn-success">
+                    <button type="submit" class="btn btn-success btn-simpan">
                         Simpan
                     </button>
                 </div>
@@ -298,6 +298,11 @@ function formModalTambah(tipe) {
         success: function(html) {
             // console.log(html)
             $('#modalFormPenerimaanBody').html(html);
+            if (tipe === 'add' || tipe === 'edit') {
+                $('.btn-simpan').show();
+            } else {
+                $('.btn-simpan').hide(); // Sembunyikan jika tipe = 'detail' / 'view'
+            }
         },
         error: function() {
             $('#modalFormPenerimaanBody').html(`
@@ -330,6 +335,11 @@ function formModalEdit(tahun, bulan, idBKUPenerimaan, tipe) {
         success: function(html) {
             // console.log(html)
             $('#modalFormPenerimaanBody').html(html);
+            if (tipe === 'add' || tipe === 'edit') {
+                $('.btn-simpan').show();
+            } else {
+                $('.btn-simpan').hide(); // Sembunyikan jika tipe = 'detail' / 'view'
+            }
         },
         error: function() {
             $('#modalFormPenerimaanBody').html(`

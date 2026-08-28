@@ -185,7 +185,7 @@
                         Batal
                     </button>
 
-                    <button type="submit" class="btn btn-success">
+                    <button type="submit" class="btn btn-success btn-simpan">
                         Simpan
                     </button>
                 </div>
@@ -236,6 +236,11 @@ $(document).ready(function() {
                 $('#tambah_pengeluaran').removeClass('hidden');
                 if (res.status == 'success') {
                     $('#tbody-pengeluaran').html(res.html);
+                    if (res.btn_tambah_pengeluaran != 'hidden') {
+                        $('#tambah_pengeluaran').removeClass('hidden');
+                    } else {
+                        $('#tambah_pengeluaran').removeClass('hidden').addClass('hidden');
+                    }
                 } else {
                     $('#tbody-pengeluaran').html(`
                         <tr>
@@ -291,6 +296,11 @@ function formModalTambah(tipe) {
         success: function(html) {
             // console.log(html)
             $('#modalFormPengeluaranBody').html(html);
+            if (tipe === 'add' || tipe === 'edit') {
+                $('.btn-simpan').show();
+            } else {
+                $('.btn-simpan').hide(); // Sembunyikan jika tipe = 'detail' / 'view'
+            }
         },
         error: function() {
             $('#modalFormPengeluaranBody').html(`
@@ -322,6 +332,11 @@ function formModalEdit(tahun, bulan, idBKUPengeluaran, tipe) {
         },
         success: function(html) {
             $('#modalFormPengeluaranBody').html(html);
+            if (tipe === 'add' || tipe === 'edit') {
+                $('.btn-simpan').show();
+            } else {
+                $('.btn-simpan').hide(); // Sembunyikan jika tipe = 'detail' / 'view'
+            }
         },
         error: function() {
             $('#modalFormPengeluaranBody').html(`
