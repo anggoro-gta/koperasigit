@@ -97,7 +97,7 @@
         </div>
     </div>
     <div class="pull-right">
-        © Copyright 2026 KPRI Canda Bhirawa
+        © Copyright 2026 KKPRI Canda Bhirawa
     </div>
     <div class="clearfix"></div>
 </div>

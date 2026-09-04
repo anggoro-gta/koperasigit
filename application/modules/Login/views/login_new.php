@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>KPRI. CANDA BHIRAWA</title>
+    <title>KKPRI. CANDA BHIRAWA</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!--===============================================================================================-->
@@ -35,7 +35,7 @@
         <div class="container-login100" style="background-image: url('<?php echo base_url() ?>assets_login/images/bg.jpg');">
             <div class="wrap-login100 p-t-30 p-b-50">
                 <span class="login100-form-title p-b-41">
-                    Account Login<br>KPRI. CANDA BHIRAWA
+                    Account Login<br>KKPRI. CANDA BHIRAWA
                 </span>
                 <?php if ($this->session->flashdata('error')) : ?>
                     <div class="alert alert-warning">
@@ -65,7 +65,7 @@
                     </div>
 
                 </form>
-                <p align="center" class="col-md-12" style="color: white"> KPRI. CANDA BHIRAWA &copy;2026</p>
+                <p align="center" class="col-md-12" style="color: white"> KKPRI. CANDA BHIRAWA &copy;2026</p>
             </div>
         </div>
     </div>
