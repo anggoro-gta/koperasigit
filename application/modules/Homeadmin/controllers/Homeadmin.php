@@ -224,7 +224,42 @@ class homeadmin extends MX_Controller
 				'sukarela' => $sukarela ?? 0,
 				'total'    => $total ?? 0,
 			];
-		}else if ($jenis === 'penerimaan_bunga') {
+		}
+		else if ($jenis === 'penarikan') {
+
+			// normalisasi tahun
+			$isAll = ($tahun === 'all' || $tahun === 'semua' || $tahun === null || $tahun === '');
+			$tahunInt = $isAll ? null : (int) $tahun;
+
+			if ($isAll) {
+				$row = $this->db->query("SELECT COALESCE(SUM(pokok),0) AS total_pokok, COALESCE(SUM(wajib),0) AS 
+						total_wajib, COALESCE(SUM(tapim),0) AS total_tapim, COALESCE(SUM(sukarela),0) AS total_sukarela
+						FROM t_cb_penarikan")->row();
+			} else {
+				$row = $this->db->query("SELECT COALESCE(SUM(pokok),0) AS total_pokok, COALESCE(SUM(wajib),0) AS total_wajib, 
+						COALESCE(SUM(tapim),0) AS total_tapim, COALESCE(SUM(sukarela),0) AS total_sukarela
+						FROM t_cb_penarikan
+						WHERE YEAR(tgl_penarikan) = ?", [$tahunInt])->row();
+			}
+
+			$pokok    = (float) $row->total_pokok;
+			$wajib    = (float) $row->total_wajib;
+			$tapim    = (float) $row->total_tapim;
+			$sukarela = (float) $row->total_sukarela;
+
+			$total = $pokok + $wajib + $tapim + $sukarela;
+
+			$data = [
+				'status'   => true,
+				'pokok'    => $pokok ?? 0,
+				'wajib'    => $wajib ?? 0,
+				'tapim'    => $tapim ?? 0,
+				'sukarela' => $sukarela ?? 0,
+				'total'    => $total ?? 0,
+			];
+			
+		}
+		else if ($jenis === 'penerimaan_bunga') {
 
 			// normalisasi tahun
 			$isAll = ($tahun === 'all' || $tahun === 'semua' || $tahun === null || $tahun === '');
@@ -467,6 +502,127 @@ class homeadmin extends MX_Controller
 			";
 
 			$rows = $this->db->query($sql, [$tahunInt, $tahunInt, $tahunInt, $tahunInt, $tahunInt])->result_array();
+			$tahunOut = $tahunInt;
+		}
+
+		// Build output series
+		$labels = [];
+		$pokok = [];
+		$wajib = [];
+		$tapim = [];
+		$sukarela = [];
+
+		foreach ($rows as $r) {
+			$b = (int)$r['bulan'];
+			$labels[]   = $bulanNama[$b] ?? (string)$b;
+			$pokok[]    = (float)$r['pokok'];
+			$wajib[]    = (float)$r['wajib'];
+			$tapim[]    = (float)$r['tapim'];
+			$sukarela[] = (float)$r['sukarela'];
+		}
+
+		// ✅ total grafik (buat pembanding dengan ajaxDetail)
+		$grandTotal = array_sum($pokok) + array_sum($wajib) + array_sum($tapim) + array_sum($sukarela);
+
+		$data = [
+			'status' => true,
+			'tahun'  => $tahunOut,
+			'labels' => $labels,
+			'series' => [
+				'pokok'    => $pokok,
+				'wajib'    => $wajib,
+				'tapim'    => $tapim,
+				'sukarela' => $sukarela,
+			],
+			'total' => $grandTotal, // <- pembanding
+		];
+
+		return $this->output
+			->set_content_type('application/json')
+			->set_output(json_encode($data));
+	}
+
+	public function ajaxGrafikPenarikan()
+	{
+		$jenis = $this->input->get('jenis', true);
+		$tahun = $this->input->get('tahun', true);
+
+		$data = ['status' => false, 'message' => 'Jenis tidak dikenali'];
+
+		if (!in_array($jenis, ['penarikan'])) {
+			return $this->output
+				->set_content_type('application/json')
+				->set_output(json_encode($data));
+		}
+
+		$isAll = ($tahun === 'all' || $tahun === 'semua' || $tahun === null || $tahun === '');
+
+		$bulanNama = [1=>'Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+
+		// Master bulan 1..12
+		$monthTable = "
+			(SELECT 1 bulan UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+			UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8
+			UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12) m
+		";
+
+		if ($isAll) {
+			// ================= ALL (tanpa filter tahun) =================
+			$sql = "
+				SELECT m.bulan,
+					COALESCE(tcp.pokok, 0)    AS pokok,
+					COALESCE(tcp.wajib, 0)    AS wajib,
+					COALESCE(tcp.tapim, 0)    AS tapim,
+					COALESCE(tcp.sukarela, 0) AS sukarela
+				FROM {$monthTable}
+
+				LEFT JOIN (
+					SELECT
+						MONTH(tgl_penarikan) AS bulan,
+						SUM(COALESCE(pokok,0)) AS pokok,
+						SUM(COALESCE(wajib,0)) AS wajib,
+						SUM(COALESCE(tapim,0)) AS tapim,
+						SUM(COALESCE(sukarela,0)) AS sukarela
+					FROM t_cb_penarikan
+					GROUP BY MONTH(tgl_penarikan)
+				) tcp ON tcp.bulan = m.bulan
+
+				ORDER BY m.bulan
+			";
+
+			$rows = $this->db->query($sql)->result_array();
+			$tahunOut = 'all';
+
+		} else {
+			// ================= 1 TAHUN =================
+			$tahunInt = (int)$tahun;
+
+			$sql = "
+				SELECT m.bulan,
+					COALESCE(tcp.pokok, 0)    AS pokok,
+					COALESCE(tcp.wajib, 0)    AS wajib,
+					COALESCE(tcp.tapim, 0)    AS tapim,
+					COALESCE(tcp.sukarela, 0) AS sukarela
+				FROM {$monthTable}
+
+				LEFT JOIN (
+					SELECT
+						MONTH(tgl_penarikan) AS bulan,
+						SUM(COALESCE(pokok,0)) AS pokok,
+						SUM(COALESCE(wajib,0)) AS wajib,
+						SUM(COALESCE(tapim,0)) AS tapim,
+						SUM(COALESCE(sukarela,0)) AS sukarela
+					FROM t_cb_penarikan
+					
+					WHERE YEAR(tgl_penarikan) = ?
+					
+					GROUP BY MONTH(tgl_penarikan)
+				) tcp ON tcp.bulan = m.bulan
+
+				ORDER BY m.bulan
+			";
+
+			$rows = $this->db->query($sql, [$tahunInt])->result_array();
 			$tahunOut = $tahunInt;
 		}
 
