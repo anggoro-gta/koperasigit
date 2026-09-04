@@ -97,9 +97,12 @@
                                             } ?>"><a href="<?php echo base_url('Homeadmin') ?>"><i
                                             class="fa fa-home"></i> Beranda</a>
                                 </li>
-                                <?php if ($level == 1) { ?>
+                                <?php if (in_array($level, [1, 2, 5])) { ?>
                                 <li><a><i class="fa fa-book"></i> Master <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
+                                        <?php
+                                            if(in_array($level, [1, 2])){
+                                        ?>
                                         <li class="<?php if (isset($MscbSkpd)) {
                                                             echo 'active';
                                                         } ?>"><a href="<?php echo base_url('MscbSkpd') ?>">SKPD</a>
@@ -108,10 +111,22 @@
                                                             echo 'active';
                                                         } ?>"><a
                                                 href="<?php echo base_url('MscbAnggota') ?>">Anggota</a></li>
+                                        <?php
+                                            }
+                                        ?>
+                                        <?php
+                                            if(in_array($level, [1])){
+                                        ?>
                                         <li class="<?php if (isset($MscbUsersistem)) {
                                                             echo 'active';
                                                         } ?>"><a
                                                 href="<?php echo base_url('MscbUsersistem') ?>">User</a></li>
+                                        <?php
+                                            }
+                                        ?>
+                                        <?php
+                                            if(in_array($level, [1, 5])){
+                                        ?>
                                         <li class="<?php if (isset($MsKategoriPenerimaan)) {
                                                             echo 'active';
                                                         } ?>"><a
@@ -129,6 +144,9 @@
                                                 Awal
                                                 Tahun</a>
                                         </li>
+                                        <?php
+                                            }
+                                        ?>
                                     </ul>
                                 </li>
                                 <?php } else { ?>
@@ -141,7 +159,7 @@
                     </ul>
                   </li> -->
 
-                                <?php if ($level == 1) { ?>
+                                <?php if (in_array($level, [1, 2])) { ?>
                                 <li><a><i class="fa fa-edit"></i> Transaksi <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li class="<?php if (isset($Pinjaman)) {
@@ -155,6 +173,8 @@
                                     </ul>
                                 </li>
 
+                                <?php } ?>
+                                <?php if (in_array($level, [1, 5])) { ?>
                                 <li><a><i class="fa fa-file"></i> BKU <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li class="<?php if (isset($variabelnya)) {
@@ -169,16 +189,21 @@
                                         </li>
                                     </ul>
                                 </li>
-
+                                <?php } ?>
+                                <?php 
+                                if(in_array($level, [1, 2])){
+                                ?>
                                 <li class="<?php if (isset($Penarikan)) {
                                                     echo 'active';
                                                 } ?>"><a href="<?php echo base_url('Penarikan') ?>"><i
                                             class="fa fa-file-invoice-dollar"></i>
                                         Penarikan</a>
                                 </li>
-                                <?php } ?>                                                           
+                                <?php
+                                }
+                                ?>
 
-                                <?php if ($level == 1) { ?>
+                                <?php if (in_array($level, [1, 2])) { ?>
                                 <li><a><i class="fa fa-bar-chart"></i> Laporan <span
                                             class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
@@ -244,7 +269,7 @@
                                 </li>
                                 <?php } ?>
 
-                                <?php if ($level == 1) { ?>
+                                <?php if (in_array($level, [1])) { ?>
                                 <li><a><i class="fa fa-edit"></i> SHU <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li class="<?php if (isset($variabelnya)) {
@@ -257,7 +282,7 @@
                                         </li>
                                     </ul>
                                 </li>
-                                <?php } ?>                                
+                                <?php } ?>
                             </ul>
                         </div>
                         <!-- <div class="menu_section">
