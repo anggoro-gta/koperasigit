@@ -101,7 +101,7 @@
             </div>
             <?php } ?>
 
-            <?php if (in_array($this->session->userdata('fk_cb_level_id'), [1, 3]) && $method == 'PUT') : ?>
+            <?php if (in_array($this->session->userdata('fk_cb_level_id'), [1, 3, 2]) && $method == 'PUT') : ?>
             <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
                 <a onclick="return confirm('Apakah Anda akan <?= $label_posting ?> data?');"
                     href="<?= base_url() ?>Tagihan/posting/<?= $id ?>" class="btn btn-primary"><?= $label_posting ?></a>
