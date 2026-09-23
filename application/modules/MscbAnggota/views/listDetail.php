@@ -172,7 +172,7 @@ $(document).ready(function() {
                 "data": "action",
                 "orderable": false,
                 "className": "text-center",
-                "visible": level == 2 ? false : true,
+                "visible": level == 5 ? false : true,
             },
         ],
         order: [
