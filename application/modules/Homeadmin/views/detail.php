@@ -36,6 +36,8 @@
                 $this->load->view('Homeadmin/_penerimaan_bunga');
             }else if($jenis=='anggota') {
                 $this->load->view('Homeadmin/_anggota');
+            }else if($jenis=='pinjaman') {
+                $this->load->view('Homeadmin/_pinjaman');
             }
         ?>
     </div>

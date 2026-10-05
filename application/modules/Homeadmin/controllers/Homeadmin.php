@@ -143,6 +143,10 @@ class homeadmin extends MX_Controller
 			$data = [
 				'judul' => 'ANGGOTA'
 			];
+		} elseif($jenis=='pinjaman') {
+			$data = [
+				'judul' => 'REALISASI PINJAMAN'
+			];
 		}
 
 		$startYear = 2023;
@@ -294,7 +298,8 @@ class homeadmin extends MX_Controller
 				'pelunasan'  => $pelunasan ?? 0,
 				'total'      => $total ?? 0,
 			];
-		}else if ($jenis === 'anggota') {
+		}
+		else if ($jenis === 'anggota') {
 
 			// normalisasi tahun
 			$isAll = ($tahun === 'all' || $tahun === 'semua' || $tahun === null || $tahun === '');
@@ -331,6 +336,52 @@ class homeadmin extends MX_Controller
 				'nonaktif' => $nonaktif ?? 0,
 				'total'    => $total ?? 0,
 			];
+		}
+		else if ($jenis === 'pinjaman') {
+
+			// normalisasi tahun
+			$isAll = ($tahun === 'all' || $tahun === 'semua' || $tahun === null || $tahun === '');
+			$tahunInt = $isAll ? null : (int) $tahun;
+
+			if ($isAll) {
+				$res = $this->db->query("SELECT
+							fk_kategori_id,
+							COALESCE(SUM(pinjaman), 0) AS total_pinjaman
+						FROM t_cb_pinjaman
+						GROUP BY fk_kategori_id")->result();
+			} else {
+				$res = $this->db->query("SELECT
+							fk_kategori_id,
+							COALESCE(SUM(pinjaman), 0) AS total_pinjaman
+						FROM t_cb_pinjaman
+						WHERE YEAR(tgl) = ?
+						GROUP BY fk_kategori_id", [$tahunInt])->result();
+			}
+
+			$uang = 0;
+			$barang = 0;
+			$palen = 0;
+
+			foreach ($res as $key) {
+				if ($key->fk_kategori_id == 1) {
+					$uang = (float) $key->total_pinjaman;
+				} elseif ($key->fk_kategori_id == 2) {
+					$barang = (float) $key->total_pinjaman;
+				} elseif ($key->fk_kategori_id == 3) {
+					$palen = (float) $key->total_pinjaman;
+				}
+			}
+
+			$total = $uang + $barang + $palen;
+
+			$data = [
+				'status' => true,
+				'uang'   => $uang ?? 0,
+				'barang' => $barang ?? 0,
+				'palen'  => $palen ?? 0,
+				'total'  => $total ?? 0,
+			];
+			
 		}
 
 		$this->output
@@ -959,6 +1010,243 @@ class homeadmin extends MX_Controller
 				'nonaktif' => $nonaktif,
 			],
 			'total' => array_sum($aktif) + array_sum($nonaktif),
+		];
+
+		return $this->output
+			->set_content_type('application/json')
+			->set_output(json_encode($data));
+	}
+
+	public function ajaxGrafikPinjaman()
+	{
+		$jenis = $this->input->get('jenis', true);
+		$tahun = $this->input->get('tahun', true);
+
+		$data = [
+			'status' => false,
+			'message' => 'Jenis tidak dikenali'
+		];
+
+		if (!in_array($jenis, ['pinjaman'])) {
+			return $this->output
+				->set_content_type('application/json')
+				->set_output(json_encode($data));
+		}
+
+		// Normalisasi tahun
+		$isAll = (
+			$tahun === 'all' ||
+			$tahun === 'semua' ||
+			$tahun === null ||
+			$tahun === ''
+		);
+
+		$bulanNama = [
+			1  => 'Jan',
+			2  => 'Feb',
+			3  => 'Mar',
+			4  => 'Apr',
+			5  => 'Mei',
+			6  => 'Jun',
+			7  => 'Jul',
+			8  => 'Agu',
+			9  => 'Sep',
+			10 => 'Okt',
+			11 => 'Nov',
+			12 => 'Des'
+		];
+
+		// Master bulan 1 - 12 agar bulan tanpa transaksi tetap muncul 0
+		$monthTable = "
+			(
+				SELECT 1 bulan
+				UNION ALL SELECT 2
+				UNION ALL SELECT 3
+				UNION ALL SELECT 4
+				UNION ALL SELECT 5
+				UNION ALL SELECT 6
+				UNION ALL SELECT 7
+				UNION ALL SELECT 8
+				UNION ALL SELECT 9
+				UNION ALL SELECT 10
+				UNION ALL SELECT 11
+				UNION ALL SELECT 12
+			) m
+		";
+
+		if ($isAll) {
+
+			// =====================================================
+			// SEMUA TAHUN
+			// =====================================================
+			$sql = "
+				SELECT
+					m.bulan,
+
+					COALESCE(tp.uang, 0) AS uang,
+					COALESCE(tp.barang, 0) AS barang,
+					COALESCE(tp.palen, 0) AS palen
+
+				FROM {$monthTable}
+
+				LEFT JOIN (
+					SELECT
+						MONTH(tgl) AS bulan,
+
+						SUM(
+							CASE
+								WHEN fk_kategori_id = 1
+								THEN COALESCE(pinjaman, 0)
+								ELSE 0
+							END
+						) AS uang,
+
+						SUM(
+							CASE
+								WHEN fk_kategori_id = 2
+								THEN COALESCE(pinjaman, 0)
+								ELSE 0
+							END
+						) AS barang,
+
+						SUM(
+							CASE
+								WHEN fk_kategori_id = 3
+								THEN COALESCE(pinjaman, 0)
+								ELSE 0
+							END
+						) AS palen
+
+					FROM t_cb_pinjaman
+
+					GROUP BY MONTH(tgl)
+
+				) tp ON tp.bulan = m.bulan
+
+				ORDER BY m.bulan
+			";
+
+			$rows = $this->db
+				->query($sql)
+				->result_array();
+
+			$tahunOut = 'all';
+
+		} else {
+
+			// =====================================================
+			// FILTER 1 TAHUN
+			// =====================================================
+			$tahunInt = (int) $tahun;
+
+			$sql = "
+				SELECT
+					m.bulan,
+
+					COALESCE(tp.uang, 0) AS uang,
+					COALESCE(tp.barang, 0) AS barang,
+					COALESCE(tp.palen, 0) AS palen
+
+				FROM {$monthTable}
+
+				LEFT JOIN (
+					SELECT
+						MONTH(tgl) AS bulan,
+
+						SUM(
+							CASE
+								WHEN fk_kategori_id = 1
+								THEN COALESCE(pinjaman, 0)
+								ELSE 0
+							END
+						) AS uang,
+
+						SUM(
+							CASE
+								WHEN fk_kategori_id = 2
+								THEN COALESCE(pinjaman, 0)
+								ELSE 0
+							END
+						) AS barang,
+
+						SUM(
+							CASE
+								WHEN fk_kategori_id = 3
+								THEN COALESCE(pinjaman, 0)
+								ELSE 0
+							END
+						) AS palen
+
+					FROM t_cb_pinjaman
+
+					WHERE YEAR(tgl) = ?
+
+					GROUP BY MONTH(tgl)
+
+				) tp ON tp.bulan = m.bulan
+
+				ORDER BY m.bulan
+			";
+
+			$rows = $this->db
+				->query($sql, [$tahunInt])
+				->result_array();
+
+			$tahunOut = $tahunInt;
+		}
+
+		// =====================================================
+		// BUILD SERIES GRAFIK
+		// =====================================================
+		$labels = [];
+
+		$uang = [];
+		$barang = [];
+		$palen = [];
+
+		foreach ($rows as $r) {
+
+			$bulan = (int) $r['bulan'];
+
+			$labels[] = $bulanNama[$bulan] ?? (string) $bulan;
+
+			$uang[] = (float) $r['uang'];
+			$barang[] = (float) $r['barang'];
+			$palen[] = (float) $r['palen'];
+		}
+
+		// =====================================================
+		// TOTAL PER KATEGORI
+		// =====================================================
+		$totalUang = array_sum($uang);
+		$totalBarang = array_sum($barang);
+		$totalPalen = array_sum($palen);
+
+		// Total seluruh pinjaman
+		$grandTotal = $totalUang + $totalBarang + $totalPalen;
+
+		// =====================================================
+		// OUTPUT
+		// =====================================================
+		$data = [
+			'status' => true,
+			'tahun'  => $tahunOut,
+
+			'labels' => $labels,
+
+			'series' => [
+				'uang'   => $uang,
+				'barang' => $barang,
+				'palen'  => $palen,
+			],
+
+			'total_kategori' => [
+				'uang'   => $totalUang,
+				'barang' => $totalBarang,
+				'palen'  => $totalPalen,
+			],
+
+			'total' => $grandTotal,
 		];
 
 		return $this->output

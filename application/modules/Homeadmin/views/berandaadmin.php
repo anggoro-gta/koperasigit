@@ -23,7 +23,7 @@
                 <p>POKOK, WAJIB, TAPIM, SUKARELA</p>
             </div>
         </div>
-        <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12" id='pinjaman'>
+        <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12 simpanan" id='pinjaman'>
             <div class="tile-stats" style="background-color: gray;color: white">
                 <div class="icon"><i class="fa-solid fa-wallet" style="color: white"></i></div>
                 <div class="count"><?= number_format($pinjaman) ?></div>
@@ -218,6 +218,12 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('#simulasi').forEach(function(el) {
         el.addEventListener('click', function() {
             window.location.href = '<?= base_url("Homeadmin/detail/anggota"); ?>';
+        });
+    });
+
+    document.querySelectorAll('#pinjaman').forEach(function(el) {
+        el.addEventListener('click', function() {
+            window.location.href = '<?= base_url("Homeadmin/detail/pinjaman"); ?>';
         });
     });
 });
