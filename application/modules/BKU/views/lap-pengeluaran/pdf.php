@@ -136,9 +136,9 @@
                 <td colspan="3">&nbsp;</td>
             </tr>
             <tr>
-                <td width="33%" align="center"><b><?= $nama_ketua_1 ?></b></td>
-                <td width="33%" align="center"><b><?= $nama_bendahara_1 ?></b></td>
-                <td align="center"><b><?= $nama_manager ?></b></td>
+                <td width="33%" align="center"><b><u><?= $nama_ketua_1 ?></u></b></td>
+                <td width="33%" align="center"><b><u><?= $nama_bendahara_1 ?></u></b></td>
+                <td align="center"><b><u><?= $nama_manager ?></u></b></td>
             </tr>
         </table>
     </div>
