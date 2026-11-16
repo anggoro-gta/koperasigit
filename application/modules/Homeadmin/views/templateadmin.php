@@ -187,6 +187,12 @@
                                                         } ?>"><a
                                                 href="<?php echo base_url('BKU/Pengeluaran') ?>">Pengeluaran</a>
                                         </li>
+                                        <li class="<?php if (isset($variabelnya)) {
+                                                            echo 'active';
+                                                        } ?>"><a
+                                                href="<?php echo base_url('BKU/LapPengeluaran') ?>">Laporan
+                                                Pengeluaran</a>
+                                        </li>
                                     </ul>
                                 </li>
                                 <?php } ?>

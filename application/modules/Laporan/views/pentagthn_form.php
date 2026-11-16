@@ -54,7 +54,7 @@
                                 
                 <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
                   <button type="submit" class="btn btn-danger" name="type" value="pdf"><i class="glyphicon glyphicon-file"></i> Cetak PDF</button>
-                  <button type="submit" class="btn btn-success" name="type" value="excel"><i class="glyphicon glyphicon-download"></i> Download ExcelF</button>
+                  <button type="submit" class="btn btn-success" name="type" value="excel"><i class="glyphicon glyphicon-download"></i> Download Excel</button>
                 </div>
               </div>
             </div>
