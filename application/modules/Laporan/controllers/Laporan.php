@@ -134,26 +134,37 @@ class Laporan extends CI_Controller
 		$type = $this->input->post('type');
 		$fk_skpd_id = $this->input->post('fk_skpd_id');
 		$data['skpd'] = $this->db->query("select nama_skpd from ms_cb_skpd where id = ? ", [$fk_skpd_id])->row()->nama_skpd;
-		$data['hasil'] = $this->db->query("select
-		nomor_anggota ,
-		nama ,
-		nip ,
-		simpanan_pokok,
-		sum(wajib) wajib,
-		sum(sukarela) sukarela ,
-		ifnull(sum(tapim),0)  tapim
-	from
-		ms_cb_user_anggota mcua
-	join t_cb_tagihan_simpanan tcts on
-		mcua.id = tcts.fk_anggota_id
-		left join t_cb_tagihan_pinjaman tctp on mcua.id =tctp.fk_anggota_id
-	where
-		fk_id_skpd = ?
-	group by
-		nomor_anggota ,
-		nama ,
-		nip ,
-		simpanan_pokok", [$fk_skpd_id])->result();
+		$data['hasil'] = $this->db->query("SELECT
+			mcua.nomor_anggota,
+			mcua.nama,
+			mcua.nip,
+			COALESCE(mcua.simpanan_pokok, 0) AS simpanan_pokok,
+			(
+				COALESCE(mcua.simpanan_wajib, 0)
+				+ COALESCE(tcts.total_wajib, 0)
+			) AS wajib,
+			COALESCE(tctp.total_tapim, 0) AS tapim,
+			COALESCE(tcts.total_sukarela, 0) AS sukarela
+		FROM ms_cb_user_anggota mcua
+		LEFT JOIN (
+			SELECT
+				fk_anggota_id,
+				SUM(COALESCE(wajib, 0)) AS total_wajib,
+				SUM(COALESCE(sukarela, 0)) AS total_sukarela
+			FROM t_cb_tagihan_simpanan
+			GROUP BY fk_anggota_id
+		) tcts
+			ON tcts.fk_anggota_id = mcua.id
+		LEFT JOIN (
+			SELECT
+				fk_anggota_id,
+				SUM(COALESCE(tapim, 0)) AS total_tapim
+			FROM t_cb_tagihan_pinjaman
+			GROUP BY fk_anggota_id
+		) tctp
+			ON tctp.fk_anggota_id = mcua.id
+		WHERE mcua.fk_id_skpd = ?
+		ORDER BY mcua.nomor_anggota", [$fk_skpd_id])->result();
 		$html = $this->load->view('Laporan/simpanan_pdf', $data, true);
 		$title = 'Laporan Simpanan';
 		if ($type == 'pdf') {
