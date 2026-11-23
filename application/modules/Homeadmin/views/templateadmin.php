@@ -138,6 +138,12 @@
                                                 href="<?php echo base_url('MsKategori/Pengeluaran') ?>">Kategori
                                                 Pengeluaran</a></li>
 
+                                        <li class="<?php if (isset($MsKategoriNeraca)) {
+                                                            echo 'active';
+                                                        } ?>"><a
+                                                href="<?php echo base_url('MsKategori/Neraca') ?>">Kategori
+                                                Neraca</a></li>
+
                                         <li class="<?php if (isset($MsSaldoAwal)) {
                                                             echo 'active';
                                                         } ?>"><a href="<?php echo base_url('MsSaldoAwal') ?>">Saldo
