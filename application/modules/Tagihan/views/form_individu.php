@@ -1,3 +1,12 @@
+<style>
+    #input_pokok,
+    #input_tapim,
+    #input_bunga {
+        width: 140px;
+        max-width: 140px;
+    }
+</style>
+
 <div class="">
     <div class="page-title">
         <div class="title_left">
@@ -213,8 +222,8 @@ function hitung_pelunasan(x) {
 
     let jenis = $('#jenis').val();
     let const_pokok = toIntDefault0($('#const_pokok').val()),
-        const_tapim_count = $('#label_tapim').text() || $('#label_tapim').val(),
-        const_bunga_count = $('#label_bunga').text() || $('#label_bunga').val(),
+        const_tapim_count = $('#input_tapim').val(),
+        const_bunga_count = $('#input_bunga').val(),
         const_tapim = toIntDefault0($('#const_tapim').val()),
         const_bunga = toIntDefault0($('#const_bunga').val()),
         const_jml_tagihan = toIntDefault0($('#const_jml_tagihan').val()),
@@ -222,7 +231,7 @@ function hitung_pelunasan(x) {
 
     let const_tapim_count_number = toIntDefault0(const_tapim_count);
     let const_bunga_count_number = toIntDefault0(const_bunga_count);
-    let const_pokok_count_number = toIntDefault0($('#pokok').val());
+    let const_pokok_count_number = toIntDefault0($('#input_pokok').val());
 
     //jika jenis kompensasi atau pelunasan
     if (jenis == '4' || jenis == '5') {
@@ -235,8 +244,8 @@ function hitung_pelunasan(x) {
     if (jenis == '4') {
         const_bunga_count_number = 1 * const_bunga;
     } else if (jenis == '5') {
-        const_tapim_input = $('#label_tapim').val();
-        const_bunga_input = $('#label_bunga').val();
+        const_tapim_input = $('#input_tapim').val();
+        const_bunga_input = $('#input_bunga').val();
 
         const_tapim_count_number = toIntDefault0(const_tapim_input);
         const_bunga_count_number = toIntDefault0(const_bunga_input);
@@ -249,9 +258,9 @@ function hitung_pelunasan(x) {
     let total_tagihan = const_pokok_count_number + const_tapim_count_number + const_bunga_count_number;
     // console.log("total_tagihan = " + total_tagihan);
 
-    $('#label_pokok').html(numberWithCommas(const_pokok_count_number));
-    $('#label_tapim').html(numberWithCommas(const_tapim_count_number));
-    $('#label_bunga').html(numberWithCommas(const_bunga_count_number));
+    $('#input_pokok').val(numberWithCommas(const_pokok_count_number));
+    $('#input_tapim').val(numberWithCommas(const_tapim_count_number));
+    $('#input_bunga').val(numberWithCommas(const_bunga_count_number));
     $('#label_jml_tagihan').html(numberWithCommas(total_tagihan));
 
     $('#pokok').val(const_pokok_count_number);
@@ -285,6 +294,7 @@ function hitung(x) {
 }
 
 $(document).ready(function() {
+    syncTagihanAmounts();
     <?php if ($id) { ?>
     loadDetail(<?= $id ?>)
     $('#fk_skpd_id').trigger('change');
@@ -295,4 +305,38 @@ function toIntDefault0(value) {
     let hasil = parseInt(String(value || '0').replace(/,/g, ''), 10);
     return isNaN(hasil) ? 0 : hasil;
 }
+
+function parseCurrency(value) {
+    return parseInt(String(value || '0').replace(/[^0-9]/g, ''), 10) || 0;
+}
+
+function formatCurrency(value) {
+    return parseCurrency(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+function syncTagihanAmounts() {
+    if (!$('#input_pokok').length) return;
+
+    const pokok = parseCurrency($('#input_pokok').val());
+    const tapim = parseCurrency($('#input_tapim').val());
+    const bunga = parseCurrency($('#input_bunga').val());
+    const jumlah = pokok + tapim + bunga;
+
+    $('#input_pokok').val(formatCurrency(pokok));
+    $('#input_tapim').val(formatCurrency(tapim));
+    $('#input_bunga').val(formatCurrency(bunga));
+    $('#pokok').val(pokok);
+    $('#tapim').val(tapim);
+    $('#bunga').val(bunga);
+    $('#jml_tagihan').val(jumlah);
+    $('#label_jml_tagihan').text(formatCurrency(jumlah));
+}
+
+$(document).on('input', '#input_pokok, #input_tapim, #input_bunga', function() {
+    const raw = parseCurrency(this.value);
+    this.value = formatCurrency(raw);
+    syncTagihanAmounts();
+});
+
+$(document).on('blur', '#input_pokok, #input_tapim, #input_bunga', syncTagihanAmounts);
 </script>

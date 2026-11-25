@@ -693,6 +693,17 @@ class Tagihan extends CI_Controller
 		$sukarela = $this->input->post('sukarela');
 		$jenis = $this->input->post('jenis');
 
+		// Pastikan nilai currency dari form selalu menjadi integer sebelum disimpan.
+		$toInteger = static function ($value) {
+			$value = preg_replace('/[^0-9-]/', '', (string) $value);
+			return (int) ($value === '' || $value === '-' ? 0 : $value);
+		};
+
+		$pokok = $toInteger($pokok);
+		$tapim = $toInteger($tapim);
+		$bunga = $toInteger($bunga);
+		$jml_tagihan = $toInteger($jml_tagihan);
+
 		$data['fk_skpd_id'] = $fk_skpd_id;
 		$data['bulan'] = explode('-', $periode)[0];
 		$data['tahun'] = explode('-', $periode)[1];
@@ -711,10 +722,10 @@ class Tagihan extends CI_Controller
 				'fk_pinjaman_id' => $fk_pinjaman_id,
 				'fk_anggota_id' => $fk_anggota_id,
 				'angsuran_ke' => str_replace(",", "", $angsuran_ke),
-				'pokok' => str_replace(",", "", $pokok),
-				'tapim' => str_replace(",", "", $tapim),
-				'bunga' => str_replace(",", "", $bunga),
-				'jml_tagihan' => str_replace(",", "", $jml_tagihan),
+				'pokok' => $pokok,
+				'tapim' => $tapim,
+				'bunga' => $bunga,
+				'jml_tagihan' => $jml_tagihan,
 				'is_kompensasi' => $jenis == 4 ? 1 : 0,
 				'is_pelunasan' => $jenis == 5 ? 1 : 0,
 			];

@@ -60,29 +60,34 @@
                         <td><?= $pinjaman->angsuran_ke ?></td>
                         <?php } else { ?>
                         <td><input <?= $jenis == 4 || $jenis == 5 ? 'readonly' : '' ?> type="text" name="angsuran_ke"
-                                class="form-control" id="angsuran_ke" value="<?= $pinjaman->angsuran_ke ?>"></td>
+                                class="form-control" id="angsuran_ke" value="<?= $pinjaman->angsuran_ke ?>"
+                                style="width: 140px; max-width: 140px;"></td>
                         <?php } ?>
 
-                        <td id="label_pokok"><?= number_format($pinjaman->pokok) ?></td>
-
-                        <?php if ($jenis == 5) { ?>
                         <?php
-                                    $var_tapim_number = (int)$pinjaman->tapim;
-                                    $var_bunga_number = (int)$pinjaman->bunga;
-
-                                    $var_tenor_number = (int)$pinjaman->tenor;
-                                    $var_angsuran_ke_number = (int)$pinjaman->angsuran_ke;
-
-                                    $result_tapim = ($var_tapim_number * (($var_tenor_number - $var_angsuran_ke_number) + 1));
-                                    $result_bunga = ($var_bunga_number * (($var_tenor_number - $var_angsuran_ke_number) + 1));
-                                    ?>
-                        <td><input type="text" name="label_tapim" id="label_tapim" class="form-control nominal"
-                                value="<?= $result_tapim ?>"></td>
-                        <td><input type="text" name="label_bunga" id="label_bunga" class="form-control nominal"
-                                value="<?= $result_bunga/2 ?>"></td>
+                        $var_tapim_number = (int)$pinjaman->tapim;
+                        $var_bunga_number = (int)$pinjaman->bunga;
+                        $var_tenor_number = (int)$pinjaman->tenor;
+                        $var_angsuran_ke_number = (int)$pinjaman->angsuran_ke;
+                        $display_tapim = $var_tapim_number;
+                        $display_bunga = $var_bunga_number;
+                        if ($jenis == 5) {
+                            $periode_sisa = ($var_tenor_number - $var_angsuran_ke_number) + 1;
+                            $display_tapim = $var_tapim_number * $periode_sisa;
+                            $display_bunga = ($var_bunga_number * $periode_sisa) / 2;
+                        }
+                        ?>
+                        <?php if ($readonly) { ?>
+                        <td><?= number_format($pinjaman->pokok) ?></td>
+                        <td><?= number_format($display_tapim) ?></td>
+                        <td><?= number_format($display_bunga) ?></td>
                         <?php } else { ?>
-                        <td id="label_tapim"><?= number_format($pinjaman->tapim) ?></td>
-                        <td id="label_bunga"><?= number_format($pinjaman->bunga) ?></td>
+                        <td><input type="text" id="input_pokok" class="form-control currency-input"
+                                value="<?= number_format($pinjaman->pokok) ?>" inputmode="numeric"></td>
+                        <td><input type="text" id="input_tapim" class="form-control currency-input"
+                                value="<?= number_format($display_tapim) ?>" inputmode="numeric"></td>
+                        <td><input type="text" id="input_bunga" class="form-control currency-input"
+                                value="<?= number_format($display_bunga) ?>" inputmode="numeric"></td>
                         <?php } ?>
 
                         <td><?= $pinjaman->tenor ?></td>
