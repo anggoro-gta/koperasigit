@@ -204,7 +204,7 @@
                                 <?php } ?>
 
                                 <?php if (in_array($level, [1, 5])) { ?>
-                                <li><a><i class="fa fa-file"></i> Neraca <span class="fa fa-chevron-down"></span></a>
+                                <li><a><i class="fa fa-balance-scale"></i> Neraca <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li class="<?php if (isset($variabelnya)) {
                                                             echo 'active';
